@@ -1,0 +1,6 @@
+[submodule "submodules/Utils"]
+	path = submodules/Utils
+	url = git@github.com:ebertolazzi/Utils.git
+[submodule "submodules/GenericContainer"]
+	path = submodules/GenericContainer
+	url = git@github.com:ebertolazzi/GenericContainer.git
