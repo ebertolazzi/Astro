@@ -1,2 +1,4 @@
-astro.xcodeproj
-*.mexmaci64
+Icon?
+*.synctex.gz
+*.log
+*.aux
