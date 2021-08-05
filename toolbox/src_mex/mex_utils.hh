@@ -35,6 +35,7 @@ either expressed or implied, of the FreeBSD Project.
 #include <string>
 #include <sstream>
 #include <iostream>
+#include "Utils.hh"
 
 #define arg_in_0 prhs[0]
 #define arg_in_1 prhs[1]

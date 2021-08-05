@@ -3,7 +3,7 @@ clear functions;
 
 old_dir = cd(fileparts(which(mfilename)));
 
-NAMES = { 'Astro' };
+NAMES = { 'Astro', 'Lambert' };
  
 LIB_NAMES = { ...
   'Astro.cc', ...

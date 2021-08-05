@@ -1,4 +1,3 @@
-#include <MechatronixCore/MechatronixCore.hh>
 /****************************************************************************\
   Copyright (c) Enrico Bertolazzi 2014
   See file license.txt
@@ -121,4 +120,3 @@ namespace GC_namespace {
   void to_mxArray( mat_complex_type const & val, mxArray * & mx );
 
 }
-

@@ -29,7 +29,7 @@
 // https://it.mathworks.com/matlabcentral/answers/132527-in-mex-files-where-does-output-to-stdout-and-stderr-go
 */
 
-#ifdef MECHATRONIX_OS_LINUX
+#ifdef UTILS_OS_LINUX
 
 class mystream : public std::streambuf {
 protected:
@@ -267,33 +267,39 @@ namespace Astro {
     MEX_ASSERT2( nrhs == 3 || nrhs == 11, CMD "expected 3 or 11 input, nrhs = {}\n", nrhs );
     CHECK_OUT(0);
     Astro * ptr = DATA_GET( arg_in_1 );
+    string name = "no-name";
+    GC_namespace::real_type t0(0), a(0), e(0), Omega(0), omega(0), i(0), M0(0), muS(0);
     if ( nrhs == 11 ) {
       MEX_ASSERT( mxIsChar(arg_in_2), CMD " param 'name' must be a string" );
-      string n = mxArrayToString(arg_in_2);
-      GC_namespace::real_type t0    = getScalarValue( arg_in_3,  CMD " param t0" );
-      GC_namespace::real_type a     = getScalarValue( arg_in_4,  CMD " param a" );
-      GC_namespace::real_type e     = getScalarValue( arg_in_5,  CMD " param e" );
-      GC_namespace::real_type Omega = getScalarValue( arg_in_6,  CMD " param Omega" );
-      GC_namespace::real_type omega = getScalarValue( arg_in_7,  CMD " param omega" );
-      GC_namespace::real_type i     = getScalarValue( arg_in_8,  CMD " param i" );
-      GC_namespace::real_type M0    = getScalarValue( arg_in_9,  CMD " param M0" );
-      GC_namespace::real_type muS   = getScalarValue( arg_in_10, CMD " param muS" );
-      ptr->setup_Keplerian( n, t0, a, e, Omega, omega, i, M0, muS );
+      name  = mxArrayToString(arg_in_2);
+      t0    = getScalarValue( arg_in_3,  CMD " param t0" );
+      a     = getScalarValue( arg_in_4,  CMD " param a" );
+      e     = getScalarValue( arg_in_5,  CMD " param e" );
+      Omega = getScalarValue( arg_in_6,  CMD " param Omega" );
+      omega = getScalarValue( arg_in_7,  CMD " param omega" );
+      i     = getScalarValue( arg_in_8,  CMD " param i" );
+      M0    = getScalarValue( arg_in_9,  CMD " param M0" );
+      muS   = getScalarValue( arg_in_10, CMD " param muS" );
     } else {
       GC_namespace::GenericContainer gc;
-      GC_namespace::mxArray_to_GenericContainer(arg_in_2,gc);
-      ptr->setup_Keplerian(
-        gc("name").get_string(CMD " param struct field 'name'" ),
-        gc("t0").get_number(),
-        gc("a").get_number(),
-        gc("e").get_number(),
-        gc("Omega").get_number(),
-        gc("omega").get_number(),
-        gc("i").get_number(),
-        gc("M0").get_number(),
-        gc("muS").get_number()
-      );
+      try {
+        GC_namespace::mxArray_to_GenericContainer(arg_in_2,gc);
+        name = gc("name").get_string(CMD " param struct field 'name': " );
+      } catch ( std::exception const & e ) {
+        mexErrMsgTxt( fmt::format( "Astro Error: {}", e.what() ).c_str() );
+      } catch (...) {
+        mexErrMsgTxt( "mxArray_to_GenericContainer failed" );
+      }
+      t0    = gc("t0").get_number();
+      a     = gc("a").get_number();
+      e     = gc("e").get_number();
+      Omega = gc("Omega").get_number();
+      omega = gc("omega").get_number();
+      i     = gc("i").get_number();
+      M0    = gc("M0").get_number();
+      muS   = gc("muS").get_number();
     }
+    ptr->setup_Keplerian( name, t0, a, e, Omega, omega, i, M0, muS );
     #undef CMD
   }
 
@@ -308,36 +314,43 @@ namespace Astro {
     MEX_ASSERT2( nrhs == 3 || nrhs == 12, CMD "expected 3 or 12 input, nrhs = {}\n", nrhs );
     CHECK_OUT(0);
     Astro * ptr = DATA_GET( arg_in_1 );
+    GC_namespace::real_type t0(0), p(0), f(0), g(0), h(0), k(0), M0(0), muS(0);
+    bool retrograde = false;
+    string name = "";
     if ( nrhs == 12 ) {
       MEX_ASSERT( mxIsChar(arg_in_2), CMD " param 'name' must be a string" );
-      string n = mxArrayToString(arg_in_2);
-      GC_namespace::real_type t0    = getScalarValue( arg_in_3,  CMD " param t0" );
-      GC_namespace::real_type p     = getScalarValue( arg_in_4,  CMD " param p" );
-      GC_namespace::real_type f     = getScalarValue( arg_in_5,  CMD " param f" );
-      GC_namespace::real_type g     = getScalarValue( arg_in_6,  CMD " param g" );
-      GC_namespace::real_type h     = getScalarValue( arg_in_7,  CMD " param h" );
-      GC_namespace::real_type k     = getScalarValue( arg_in_8,  CMD " param k" );
-      bool retrograde = getBool( arg_in_9, CMD " param 'retrograde'" );
-      GC_namespace::real_type M0    = getScalarValue( arg_in_10, CMD " param M0" );
-      GC_namespace::real_type muS   = getScalarValue( arg_in_11, CMD " param muS" );
-      ptr->setup_Equinoctial( n, t0, p, f, g, h, k, retrograde, M0, muS );
+      name       = mxArrayToString(arg_in_2);
+      t0         = getScalarValue( arg_in_3,  CMD " param t0" );
+      p          = getScalarValue( arg_in_4,  CMD " param p" );
+      f          = getScalarValue( arg_in_5,  CMD " param f" );
+      g          = getScalarValue( arg_in_6,  CMD " param g" );
+      h          = getScalarValue( arg_in_7,  CMD " param h" );
+      k          = getScalarValue( arg_in_8,  CMD " param k" );
+      retrograde = getBool( arg_in_9, CMD " param 'retrograde'" );
+      M0         = getScalarValue( arg_in_10, CMD " param M0" );
+      muS        = getScalarValue( arg_in_11, CMD " param muS" );
     } else {
       GC_namespace::GenericContainer gc;
-      GC_namespace::mxArray_to_GenericContainer(arg_in_2,gc);
-      ptr->setup_Equinoctial(
-        gc("name").get_string(CMD " param struct field 'name'" ),
-        gc("t0").get_number(),
-        gc("p").get_number(),
-        gc("f").get_number(),
-        gc("g").get_number(),
-        gc("h").get_number(),
-        gc("k").get_number(),
-        gc("retrograde").get_bool(),
-        gc("M0").get_number(),
-        gc("muS").get_number()
-      );
-
+      try {
+        GC_namespace::mxArray_to_GenericContainer(arg_in_2,gc);
+        name = gc("name").get_string(CMD " param struct field 'name': " );
+      } catch ( std::exception const & e ) {
+        mexErrMsgTxt( fmt::format( "Astro Error: {}", e.what() ).c_str() );
+      } catch (...) {
+        mexErrMsgTxt( "mxArray_to_GenericContainer failed" );
+      }
+      name       = gc("name").get_string(CMD " param struct field 'name'" );
+      t0         = gc("t0").get_number();
+      p          = gc("p").get_number();
+      f          = gc("f").get_number();
+      g          = gc("g").get_number();
+      h          = gc("h").get_number();
+      k          = gc("k").get_number();
+      retrograde =  gc("retrograde").get_bool();
+      M0         = gc("M0").get_number();
+      muS        = gc("muS").get_number();
     }
+    ptr->setup_Equinoctial( name, t0, p, f, g, h, k, retrograde, M0, muS );
     #undef CMD
   }
 

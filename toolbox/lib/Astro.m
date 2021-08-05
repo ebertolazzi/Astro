@@ -208,7 +208,7 @@ classdef Astro < handle
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function print( self )
       res = AstroMexWrapper( 'info', self.objectHandle );
-      fprintf('''%s''\n',self.name());
+      fprintf('\n''%s''\n',self.name());
       fprintf('Equinoctial\n');
       fprintf('  p = %g\n',res.Equinoctial.p);
       fprintf('  f = %g\n',res.Equinoctial.f);
@@ -216,13 +216,13 @@ classdef Astro < handle
       fprintf('  h = %g\n',res.Equinoctial.h);
       fprintf('  k = %g\n',res.Equinoctial.k);
       fprintf('  retrograde = %g\n',res.Equinoctial.retrograde);
-      fprintf('Kepler\n');
+      fprintf('\nKepler\n');
       fprintf('  a     = %g\n',res.Kepler.a);
       fprintf('  e     = %g\n',res.Kepler.e);
       fprintf('  i     = %g [%g degree]\n',res.Kepler.i,res.Kepler.i*(180/pi));
       fprintf('  omega = %g [%g degree]\n',res.Kepler.omega,res.Kepler.omega*(180/pi));
       fprintf('  Omega = %g [%g degree]\n',res.Kepler.Omega,res.Kepler.Omega*(180/pi));
-      fprintf('INFO\n');
+      fprintf('\nINFO\n');
       fprintf('  M0 = %g [%g degree]\n',res.M0,res.M0*(180/pi));
       fprintf('  t0 = %g\n',res.t0);
       fprintf('  period       = %g\n',self.period());
@@ -230,6 +230,14 @@ classdef Astro < handle
       fprintf('  periapsis    = %g\n',self.periapsis());
       fprintf('  muS          = %g\n',self.muS());
       fprintf('  orbit_energy = %g\n',self.orbit_energy());
+      fprintf('\n\n');
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function plot( self, varargin )
+      year = self.period();
+      t    = 0:year/1000:year;
+      [ X, Y, Z ] = self.position( t );
+      plot3( X, Y, Z, varargin{:} );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   end
