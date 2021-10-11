@@ -20,7 +20,7 @@
 
 #include "Astro.hh"
 
-namespace Astro {
+namespace AstroLib {
 
   Astro::Astro()
   : m_name("noname")

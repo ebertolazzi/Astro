@@ -2,3 +2,6 @@ Icon?
 *.synctex.gz
 *.log
 *.aux
+build
+Xcode
+Astro.mltbx

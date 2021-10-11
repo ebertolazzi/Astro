@@ -24,7 +24,7 @@
 #ifndef ASTRO_LOCAL_KEPLER_DOT_HH
 #define ASTRO_LOCAL_KEPLER_DOT_HH
 
-namespace Astro {
+namespace AstroLib {
 
   struct Equinoctial {
     real_type p;

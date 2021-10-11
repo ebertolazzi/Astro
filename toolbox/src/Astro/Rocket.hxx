@@ -26,7 +26,7 @@
   #include "Astro.hh"
 #endif
 
-namespace Astro {
+namespace AstroLib {
 
   void
   odeXYZ(

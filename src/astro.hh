@@ -31,7 +31,7 @@
   #include "Utils.hh"
 #endif
 
-namespace Astro {
+namespace AstroLib {
   using GC_namespace::GenericContainer;
   using GC_namespace::ostream_type;
   using GC_namespace::real_type;
@@ -45,7 +45,7 @@ namespace Astro {
 
 #include <string>
 
-namespace Astro {
+namespace AstroLib {
 
   using std::string;
   using Utils::m_pi;

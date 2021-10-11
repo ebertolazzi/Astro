@@ -91,7 +91,7 @@
  % See also lambert_low_ExpoSins.
 \*/
 
-namespace Astro {
+namespace AstroLib {
 
   using Utils::m_pi;
 

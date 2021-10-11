@@ -64,7 +64,7 @@ static scoped_redirect_cout mycout_redirect;
 #define CHECK_OUT(N) \
   MEX_ASSERT2( nlhs == N, CMD "Expected {} argument(s), nlhs = {}\n", N, nlhs )
 
-namespace Astro {
+namespace AstroLib {
 
   /*\
    |  ____    _  _____  _

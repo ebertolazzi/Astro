@@ -67,7 +67,7 @@ static scoped_redirect_cout mycout_redirect;
 #define CHECK_OUT(N) \
   MEX_ASSERT2( nlhs == N, CMD "Expected {} argument(s), nlhs = {}\n", N, nlhs )
 
-namespace Astro {
+namespace AstroLib {
   // function [V1,V2,ok] = Lambert(t1,P1,t2,P2,m,mu)
 
   using namespace std ;

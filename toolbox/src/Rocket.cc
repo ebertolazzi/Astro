@@ -23,7 +23,7 @@
 #pragma clang diagnostic ignored "-Wglobal-constructors"
 #endif
 
-namespace Astro {
+namespace AstroLib {
 
   void
   odeXYZ(
