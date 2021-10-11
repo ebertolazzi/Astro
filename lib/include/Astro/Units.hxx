@@ -28,7 +28,7 @@
   #include "Astro.hh"
 #endif
 
-namespace Astro {
+namespace AstroLib {
 
   /*
   //    ____                              _
