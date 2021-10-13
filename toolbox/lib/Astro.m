@@ -17,6 +17,10 @@ classdef Astro < handle
       self.objectHandle = 0; % avoid double destruction of object
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function change_handle( self, new_objectHandle )
+      AstroMexWrapper( 'new_handle', self.objectHandle , new_objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     %> Return the `pointer` of the interbal stored c++ object
     %>
     %> **Usage**
@@ -115,6 +119,10 @@ classdef Astro < handle
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function res = info( self )
       res = AstroMexWrapper( 'info', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function print_info( self )
+      AstroMexWrapper( 'print_info', self.objectHandle );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function n = number_of_revolution( self, t )

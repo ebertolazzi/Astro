@@ -8,7 +8,6 @@
   See the file license.txt for more details.
 \****************************************************************************/
 
-#include "GenericContainerMatlabInterface.hh"
 #include "mex_utils.hh"
 #include "Astro.hh"
 
@@ -18,7 +17,7 @@
 "\n" \
 "USAGE:\n" \
 "  - Constructors:\n" \
-"    OBJ = mex_Astro( 'new' );\n" \
+"    OBJ = AstroMexWrapper( 'new' );\n" \
 "\n" \
 "  On output:\n" \
 "    OBJ = pointer to the internal object\n" \
@@ -103,7 +102,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('new'[,'name']): "
+    #define CMD "AstroMexWrapper('new'[,'name']): "
     MEX_ASSERT2( nlhs == 1, CMD "expected 1 output, nlhs = {}\n", nlhs );
     MEX_ASSERT2( nrhs == 1 || nrhs == 2, CMD "expected 1 or 2 input, nrhs = {}\n", nrhs );
     Astro * ptr = nullptr;
@@ -115,6 +114,20 @@ namespace AstroLib {
       ptr = new Astro(name);
     }
     arg_out_0 = convertPtr2Mat<Astro>(ptr);
+    #undef CMD
+  }
+
+  static
+  void
+  do_new_handle(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('new_handle',old_handle,new_handle): "
+    MEX_ASSERT2( nlhs == 0, CMD "expected NO output, nlhs = {}\n", nlhs );
+    MEX_ASSERT2( nrhs == 3, CMD "expected 2 input, nrhs = {}\n", nrhs );
+    Astro * ptr = DATA_GET( arg_in_2 );
+    Mat2Ptr_change_ptr<Astro>( arg_in_1, ptr );
     #undef CMD
   }
 
@@ -131,7 +144,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('delete',obj): "
+    #define CMD "AstroMexWrapper('delete',obj): "
     CHECK_IN(2);
     CHECK_OUT(0);
     destroyObject<Astro>( arg_in_1 );
@@ -145,7 +158,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('copy',obj,obj1): "
+    #define CMD "AstroMexWrapper('copy',obj,obj1): "
     CHECK_IN(3);
     CHECK_OUT(0);
     Astro * ptr  = DATA_GET( arg_in_1 );
@@ -164,7 +177,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('do_name',obj): "
+    #define CMD "AstroMexWrapper('do_name',obj): "
     CHECK_IN(2);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -179,7 +192,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('position',obj,t): "
+    #define CMD "AstroMexWrapper('position',obj,t): "
     CHECK_IN(3);
     CHECK_OUT(3);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -200,7 +213,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('velocity',obj,t): "
+    #define CMD "AstroMexWrapper('velocity',obj,t): "
     CHECK_IN(3);
     CHECK_OUT(3);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -221,7 +234,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('acceleration',obj,t): "
+    #define CMD "AstroMexWrapper('acceleration',obj,t): "
     CHECK_IN(3);
     CHECK_OUT(3);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -242,7 +255,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('jerk',obj,t): "
+    #define CMD "AstroMexWrapper('jerk',obj,t): "
     CHECK_IN(3);
     CHECK_OUT(3);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -263,7 +276,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('setup_Keplerian',obj,[name,t0,a,e,Omega,omega,i,M0,muS]||struct): "
+    #define CMD "AstroMexWrapper('setup_Keplerian',obj,[name,t0,a,e,Omega,omega,i,M0,muS]||struct): "
     MEX_ASSERT2( nrhs == 3 || nrhs == 11, CMD "expected 3 or 11 input, nrhs = {}\n", nrhs );
     CHECK_OUT(0);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -310,7 +323,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('setup_Equinoctial',obj,[name,t0,p,f,g,h,k,retrograde,M0,muS]||struct): "
+    #define CMD "AstroMexWrapper('setup_Equinoctial',obj,[name,t0,p,f,g,h,k,retrograde,M0,muS]||struct): "
     MEX_ASSERT2( nrhs == 3 || nrhs == 12, CMD "expected 3 or 12 input, nrhs = {}\n", nrhs );
     CHECK_OUT(0);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -361,7 +374,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('setup_PV',obj,name,P,V,t0,muS): "
+    #define CMD "AstroMexWrapper('setup_PV',obj,name,P,V,t0,muS): "
     CHECK_IN(7);
     CHECK_OUT(0);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -385,7 +398,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('mean_anomaly',obj,t): "
+    #define CMD "AstroMexWrapper('mean_anomaly',obj,t): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -405,7 +418,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('true_anomaly',obj,t): "
+    #define CMD "AstroMexWrapper('true_anomaly',obj,t): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -425,7 +438,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('L_orbital',obj,[t0,dt|t]): "
+    #define CMD "AstroMexWrapper('L_orbital',obj,[t0,dt|t]): "
     MEX_ASSERT2(
       nrhs == 3 || nrhs == 4, CMD "Expected 3 or 4 argument(s), nrhs = {}\n", nrhs
     );
@@ -457,7 +470,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('L_orbital_D',obj,t): "
+    #define CMD "AstroMexWrapper('L_orbital_D',obj,t): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -477,7 +490,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('L_orbital_DD',obj,t): "
+    #define CMD "AstroMexWrapper('L_orbital_DD',obj,t): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -497,7 +510,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('latitude_of_periapsis',obj): "
+    #define CMD "AstroMexWrapper('latitude_of_periapsis',obj): "
     CHECK_IN(2);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -512,7 +525,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('latitude_of_apoapsis',obj): "
+    #define CMD "AstroMexWrapper('latitude_of_apoapsis',obj): "
     CHECK_IN(2);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -527,7 +540,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('info',obj): "
+    #define CMD "AstroMexWrapper('info',obj): "
     CHECK_IN(2);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -557,11 +570,26 @@ namespace AstroLib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   static
   void
+  do_print_info(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('print_info',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(0);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    mexPrintf("%s\n",ptr->info().c_str());
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  static
+  void
   do_number_of_revolution(
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('number_of_revolution',obj,t): "
+    #define CMD "AstroMexWrapper('number_of_revolution',obj,t): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -577,7 +605,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('time_from_L_angle',obj,t,L): "
+    #define CMD "AstroMexWrapper('time_from_L_angle',obj,t,L): "
     CHECK_IN(4);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -594,7 +622,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('absolute_position',obj,t): "
+    #define CMD "AstroMexWrapper('absolute_position',obj,t): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -610,7 +638,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('absolute_velocity',obj,t): "
+    #define CMD "AstroMexWrapper('absolute_velocity',obj,t): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -626,7 +654,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('period',obj): "
+    #define CMD "AstroMexWrapper('period',obj): "
     CHECK_IN(2);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -641,7 +669,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('apoapsis',obj): "
+    #define CMD "AstroMexWrapper('apoapsis',obj): "
     CHECK_IN(2);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -656,7 +684,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('periapsis',obj): "
+    #define CMD "AstroMexWrapper('periapsis',obj): "
     CHECK_IN(2);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -671,7 +699,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('muS',obj): "
+    #define CMD "AstroMexWrapper('muS',obj): "
     CHECK_IN(2);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -686,7 +714,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('orbit_energy',obj): "
+    #define CMD "AstroMexWrapper('orbit_energy',obj): "
     CHECK_IN(2);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -701,7 +729,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('ray_by_L',obj,L): "
+    #define CMD "AstroMexWrapper('ray_by_L',obj,L): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -721,7 +749,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('ray_by_L_D',obj,L): "
+    #define CMD "AstroMexWrapper('ray_by_L_D',obj,L): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -741,7 +769,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('ray_by_L_DD',obj,L): "
+    #define CMD "AstroMexWrapper('ray_by_L_DD',obj,L): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -761,7 +789,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('absolute_velocity_by_angle',obj,L): "
+    #define CMD "AstroMexWrapper('absolute_velocity_by_angle',obj,L): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -777,7 +805,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('L_from_true_anomaly',obj,nu): "
+    #define CMD "AstroMexWrapper('L_from_true_anomaly',obj,nu): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -797,7 +825,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('make_retrograde',obj): "
+    #define CMD "AstroMexWrapper('make_retrograde',obj): "
     CHECK_IN(2);
     CHECK_OUT(0);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -812,7 +840,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('make_not_retrograde',obj): "
+    #define CMD "AstroMexWrapper('make_not_retrograde',obj): "
     CHECK_IN(2);
     CHECK_OUT(0);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -827,7 +855,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('normal',obj): "
+    #define CMD "AstroMexWrapper('normal',obj): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -843,7 +871,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('local_frame',obj,t): "
+    #define CMD "AstroMexWrapper('local_frame',obj,t): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -864,7 +892,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('local_frame_by_L',obj,L): "
+    #define CMD "AstroMexWrapper('local_frame_by_L',obj,L): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -885,7 +913,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('ellipse_frame',obj): "
+    #define CMD "AstroMexWrapper('ellipse_frame',obj): "
     CHECK_IN(2);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -905,7 +933,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('eval_E',obj,t): "
+    #define CMD "AstroMexWrapper('eval_E',obj,t): "
     CHECK_IN(3);
     Astro * ptr = DATA_GET( arg_in_1 );
     GC_namespace::real_type t = getScalarValue( arg_in_2, CMD " param t" );
@@ -930,7 +958,7 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "mex_Astro('eval_L',obj,t): "
+    #define CMD "AstroMexWrapper('eval_L',obj,t): "
     CHECK_IN(3);
     Astro * ptr = DATA_GET( arg_in_1 );
     GC_namespace::real_type t = getScalarValue( arg_in_2, CMD " param t" );
@@ -997,6 +1025,7 @@ namespace AstroLib {
 
   static std::map<std::string,DO_CMD> cmd_to_fun = {
     {"new",do_new},
+    {"new_handle",do_new_handle},
     {"delete",do_delete},
     {"copy",do_copy},
     {"name",do_name},
@@ -1015,6 +1044,7 @@ namespace AstroLib {
     {"latitude_of_periapsis",do_latitude_of_periapsis},
     {"latitude_of_apoapsis",do_latitude_of_apoapsis},
     {"info",do_info},
+    {"print_info",do_print_info},
     {"number_of_revolution",do_number_of_revolution},
     {"time_from_L_angle",do_time_from_L_angle},
     {"absolute_position",do_absolute_position},
@@ -1056,12 +1086,16 @@ namespace AstroLib {
     try {
       MEX_ASSERT( mxIsChar(arg_in_0), "First argument must be a string" );
       string cmd = mxArrayToString(arg_in_0);
-      DO_CMD pfun = cmd_to_fun.at(cmd);
-      pfun( nlhs, plhs, nrhs, prhs );
+      std::map<std::string,DO_CMD>::const_iterator it = cmd_to_fun.find(cmd);
+      if ( it != cmd_to_fun.end() ) {
+        it->second( nlhs, plhs, nrhs, prhs );
+      } else {
+        mexErrMsgTxt( fmt::format( "AstroMexWrapper Error: key {} unknown", cmd ).c_str() );
+      }
     } catch ( std::exception const & e ) {
-      mexErrMsgTxt( fmt::format( "Astro Error: {}", e.what() ).c_str() );
+      mexErrMsgTxt( fmt::format( "AstroMexWrapper Error: {}", e.what() ).c_str() );
     } catch (...) {
-      mexErrMsgTxt( "Astro failed" );
+      mexErrMsgTxt( "AstroMexWrapper failed" );
     }
   }
 }

@@ -110,16 +110,18 @@ namespace AstroLib {
       "g     = {}\n"
       "h     = {}\n"
       "k     = {}\n"
-      "Keplerian{}"
+      "Keplerian\n"
       "e     = {}\n"
       "a     = {}\n"
       "i     = {} [degree]\n"
       "Omega = {} [degree]\n"
       "omega = {} [degree]\n"
-      "Other infos"
-      "period = {}",
+      "Other infos\n"
+      "period = {}\n",
       m_name, (EQ.retrograde?"RETROGRADE":"NORMAL"),
-      t0, M0, Mdot, muS, EQ.p, EQ.f, EQ.g, EQ.h, EQ.k, K.e, K.a,
+      t0, M0, Mdot, muS,
+      EQ.p, EQ.f, EQ.g, EQ.h, EQ.k,
+      K.e, K.a,
       radiants_to_degrees(K.i),
       radiants_to_degrees(K.Omega),
       radiants_to_degrees(K.omega),

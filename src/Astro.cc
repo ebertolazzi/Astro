@@ -116,8 +116,8 @@ namespace AstroLib {
       "i     = {} [degree]\n"
       "Omega = {} [degree]\n"
       "omega = {} [degree]\n"
-      "Other infos"
-      "period = {}",
+      "Other infos\n"
+      "period = {}\n",
       m_name, (EQ.retrograde?"RETROGRADE":"NORMAL"),
       t0, M0, Mdot, muS,
       EQ.p, EQ.f, EQ.g, EQ.h, EQ.k,

@@ -50,6 +50,9 @@ namespace AstroLib {
   extern real_type const gravity_kg_m_s2;
   extern real_type const gravity_kg_UA_DAY2;
 
+  extern real_type const muSun_km3s2;   // Km^3/s^2
+  extern real_type const muSun_UA3DAY2; // Km^3/s^2
+
   inline
   real_type
   UA_to_km( real_type pos )

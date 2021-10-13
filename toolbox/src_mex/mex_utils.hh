@@ -35,7 +35,9 @@ either expressed or implied, of the FreeBSD Project.
 #include <string>
 #include <sstream>
 #include <iostream>
+
 #include "Utils.hh"
+#include "GenericContainerMatlabInterface.hh"
 
 #define arg_in_0 prhs[0]
 #define arg_in_1 prhs[1]
@@ -174,7 +176,7 @@ getVectorPointer( mxArray const * arg, mwSize & sz, char const msg[] ) {
 static
 inline
 double const *
-getMatrixPointer( mxArray const * arg, mwSize & nr, mwSize & nc,  char const msg[] ) {
+getMatrixPointer( mxArray const * arg, mwSize & nr, mwSize & nc, char const msg[] ) {
   mwSize number_of_dimensions = mxGetNumberOfDimensions(arg);
   MEX_ASSERT( number_of_dimensions == 2, msg );
   mwSize const * dims = mxGetDimensions(arg);
@@ -269,6 +271,7 @@ public:
             !strcmp(name_m.c_str(), typeid(base).name())); }
 
   base *ptr() { return ptr_m; }
+  void change_ptr( base * new_ptr ) { ptr_m = new_ptr; }
 };
 
 template <typename base>
@@ -284,7 +287,7 @@ convertPtr2Mat( base *ptr ) {
 template <typename base>
 inline
 class_handle<base> *
-convertMat2HandlePtr(const mxArray *in) {
+convertMat2HandlePtr( mxArray const * in ) {
   if ( mxGetNumberOfElements(in) != 1 || mxGetClassID(in) != mxUINT64_CLASS || mxIsComplex(in))
     mexErrMsgTxt("Input must be an uint64 scalar.");
   class_handle<base> *ptr = reinterpret_cast<class_handle<base> *>(*((uint64_t *)mxGetData(in)));
@@ -296,14 +299,21 @@ convertMat2HandlePtr(const mxArray *in) {
 template <typename base>
 inline
 base *
-convertMat2Ptr(const mxArray *in) {
+convertMat2Ptr( mxArray const * in ) {
   return convertMat2HandlePtr<base>(in)->ptr();
 }
 
 template <typename base>
 inline
 void
-destroyObject(const mxArray *in) {
+Mat2Ptr_change_ptr( mxArray const * in, base * new_ptr) {
+  return convertMat2HandlePtr<base>(in)->change_ptr(new_ptr);
+}
+
+template <typename base>
+inline
+void
+destroyObject( mxArray const * in ) {
   if ( in != nullptr ) delete convertMat2HandlePtr<base>(in);
   in = nullptr;
   mexUnlock();
