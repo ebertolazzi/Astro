@@ -38,22 +38,20 @@ namespace AstroLib {
   //   \____\___/|_| |_|\_/ \___|_|  |___/_|\___/|_| |_|
   */
 
-  extern real_type const one_UA_to_km;
-  extern real_type const one_DAY_to_second;
-
+  extern real_type const one_UA_to_km; // KM
+  extern real_type const one_DAY_to_second; // sec
+ 
   extern real_type const one_km_to_UA;
   extern real_type const one_m_to_UA;
   extern real_type const one_second_to_DAY;
  
-  extern real_type const oneNewton_to_kg_UA_DAY2;
+  extern real_type const oneNewton_to_kg_UA_DAY2; // Kg * m/s^2 => Kg * UA / day^2
  
   extern real_type const gravity_kg_m_s2;
   extern real_type const gravity_kg_UA_DAY2;
- 
-  // costanti gravitazionali
- 
-  extern real_type const muSun_km3s2;
-  extern real_type const muSun_UA3DAY2;
+
+  extern real_type const muSun_km3s2;   // Km^3/s^2
+  extern real_type const muSun_UA3DAY2; // Km^3/s^2
 
   inline
   real_type
