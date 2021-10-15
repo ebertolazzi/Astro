@@ -9,6 +9,32 @@ end
 
 require_relative "./Rakefile_common.rb"
 
+file_base = File.expand_path(File.dirname(__FILE__)).to_s+'/lib'
+
+cmd_cmake_build = ""
+if COMPILE_EXECUTABLE then
+  cmd_cmake_build += ' -DBUILD_EXECUTABLE:VAR=true '
+else
+  cmd_cmake_build += ' -DBUILD_EXECUTABLE:VAR=false '
+end
+if COMPILE_DYNAMIC then
+  cmd_cmake_build += ' -DBUILD_SHARED:VAR=true '
+else
+  cmd_cmake_build += ' -DBUILD_SHARED:VAR=false '
+end
+if COMPILE_DEBUG then
+  cmd_cmake_build += ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING '
+else
+  cmd_cmake_build += ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING '
+end
+cmd_cmake_build += " -DINSTALL_HERE:VAR=true "
+
+FileUtils.cp 'CMakeLists-cflags.txt', 'submodules/Utils/CMakeLists-cflags.txt'
+FileUtils.cp 'CMakeLists-cflags.txt', 'submodules/quarticRootsFlocke/CMakeLists-cflags.txt'
+FileUtils.cp 'CMakeLists-cflags.txt', 'submodules/GenericContainer/CMakeLists-cflags.txt'
+
+
+
 task :default => [:build]
 
 TESTS = [
@@ -40,39 +66,23 @@ task :build_win, [:year, :bits] do |t, args|
 
   args.with_defaults( :year => "2017", :bits => "x64" )
 
-  Rake::Task[:win_3rd].invoke(args.year,args.bits,args.lapack)
-
   dir = "vs_#{args.year}_#{args.bits}"
 
   FileUtils.rm_rf   dir
   FileUtils.mkdir_p dir
   FileUtils.cd      dir
 
-  cmake_cmd = win_vs(args.bits,args.year)
-  if COMPILE_EXECUTABLE then
-    cmake_cmd += ' -DBUILD_EXECUTABLE:VAR=true '
-  else
-    cmake_cmd += ' -DBUILD_EXECUTABLE:VAR=false '
-  end
-  if COMPILE_DYNAMIC then
-    cmake_cmd += ' -DBUILD_SHARED:VAR=true '
-  else
-    cmake_cmd += ' -DBUILD_SHARED:VAR=false '
-  end
+  cmd_cmake = win_vs(args.bits,args.year) + cmd_cmake_build
 
-  FileUtils.mkdir_p "../lib/lib"
-  FileUtils.mkdir_p "../lib/bin"
-  FileUtils.mkdir_p "../lib/bin/"+args.bits
-  FileUtils.mkdir_p "../lib/dll"
-  FileUtils.mkdir_p "../lib/include"
-
+  puts "run CMAKE for ASTRO".yellow
+  sh cmd_cmake + ' ..'
+  puts "compile with CMAKE for ASTRO".yellow
   if COMPILE_DEBUG then
-    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
     sh 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
   else
-    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
     sh 'cmake  --build . --config Release  --target install '+PARALLEL+QUIET
   end
+
   FileUtils.cd '..'
 end
 
@@ -81,38 +91,21 @@ task :build, [:os] do |t, args|
 
   args.with_defaults( :os => "osx" )
 
-  case args.os
-  when 'osx'
-    Rake::Task[:osx_3rd].invoke()
-  when 'linux'
-    Rake::Task[:linux_3rd].invoke()
-  end
-
   dir = "build"
 
   FileUtils.rm_rf   dir
   FileUtils.mkdir_p dir
   FileUtils.cd      dir
 
-  cmake_cmd = "cmake "
+  cmd_cmake = "cmake " + cmd_cmake_build
 
-  if COMPILE_EXECUTABLE then
-    cmake_cmd += '-DBUILD_EXECUTABLE:VAR=true '
-  else
-    cmake_cmd += '-DBUILD_EXECUTABLE:VAR=false '
-  end
-  if COMPILE_DYNAMIC then
-    cmake_cmd += '-DBUILD_SHARED:VAR=true '
-  else
-    cmake_cmd += '-DBUILD_SHARED:VAR=false '
-  end
-
+  puts "run CMAKE for ASTRO".yellow
+  sh cmd_cmake + ' ..'
+  puts "compile with CMAKE for ASTRO".yellow
   if COMPILE_DEBUG then
-    sh cmake_cmd + '-DCMAKE_BUILD_TYPE:VAR=Debug .. ' #--loglevel=WARNING ..'
     sh 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
   else
-    sh cmake_cmd + '-DCMAKE_BUILD_TYPE:VAR=Release .. ' #--loglevel=WARNING ..'
-    sh 'cmake --build . --config Release --target install '+PARALLEL+QUIET
+    sh 'cmake  --build . --config Release  --target install '+PARALLEL+QUIET
   end
 
   FileUtils.cd '..'
@@ -126,59 +119,4 @@ end
 desc "compile for OSX"
 task :build_osx do
   Rake::Task[:build].invoke("osx")
-end
-
-desc 'install third parties for osx'
-task :osx_3rd do
-  FileUtils.rm_rf 'lib'
-  FileUtils.rm_rf 'lib3rd'
-  FileUtils.cp 'CMakeLists-cflags.txt', 'submodules/Utils/CMakeLists-cflags.txt'
-  ##FileUtils.cp 'CMakeLists-cflags.txt', 'submodules/quarticRootsFlocke/CMakeLists-cflags.txt'
-  FileUtils.cp 'CMakeLists-cflags.txt', 'submodules/GenericContainer/CMakeLists-cflags.txt'
-  FileUtils.cd 'submodules'
-  puts "\n\nSUBMODULES (for ASTRO)\n\n".green
-  sh "rake build_osx"
-  FileUtils.cd '..'
-end
-
-desc 'install third parties for linux'
-task :linux_3rd do
-  FileUtils.rm_rf 'lib'
-  FileUtils.rm_rf 'lib3rd'
-  FileUtils.cp 'CMakeLists-cflags.txt', 'submodules/Utils/CMakeLists-cflags.txt'
-  ##FileUtils.cp 'CMakeLists-cflags.txt', 'submodules/quarticRootsFlocke/CMakeLists-cflags.txt'
-  FileUtils.cp 'CMakeLists-cflags.txt', 'submodules/GenericContainer/CMakeLists-cflags.txt'
-  FileUtils.cd 'submodules'
-  puts "\n\nSUBMODULES (for ASTRO)\n\n".green
-  sh "rake build_linux"
-  FileUtils.cd '..'
-end
-
-desc "compile for Visual Studio [default year=2017, bits=x64]"
-task :win_3rd, [:year, :bits] do |t, args|
-  FileUtils.rm_rf 'lib'
-  FileUtils.rm_rf 'lib3rd'
-  FileUtils.cp 'CMakeLists-cflags.txt', 'submodules/Utils/CMakeLists-cflags.txt'
-  ##FileUtils.cp 'CMakeLists-cflags.txt', 'submodules/quarticRootsFlocke/CMakeLists-cflags.txt'
-  FileUtils.cp 'CMakeLists-cflags.txt', 'submodules/GenericContainer/CMakeLists-cflags.txt'
-  args.with_defaults( :year => "2017", :bits => "x64" )
-  FileUtils.cd 'submodules'
-  puts "\n\nSUBMODULES (for ASTRO)\n\n".green
-  sh "rake build_win[#{args.year},#{args.bits}]"
-  FileUtils.cd '..'
-end
-
-task :clean_osx do
-  FileUtils.rm_rf 'lib'
-  FileUtils.rm_rf 'lib3rd'
-end
-
-task :clean_linux do
-  FileUtils.rm_rf 'lib'
-  FileUtils.rm_rf 'lib3rd'
-end
-
-task :clean_win do
-  FileUtils.rm_rf 'lib'
-  FileUtils.rm_rf 'lib3rd'
 end

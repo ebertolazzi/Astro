@@ -24,7 +24,7 @@
 #define ASTRO_dot_HH
 
 #if !defined(GENERIC_CONTAINER_HH) && !defined(GENERIC_CONTAINER_dot_HH)
-  #include "GenericContainer.hh"
+  #include "GenericContainer/GenericContainer.hh"
 #endif
 
 #ifndef UTILS_dot_HH

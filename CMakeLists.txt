@@ -5,130 +5,172 @@
 #      Enrico Bertolazzi                                                   #
 #      Dipartimento di Ingegneria Industriale                              #
 #      Universita` degli Studi di Trento                                   #
-#      <mailto:enrico.bertolazzi@unitn.it>                                 #
+#      email: enrico.bertolazzi@ing.unitn.it                               #
 #                                                                          #
 ############################################################################
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
-SET( CMAKE_VERBOSE_MAKEFILE OFF )
-SET( CMAKE_INSTALL_MESSAGE NEVER )
+cmake_minimum_required(VERSION 3.0.0)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
+# set(CMAKE_INSTALL_MESSAGE NEVER)
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
-IF ( CMAKE_BUILD_TYPE STREQUAL "Debug" )
-  SET( DEBUG_SUFFIX "_debug" )
-ELSE()
-  SET( DEBUG_SUFFIX )
-ENDIF()
+if(ENABLE_CTEST)
+  enable_testing()
+endif()
 
-IF ( BUILD_SHARED )
-  IF ( APPLE )
-    SET( TARGET  Astro_osx${DEBUG_SUFFIX} )
-  ELSEIF( LINUX OR UNIX )
-    SET( TARGET  Astro_linux${DEBUG_SUFFIX} )
-  ELSE()
-    SET( TARGET  Astro_win_${BITS}${DEBUG_SUFFIX} )
-    SET( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
-  ENDIF()
-ENDIF()
+# get version from the git tag
+execute_process(COMMAND git describe --tags --abbrev=0 OUTPUT_VARIABLE VERSION)
+string(REGEX REPLACE "\n$" "" VERSION "${VERSION}")
 
-IF ( APPLE )
-  SET( TARGETS Astro_osx_static${DEBUG_SUFFIX} )
-ELSEIF( LINUX OR UNIX )
-  SET( TARGETS Astro_linux_static${DEBUG_SUFFIX} )
-ELSE()
-  SET( TARGETS Astro_win_${BITS}_static${DEBUG_SUFFIX} )
-ENDIF()
+project(
+  Astro
+  VERSION ${VERSION}
+  HOMEPAGE_URL "https://ebertolazzi.github.io/Astro/"
+)
 
-PROJECT( Astro CXX C )
+# NOTE: Predictable target name
+set(STATIC_PROJECT "${PROJECT_NAME}Static")
+set(DYNAMIC_PROJECT "${PROJECT_NAME}")
 
-INCLUDE( ./CMakeLists-cflags.txt )
-MESSAGE( STATUS "Compiler used: ${CMAKE_CXX_COMPILER_ID}")
+include(./CPackConfig.cmake)
+include(./CMakeLists-cflags.txt)
+include(./CMakeUtilities.txt)
 
-SET( CMAKE_C_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE} )
-SET( CMAKE_C_FLAGS_DEBUG   ${CMAKE_CXX_FLAGS_DEBUG} )
+# Evaluating the suffix to append to target built by this CMake file
+ebertolazzi_artifacts_suffix(ARTIFACTS_STATIC_SUFFIX TRUE)
+if(BUILD_SHARED)
+  ebertolazzi_artifacts_suffix(ARTIFACTS_DYNAMIC_SUFFIX FALSE)
+endif()
 
-SET( SOURCES )
-FILE( GLOB S ./src/*.cc )
-FOREACH (F ${S})
-  FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
-  LIST( APPEND SOURCES ${RF} )
-ENDFOREACH (F ${S})
+# DEPENDENCIES (TRY TO USE ALREADY COMPILED SUBMODULE IN LARGE PROJECT)
+set(UPDIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
+set(DIRGC    "${CMAKE_CURRENT_SOURCE_DIR}/extern/GC")
+set(DIRUTILS "${CMAKE_CURRENT_SOURCE_DIR}/extern/Utils")
+set(DIRROOTS "${CMAKE_CURRENT_SOURCE_DIR}/extern/Flocke")
+if(FALSE AND EXISTS "${UPDIR}/GC")
+  add_subdirectory("${UPDIR}/GC" "${DIRGC}")
+else()
+  #add_subdirectory(./submodules/GenericContainer "${DIRGC}") # NON FUNZIONA
+  add_subdirectory(./submodules/GenericContainer)
+endif()
+if(FALSE AND EXISTS "${UPDIR}/Utils")
+  add_subdirectory("${UPDIR}/Utils" "${DIRUTILS}")
+else()
+  #add_subdirectory(./submodules/Utils "${DIRUTILS}") # NON FUNZIONA
+  add_subdirectory(./submodules/Utils)
+endif()
+if(FALSE AND EXISTS "${UPDIR}/quarticRootsFlocke")
+  add_subdirectory("${UPDIR}/quarticRootsFlocke" "${DIRROOTS}")
+else()
+  #add_subdirectory(./submodules/quarticRootsFlocke "${DIRROOTS}") # NON FUNZIONA
+  add_subdirectory(./submodules/quarticRootsFlocke)
+endif()
 
-SET( SRCS_LIBS )
-#FILE( GLOB S ./submodules/quarticRootsFlocke/src/*.cc )
-#FOREACH (F ${S})
-#  FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
-#  LIST( APPEND SRCS_LIBS ${RF} )
-#ENDFOREACH (F ${S})
-FILE( GLOB S ./submodules/Utils/src/*.cc )
-FOREACH (F ${S})
-  FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
-  LIST( APPEND SRCS_LIBS ${RF} )
-ENDFOREACH (F ${S})
-FILE( GLOB S ./submodules/GenericContainer/src/*.cc )
-FOREACH (F ${S})
-  FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
-  LIST( APPEND SRCS_LIBS ${RF} )
-ENDFOREACH (F ${S})
+include_directories(lib3rd/include)
 
-SET( HEADERS )
+message( STATUS "Compiler used: ${CMAKE_CXX_COMPILER_ID}")
+set(CMAKE_C_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE})
+set(CMAKE_C_FLAGS_DEBUG   ${CMAKE_CXX_FLAGS_DEBUG})
+
+# NOTE: Glob shall be avoided. Headers and sources shall be declared 
+# manually in order to rebuild cmake-cache automatically.
+# Ref: https://cmake.org/cmake/help/v3.15/command/file.html?highlight=glob#filesystem
+set(Astro_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+
+set( SOURCES )
+file( GLOB S ./src/*.cc )
+foreach (F ${S})
+  file( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
+  list( APPEND SOURCES ${RF} )
+endforeach (F ${S})
+
+set( HEADERS )
+FILE( GLOB S ./src/*.hh )
+foreach (F ${S})
+  file( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
+  list( APPEND HEADERS ${RF} )
+endforeach (F ${S})
+
 FILE( GLOB S ./src/*.h* )
-FOREACH (F ${S})
-  FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
-  LIST( APPEND HEADERS ${RF} )
-ENDFOREACH (F ${S})
-SET( HEADERS1 )
+foreach (F ${S})
+  file( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
+  list( APPEND HEADERS ${RF} )
+endforeach (F ${S})
+
+set( HEADERS2 )
 FILE( GLOB S ./src/Astro/*.h* )
-FOREACH (F ${S})
-  FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
-  LIST( APPEND HEADERS1 ${RF} )
-ENDFOREACH (F ${S})
+foreach (F ${S})
+  file( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
+  list( APPEND HEADERS2 ${RF} )
+endforeach (F ${S})
 
-#FILE( GLOB S ./submodules/quarticRootsFlocke/src/*.hh )
-#FOREACH (F ${S})
-#  FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
-#  LIST( APPEND HEADERS ${RF} )
-#ENDFOREACH (F ${S})
 
-INCLUDE_DIRECTORIES( src lib3rd/include lib3rd/include/Utils )
+add_library(${STATIC_PROJECT} STATIC ${SOURCES})
+target_include_directories(
+  ${STATIC_PROJECT} PUBLIC 
+  "$<BUILD_INTERFACE:${Astro_DIR}>"
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+)
+set_target_properties(
+  ${STATIC_PROJECT} PROPERTIES
+  OUTPUT_NAME "${PROJECT_NAME}${ARTIFACTS_STATIC_SUFFIX}"
+  # FIXME: I'm not sure if this is required for OSX Framework
+  #PUBLIC_HEADER "${HEADERS}"
+  POSITION_INDEPENDENT_CODE ON
+)
 
-SET( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/lib )
-
-IF ( BUILD_SHARED )
-  ADD_LIBRARY( ${TARGETS} STATIC ${SOURCES} ${HEADERS} )
-  ADD_LIBRARY( ${TARGET}  SHARED ${SOURCES} ${HEADERS} )
-  INSTALL(
-    TARGETS ${TARGET} ${TARGETS}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/dll
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+if(BUILD_SHARED)
+  add_library(${DYNAMIC_PROJECT} SHARED ${SOURCES})
+  set_target_properties(
+    ${DYNAMIC_PROJECT} PROPERTIES
+    OUTPUT_NAME "${PROJECT_NAME}${ARTIFACTS_DYNAMIC_SUFFIX}"
+    # FIXME: I'm not sure if this is required for OSX Framework
+    # PUBLIC_HEADER "${HEADERS}"
+    POSITION_INDEPENDENT_CODE ON
   )
-ELSE()
-  ADD_LIBRARY( ${TARGETS} STATIC ${SOURCES} ${HEADERS} )
-  INSTALL(
-    TARGETS ${TARGETS}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/dll
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+  target_include_directories(
+    ${DYNAMIC_PROJECT} PUBLIC 
+    "$<BUILD_INTERFACE:${Astro_DIR}>"
+    "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
   )
-ENDIF()
+  target_link_libraries( ${DYNAMIC_PROJECT} PUBLIC GenericContainerStatic UtilsStatic QuarticStatic )
+  if(WIN32)
+    set_target_properties(
+      ${DYNAMIC_PROJECT} PROPERTIES 
+      WINDOWS_EXPORT_ALL_SYMBOLS TRUE
+    )
+  endif()
+endif()
 
-IF( BUILD_EXECUTABLE )
-  SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-  SET( EXECUTABLE test-Lambert )
-  FOREACH ( EXE ${EXECUTABLE} )
-    ADD_EXECUTABLE( ${EXE} tests-cpp/${EXE}.cc ${SRCS_LIBS} ${HEADERS} )
-    IF ( UNIX )
-      TARGET_LINK_LIBRARIES( ${EXE} ${TARGETS} -ldl )
-    ELSE()
-      TARGET_LINK_LIBRARIES( ${EXE} ${TARGETS} )
-    ENDIF()
-  ENDFOREACH ( EXE ${EXECUTABLE} )
-ENDIF()
+if(BUILD_EXECUTABLE OR ENABLE_CTEST)
+  enable_testing()
+  set(TEST_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin")
+  set(
+    EXECUTABLES
+    test1.cc test2.cc test3.cc test4.cc test5.cc
+    test6.cc test7.cc test8.cc test9.cc test10.cc
+  )
+  foreach(EXE ${EXECUTABLES})
+    add_executable(${EXE} tests-cpp/${EXE}.cc)
+    target_link_libraries(${EXE} PRIVATE ${STATIC_PROJECT} Utils ${CMAKE_DL_LIBS})
+    set_target_properties(
+      ${EXE} PROPERTIES
+      RUNTIME_OUTPUT_DIRECTORY "${TEST_OUTPUT_PATH}"
+    )
+    add_test(${EXE} "${CMAKE_CURRENT_SOURCE_DIR}/bin/${EXE}")
+  endforeach()
+endif()
 
-SET_PROPERTY( TARGET ${TARGETS} PROPERTY POSITION_INDEPENDENT_CODE ON )
+# INSTALL TARGETS
 
-INSTALL( FILES ${HEADERS}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
-INSTALL( FILES ${HEADERS1} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/Astro )
+set(INSTALL_TARGETS ${STATIC_PROJECT})
+add_dependencies( ${STATIC_PROJECT} GenericContainerStatic UtilsStatic QuarticStatic )
+if(BUILD_SHARED)
+  add_dependencies( ${STATIC_PROJECT} GenericContainerStatic UtilsStatic QuarticStatic )
+  set(INSTALL_TARGETS ${INSTALL_TARGETS} ${DYNAMIC_PROJECT})
+endif()
+
+include("${CMAKE_CURRENT_SOURCE_DIR}/CMakeInstall.txt")
 
 MESSAGE( STATUS "Using ${SSE_FLAGS} extensions")
 MESSAGE( STATUS "C compiler                  = ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER}" )
@@ -144,4 +186,6 @@ IF(APPLE)
   MESSAGE( STATUS "CMAKE_OSX_ARCHITECTURES     = ${CMAKE_OSX_ARCHITECTURES}" )
   MESSAGE( STATUS "CMAKE_OSX_DEPLOYMENT_TARGET = ${CMAKE_OSX_DEPLOYMENT_TARGET}" )
 ENDIF()
-MESSAGE( STATUS "BUILD_EXECUTABLE            = ${BUILD_EXECUTABLE}" )
+MESSAGE( STATUS "Sources      = ${SOURCES}" )
+MESSAGE( STATUS "Headers      = ${HEADERS}" )
+MESSAGE( STATUS "GC_LIB       = ${GC_LIB}" )
