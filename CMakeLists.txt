@@ -144,15 +144,14 @@ endif()
 
 if(BUILD_EXECUTABLE OR ENABLE_CTEST)
   enable_testing()
-  set(TEST_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin")
-  set(
-    EXECUTABLES
-    test1.cc test2.cc test3.cc test4.cc test5.cc
-    test6.cc test7.cc test8.cc test9.cc test10.cc
-  )
+  set( TEST_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin" )
+  set( EXECUTABLES test-Lambert )
   foreach(EXE ${EXECUTABLES})
-    add_executable(${EXE} tests-cpp/${EXE}.cc)
-    target_link_libraries(${EXE} PRIVATE ${STATIC_PROJECT} Utils ${CMAKE_DL_LIBS})
+    add_executable( ${EXE} tests-cpp/${EXE}.cc )
+    target_link_libraries(
+      ${EXE} PRIVATE ${STATIC_PROJECT} 
+      GenericContainerStatic UtilsStatic QuarticStatic ${CMAKE_DL_LIBS}
+    )
     set_target_properties(
       ${EXE} PROPERTIES
       RUNTIME_OUTPUT_DIRECTORY "${TEST_OUTPUT_PATH}"

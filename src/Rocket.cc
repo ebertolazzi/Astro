@@ -27,7 +27,6 @@ namespace AstroLib {
 
   void
   odeXYZ(
-    real_type       t,
     real_type       Thrust_r,
     real_type       Thrust_t,
     real_type       Thrust_n,
@@ -63,7 +62,6 @@ namespace AstroLib {
 
   void
   odeEQ(
-    real_type       t,
     real_type       Thrust_r,
     real_type       Thrust_t,
     real_type       Thrust_n,
