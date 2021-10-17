@@ -1,0 +1,79 @@
+if(INSTALL_HERE) 
+  # install in the home of the whole project
+  if ( ${CMAKE_HOME_DIRECTORY} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR} )
+    set(INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/lib")
+  else()
+    set(INSTALL_PREFIX "${CMAKE_HOME_DIRECTORY}/lib3rd")
+  endif()
+  set(PROJECT_PUBLIC_HEADER_DESTINATION "${INSTALL_PREFIX}/include")
+else()
+  set(INSTALL_TARGETS ${INSTALL_TARGETS} GenericContainerStatic UtilsStatic QuarticStatic)
+  set(INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+  set(PROJECT_PUBLIC_HEADER_DESTINATION "${CMAKE_INSTALL_PREFIX}/include/${PROJECT_NAME}")
+endif()
+
+#MESSAGE( STATUS "\n\n\nCMAKE_HOME_DIRECTORY     = ${CMAKE_HOME_DIRECTORY}\n\n\n")
+#MESSAGE( STATUS "\n\n\nCMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}\n\n\n")
+#MESSAGE( STATUS "\n\n\nINSTALL_PREFIX           = ${INSTALL_PREFIX}\n\n\n")
+
+# Installing Dependencies
+install(
+  TARGETS ${INSTALL_TARGETS}
+  EXPORT AstroTargets
+  RUNTIME DESTINATION "${INSTALL_PREFIX}/bin"
+  ARCHIVE DESTINATION "${INSTALL_PREFIX}/lib"
+  LIBRARY DESTINATION "${INSTALL_PREFIX}/dll"
+  PUBLIC_HEADER DESTINATION "${PROJECT_PUBLIC_HEADER_DESTINATION}"
+)
+
+# FIXME: The header structure forces me to do this... And this will create issues!
+install(FILES "${Astro_DIR}/Astro.hh" DESTINATION "${PROJECT_PUBLIC_HEADER_DESTINATION}")
+install(DIRECTORY "${Astro_DIR}/Astro" DESTINATION "${PROJECT_PUBLIC_HEADER_DESTINATION}")
+
+#----------------------------------------
+
+install(
+  EXPORT AstroTargets
+  FILE AstroTargets.cmake 
+  DESTINATION lib/cmake/Astro
+)
+
+# CPACK INSTALL TARGETS (Leaving almost as it is...)
+
+set(INCLUDE_INSTALL_DIR include/ CACHE STRING "Include install directory")
+set(LIBRARIES_INSTALL_DIR lib/ CACHE STRING "Libraries install directory")
+get_target_property(ASTRO_LIB_OUTPUT_NAME ${STATIC_PROJECT} OUTPUT_NAME)
+if(UNIX)
+  set(ASTRO_LIB_PREFIX lib)
+  set(ASTRO_LIB_SUFFIX .a)
+else()
+  set(ASTRO_LIB_PREFIX "")
+  set(ASTRO_LIB_SUFFIX .lib)
+endif()
+set(ASTRO_LIB_NAME "${ASTRO_LIB_PREFIX}${ASTRO_LIB_OUTPUT_NAME}${ASTRO_LIB_SUFFIX}")
+set(LIBRARIES lib/${ASTRO_LIB_NAME} CACHE STRING "Libraries directory")
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+  AstroConfig.cmake.in 
+  "${CMAKE_CURRENT_BINARY_DIR}/AstroConfig.cmake"
+  INSTALL_DESTINATION "lib/Astro/cmake"
+  PATH_VARS INCLUDE_INSTALL_DIR LIBRARIES_INSTALL_DIR LIBRARIES
+)
+write_basic_package_version_file(
+  "AstroConfigVersion.cmake"
+  COMPATIBILITY SameMajorVersion
+)
+install(
+  FILES 
+  ${CMAKE_CURRENT_BINARY_DIR}/AstroConfig.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/AstroConfigVersion.cmake
+  DESTINATION lib/cmake/Astro
+)
+
+if(INSTALL_HERE)
+  add_custom_command(
+    TARGET ${STATIC_PROJECT} POST_BUILD
+    COMMAND cmake --build . --config Release  --target install
+  )
+endif()
