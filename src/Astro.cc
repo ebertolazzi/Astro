@@ -470,6 +470,94 @@ namespace AstroLib {
     position_by_L( L[0], x, y, z );
   }
 
+  void
+  Astro::position_by_L_jacobian_EQ( real_type L, real_type JP[3][6] ) const {
+    real_type p = EQ.p;
+    real_type f = EQ.f;
+    real_type g = EQ.g;
+    real_type h = EQ.h;
+    real_type k = EQ.k;
+    real_type I = EQ.retrograde ? -1 : 1;
+
+    real_type t1 = h * h;
+    real_type t2 = k * k;
+    real_type t3 = 1 + t1 - t2;
+    real_type t4 = cos(L);
+    real_type t5 = sin(L);
+    real_type t6 = t5 * h;
+    real_type t7 = 2 * t6;
+    real_type t8 = t7 * I;
+    real_type t9 = t3 * t4;
+    real_type t10 = t8 * k + t9;
+    real_type t11 = f * t4;
+    real_type t12 = g * t5;
+    real_type t13 = 1 + t12 + t11;
+    real_type t14 = 1 + t1 + t2;
+    real_type t15 = 1 - t1 + t2;
+    real_type t16 = 2 * h;
+    real_type t17 = t16 * k;
+    real_type t18 = t17 * t4;
+    real_type t19 = I * t15;
+    real_type t20 = -t19 * t5 - t18;
+    real_type t21 = 2 * k;
+    real_type t22 = -t3 / 2;
+    real_type t23 = f * h * k * I + t22 * g;
+    real_type t24 = t5*t5;
+              t13 = 1 / t13;
+              t14 = 1 / t14;
+    real_type t25 = t13*t13;
+    real_type t26 = t14*t14;
+    real_type t27 = 2 * p;
+    real_type t28 = p * t10;
+    real_type t29 = t28 * t25 * t14;
+    real_type t30 = -t19 * f + t17 * g;
+    real_type t31 = t20 * p * t25 * t14;
+    real_type t32 = k * t4 * I - t6;
+    real_type t33 = t27 * t32 * t25 * t14;
+
+    JP[0][0] = t10 * t13 * t14;
+    JP[0][1] = -t29 * t4;
+    JP[0][2] = -t29 * t5;
+    JP[0][3] = -t21 * t20 * p * t13 * t26;
+    JP[0][4] = (2 * t6 * I * t3 - 2 * t21 * t4 * (1 + t1)) * p * t13 * t26;
+    JP[0][5] = t27 * (t22 * t5 + t23 * t24 + t4 * (h * k * I + t23 * t4)) * t25 * t14;
+    JP[1][0] = -t20 * t13 * t14;
+    JP[1][1] = t31 * t4;
+    JP[1][2] = t31 * t5;
+    JP[1][3] = -t27 * (t8 * (1 + t2) - k * t15 * t4) * t13 * t26;
+    JP[1][4] = t28 * t16 * t13 * t26;
+    JP[1][5] = p * (t4 * (-t30 * t4 + t19) - t5 * (t30 * t5 + t17)) * t25 * t14;
+    JP[2][0] = -2 * t32 * t13 * t14;
+    JP[2][1] = t33 * t4;
+    JP[2][2] = t33 * t5;
+    JP[2][3] = -t27 * (-t15 * t5 - t18 * I) * t13 * t26;
+    JP[2][4] = -t27 * (t7 * k + t9 * I) * t13 * t26;
+    JP[2][5] = t27 * (h * (f * t24 + t4 * (1 + t11)) + (g * (t4*t4) + t5 * (1 + t12)) * I * k) * t25 * t14;
+  }
+
+  void
+  Astro::ray_by_L_gradient( real_type L, real_type grad[6] ) const {
+    real_type p = EQ.p;
+    real_type f = EQ.f;
+    real_type g = EQ.g;
+    real_type h = EQ.h;
+    real_type k = EQ.k;
+    real_type I = EQ.retrograde ? -1 : 1;
+
+    real_type t1 = cos(L);
+    real_type t2 = sin(L);
+    real_type t3 = 1/(f * t1 + g * t2 + 1);
+    real_type t4 = t3*t3;
+    real_type t5 = p * t4;
+
+    grad[0] = t3;
+    grad[1] = -t5 * t1;
+    grad[2] = -t5 * t2;
+    grad[3] = 0;
+    grad[4] = 0;
+    grad[5] = p * (f * t2 - g * t1) * t4;
+  }
+
   /*
   //             _            _ _
   //  __   _____| | ___   ___(_) |_ _   _
@@ -515,6 +603,88 @@ namespace AstroLib {
     real_type L[4];
     eval_L( t, L, 0 );
     velocity_by_L( L[0], vx, vy, vz );
+  }
+
+  void
+  Astro::velocity_by_L_jacobian_EQ( real_type L, real_type JV[3][6] ) const {
+    real_type p = EQ.p;
+    real_type f = EQ.f;
+    real_type g = EQ.g;
+    real_type h = EQ.h;
+    real_type k = EQ.k;
+    real_type I = EQ.retrograde ? -1 : 1;
+
+    real_type t1 = pow(p, -1.5);
+    real_type t2 = sqrt(muS);
+    real_type t3 = h * h;
+    real_type t4 = k * k;
+    real_type t5 = 1 + t3 - t4;
+    real_type t6 = sin(L);
+    real_type t7 = cos(L);
+    real_type t8 = f + t7;
+    real_type t9 = t8 * h;
+    real_type t10 = t9 * k;
+    real_type t11 = 2;
+    real_type t12 = -t10 * t11 * I + g * t5 + t5 * t6;
+    real_type t13 = 1 + t3 + t4;
+    real_type t14 = p * t1;
+    real_type t15 = 1 - t3 + t4;
+    real_type t16 = I * t15;
+    real_type t17 = g + t6;
+    real_type t18 = h * k;
+    real_type t19 = t18 * t17;
+              t8  = t19 -t16 * t8 / 2;
+    real_type t20 = t5 * t7;
+    real_type t21 = I * h;
+              t18 *= t11;
+    real_type t22 = t18 * I;
+              t13 = 1/t13;
+    real_type t23 = t13*t13;
+    real_type t24 = t14 * t2;
+    real_type t25 = t24 * t11;
+    real_type t26 = k * I;
+
+    JV[0][0] = t1 * t2 * t12 * t13 / 2;
+    JV[0][1] = t22 * t14 * t2 * t13;
+    JV[0][2] = -t24 * t5 * t13;
+    JV[0][3] = -4 * t8 * t14 * t2 * t23 * k;
+    JV[0][4] = 4 * t24 * (k * ((t3 + 1) * g + t6 * (t3 + 1)) + t21 * (((1 - k) * (k + 1) + t3) * f + t20) / 2) * t23;
+    JV[0][5] = -t24 * (t22 * t6 + t20) * t13;
+    JV[1][0] = t8 * t1 * t2 * t13;
+    JV[1][1] = t24 * t16 * t13;
+    JV[1][2] = -t24 * t18 * t13;
+    JV[1][3] = t25 * (-t11 * t21 * ((t4 + 1) * f + t7 * (t4 + 1)) - (g * t4 + t15 * t6 + g * (1 - t3)) * k) * t23;
+    JV[1][4] = -t25 * t12 * t23 * h;
+    JV[1][5] = t24 * (-t16 * t6 - t18 * t7) * t13;
+    JV[2][0] = -t2 * (t26 * t17 + t9) * t1 * t13;
+    JV[2][1] = t25 * h * t13;
+    JV[2][2] = t26 * t25 * t13;
+    JV[2][3] = t24 * (t11 * (f * t15 + t15 * t7) - 4 * t19 * I) * t23;
+    JV[2][4] = t25 * (I * t5 * t17 - t10 * t11) * t23;
+    JV[2][5] = t25 * (-h * t6 + t26 * t7) * t13;
+  }
+
+  void
+  Astro::absolute_velocity_by_angle_gradient( real_type L, real_type grad[6] ) const {
+    real_type p = EQ.p;
+    real_type f = EQ.f;
+    real_type g = EQ.g;
+    real_type h = EQ.h;
+    real_type k = EQ.k;
+    real_type I = EQ.retrograde ? -1 : 1;
+
+    real_type t1 = pow(p, -1.5);
+    real_type t2 = sin(L);
+    real_type t3 = cos(L);
+    real_type t4 = 2 * muS * (f * f + g * g + t4 * (f * t3 + g * t2) + 1);
+    real_type t5 = 1/sqrt(t4);
+    real_type t6 = p * t1;
+    grad[0] = -t4 * t1 * t5 / 2;
+    grad[1] = muS * (f + t3) * t6 * t5;
+    grad[2] = muS * (g + t2) * t6 * t5;
+    grad[3] = 0;
+    grad[4] = 0;
+    grad[5] = -muS * (f * t2 - g * t3) * t6 * t5;
   }
 
   /*

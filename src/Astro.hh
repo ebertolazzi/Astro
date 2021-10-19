@@ -367,6 +367,17 @@ namespace AstroLib {
     void make_retrograde();
     void make_not_retrograde();
 
+    // gradient and jacobians
+
+    // gradient respect to p, f, g, h, k, l
+    void ray_by_L_gradient( real_type L, real_type grad[6] ) const;
+
+    // gradient respect to p, f, g, h, k, l
+    void absolute_velocity_by_angle_gradient( real_type L, real_type grad[6] ) const;
+
+    void position_by_L_jacobian_EQ( real_type L, real_type JP[3][6] ) const;
+    void velocity_by_L_jacobian_EQ( real_type L, real_type JV[3][6] ) const;
+
   };
 
 }
