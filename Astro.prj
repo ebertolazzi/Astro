@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="1919082438" file="/Users/enrico/GTOC11/submodules/Astro/Astro.prj" location="/Users/enrico/GTOC11/submodules/Astro" name="Astro" target="target.toolbox" target-name="Package Toolbox">
+  <configuration build-checksum="704343697" file="/Users/enrico/GTOC11/submodules/Astro/Astro.prj" location="/Users/enrico/GTOC11/submodules/Astro" name="Astro" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>Astro</param.appname>
     <param.authnamewatermark>Enrico Bertolazzi</param.authnamewatermark>
     <param.email>enrico.bertolazzi@unitn.it</param.email>
