@@ -98,34 +98,31 @@ namespace AstroLib {
   string
   Astro::info() const {
     return fmt::format(
-      "name: {}\n"
-      "mode: {}\n"
-      "t0    = {}\n"
-      "M0    = {}\n"
-      "Mdot  = {}\n"
-      "muS   = {}\n"
-      "Equinoctial\n"
-      "p     = {}\n"
-      "f     = {}\n"
-      "g     = {}\n"
-      "h     = {}\n"
-      "k     = {}\n"
-      "Keplerian\n"
-      "e     = {}\n"
-      "a     = {}\n"
-      "i     = {} [degree]\n"
-      "Omega = {} [degree]\n"
-      "omega = {} [degree]\n"
-      "Other infos\n"
-      "period = {}\n",
+      "Astro Name: {} [mode: {}]\n"
+      "------------------------------------------\n"
+      "t0  = {:<12} Mdot   = {:<12}\n"
+      "M0  = {:<12} L(t0)  = {:<12}\n"
+      "muS = {:<12} period = {:<12}\n"
+      "Equinoctial        Keplerian\n"
+      "------------------------------------------\n"
+      "p = {:<12}   e     = {}\n"
+      "f = {:<12}   a     = {}\n"
+      "g = {:<12}   i     = {} [degree]\n"
+      "h = {:<12}   Omega = {} [degree]\n"
+      "k = {:<12}   omega = {} [degree]\n"
+      "------------------------------------------\n",
       m_name, (m_EQ.retrograde?"RETROGRADE":"NORMAL"),
-      m_t0, m_M0, m_Mdot, m_muS,
-      m_EQ.p, m_EQ.f, m_EQ.g, m_EQ.h, m_EQ.k,
-      m_K.e, m_K.a,
-      radiants_to_degrees(m_K.i),
-      radiants_to_degrees(m_K.Omega),
-      radiants_to_degrees(m_K.omega),
-      period()
+      fmt::format("{:.6}",m_t0),
+      fmt::format("{:.6}",m_Mdot),
+      fmt::format("{:.6}",m_M0),
+      fmt::format("{:.6}",L_orbital(m_t0)),
+      fmt::format("{:.6}",m_muS),
+      fmt::format("{:.6}",period()),
+      fmt::format("{:.6}",m_EQ.p), fmt::format("{:.6}",m_K.e), 
+      fmt::format("{:.6}",m_EQ.f), fmt::format("{:.6}",m_K.a),
+      fmt::format("{:.6}",m_EQ.g), fmt::format("{:.6}",radiants_to_degrees(m_K.i)),
+      fmt::format("{:.6}",m_EQ.h), fmt::format("{:.6}",radiants_to_degrees(m_K.Omega)),
+      fmt::format("{:.6}",m_EQ.k), fmt::format("{:.6}",radiants_to_degrees(m_K.omega))
     );
   }
 
@@ -186,7 +183,12 @@ namespace AstroLib {
     m_t0   = t0;
     m_muS  = muS;
     // Angle corresponding to time t0
-    m_M0 = true_anomaly_to_mean_anomaly( L-m_K.omega, m_K.e );
+    real_type theta = L-m_K.omega;
+
+    if ( retrograde ) theta += m_K.Omega;
+    else              theta -= m_K.Omega;
+
+    m_M0 = true_anomaly_to_mean_anomaly( theta, m_K.e );
 
     real_type absa = m_K.a > 0 ? m_K.a : -m_K.a;
     m_Mdot = sqrt(m_muS/absa)/absa;
