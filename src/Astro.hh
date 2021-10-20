@@ -150,7 +150,7 @@ namespace AstroLib {
       real_type      h,
       real_type      k,
       bool           retrograde,
-      real_type      M0,
+      real_type      L,
       real_type      muS
     );
 
@@ -172,11 +172,11 @@ namespace AstroLib {
       string const &      n,
       real_type           _t0,
       Equinoctial const & _EQ,
-      real_type           _M0,
+      real_type           _L,
       real_type           _muS
     ) {
       return setup_Equinoctial(
-        n, _t0, _EQ.p, _EQ.f, _EQ.g, _EQ.h, _EQ.k, _EQ.retrograde, _M0, _muS
+        n, _t0, _EQ.p, _EQ.f, _EQ.g, _EQ.h, _EQ.k, _EQ.retrograde, _L, _muS
       );
     }
 

@@ -169,7 +169,7 @@ namespace AstroLib {
     real_type      _h,
     real_type      _k,
     bool           _retrograde,
-    real_type      _M0,
+    real_type      _L,
     real_type      _muS
   ) {
 
@@ -184,8 +184,10 @@ namespace AstroLib {
 
     m_name = n;
     t0     = _t0;
-    M0     = _M0; // Angle corresponding to time t0
     muS    = _muS;
+    // Angle corresponding to time t0
+    M0 = true_anomaly_to_mean_anomaly( _L-K.omega, K.e );
+
     real_type absa = K.a > 0 ? K.a : -K.a;
     Mdot = sqrt(muS/absa)/absa;
 
@@ -220,7 +222,7 @@ namespace AstroLib {
       vars("h")          . get_number(),
       vars("k")          . get_number(),
       vars("retrograde") . get_bool(),
-      vars("M0")         . get_number(),
+      vars("L")          . get_number(),
       vars("muS")        . get_number()
     );
   }
@@ -540,9 +542,6 @@ namespace AstroLib {
     real_type p = EQ.p;
     real_type f = EQ.f;
     real_type g = EQ.g;
-    real_type h = EQ.h;
-    real_type k = EQ.k;
-    real_type I = EQ.retrograde ? -1 : 1;
 
     real_type t1 = cos(L);
     real_type t2 = sin(L);
@@ -669,22 +668,20 @@ namespace AstroLib {
     real_type p = EQ.p;
     real_type f = EQ.f;
     real_type g = EQ.g;
-    real_type h = EQ.h;
-    real_type k = EQ.k;
-    real_type I = EQ.retrograde ? -1 : 1;
 
-    real_type t1 = pow(p, -1.5);
-    real_type t2 = sin(L);
-    real_type t3 = cos(L);
-    real_type t4 = 2 * muS * (f * f + g * g + t4 * (f * t3 + g * t2) + 1);
-    real_type t5 = 1/sqrt(t4);
-    real_type t6 = p * t1;
-    grad[0] = -t4 * t1 * t5 / 2;
-    grad[1] = muS * (f + t3) * t6 * t5;
-    grad[2] = muS * (g + t2) * t6 * t5;
-    grad[3] = 0;
-    grad[4] = 0;
-    grad[5] = -muS * (f * t2 - g * t3) * t6 * t5;
+   real_type t1 = pow(p,-1.5);
+   real_type t2 = sin(L);
+   real_type t3 = cos(L);
+   real_type t4 = muS * (f * f + g * g + 2 * (f * t3 + g * t2) + 1);
+   real_type t5 = 1/sqrt(t4);
+   real_type t6 = p * t1;
+
+   grad[0] = -t4 * t1 * t5 / 2;
+   grad[1] = muS * (f + t3) * t6 * t5;
+   grad[2] = muS * (g + t2) * t6 * t5;
+   grad[3] = 0;
+   grad[4] = 0;
+   grad[5] = -muS * (f * t2 - g * t3) * t6 * t5;
   }
 
   /*
