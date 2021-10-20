@@ -186,7 +186,12 @@ namespace AstroLib {
     m_t0   = t0;
     m_muS  = muS;
     // Angle corresponding to time t0
-    m_M0 = true_anomaly_to_mean_anomaly( L-m_K.omega, m_K.e );
+    real_type theta = L-m_K.omega;
+
+    if ( retrograde ) theta -= m_K.Omega;
+    else              theta += m_K.Omega;
+
+    m_M0 = true_anomaly_to_mean_anomaly( theta, m_K.e );
 
     real_type absa = m_K.a > 0 ? m_K.a : -m_K.a;
     m_Mdot = sqrt(m_muS/absa)/absa;
