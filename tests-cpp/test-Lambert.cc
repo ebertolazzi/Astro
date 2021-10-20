@@ -23,7 +23,7 @@
 #pragma clang diagnostic ignored "-Wglobal-constructors"
 #endif
 
-using namespace AstroLib;
+using AstroLib::real_type;
 int
 main() {
 
@@ -34,7 +34,7 @@ main() {
   real_type muSun_UA3DAY2 = 2.959122082856201e-04;
   real_type V1[3], V2[3];
   int m = 0;
-  int ok = Lambert( P1, P2, t2-t1, m, muSun_UA3DAY2, V1, V2 );
+  int ok = AstroLib::Lambert( P1, P2, t2-t1, m, muSun_UA3DAY2, V1, V2 );
   std::cout << "ok = " << ok << "\n";
   std::cout << "All done folks!!\n";
   return 0;
