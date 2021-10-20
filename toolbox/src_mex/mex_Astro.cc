@@ -785,6 +785,31 @@ namespace AstroLib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   static
   void
+  do_ray_by_L_grad(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('ray_by_L_grad',obj,L): "
+    CHECK_IN(3);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    mwSize sz;
+    double const * L = getVectorPointer( arg_in_2, sz, CMD " param L" );
+    GC_namespace::mat_real_type G;
+    G.resize(sz,6);
+    for ( mwSize i = 0 ; i < sz ; ++i ) {
+      real_type grad[6];
+      ptr->ray_by_L_gradient( L[i], grad );
+      G(i,0) = grad[0]; G(i,1) = grad[1]; G(i,2) = grad[2];
+      G(i,3) = grad[3]; G(i,4) = grad[4]; G(i,5) = grad[5];
+    }
+    GC_namespace::to_mxArray(G,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  static
+  void
   do_absolute_velocity_by_angle(
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
@@ -795,6 +820,31 @@ namespace AstroLib {
     Astro * ptr = DATA_GET( arg_in_1 );
     GC_namespace::real_type L = getScalarValue( arg_in_2, CMD " param L" );
     GC_namespace::to_mxArray(ptr->absolute_velocity_by_angle(L),arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  static
+  void
+  do_absolute_velocity_by_angle_grad(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('absolute_velocity_by_angle_grad',obj,L): "
+    CHECK_IN(3);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    mwSize sz;
+    double const * L = getVectorPointer( arg_in_2, sz, CMD " param L" );
+    GC_namespace::mat_real_type G;
+    G.resize(sz,6);
+    for ( mwSize i = 0 ; i < sz ; ++i ) {
+      real_type grad[6];
+      ptr->absolute_velocity_by_angle_gradient( L[i], grad );
+      G(i,0) = grad[0]; G(i,1) = grad[1]; G(i,2) = grad[2];
+      G(i,3) = grad[3]; G(i,4) = grad[4]; G(i,5) = grad[5];
+    }
+    GC_namespace::to_mxArray(G,arg_out_0);
     #undef CMD
   }
 
@@ -1057,8 +1107,9 @@ namespace AstroLib {
     {"ray_by_L",do_ray_by_L},
     {"ray_by_L_D",do_ray_by_L_D},
     {"ray_by_L_DD",do_ray_by_L_DD},
-    {"ray_by_L_DD",do_ray_by_L_DD},
+    {"ray_by_L_grad",do_ray_by_L_grad},
     {"absolute_velocity_by_angle",do_absolute_velocity_by_angle},
+    {"do_absolute_velocity_by_angle_grad",do_absolute_velocity_by_angle_grad},
     {"L_from_true_anomaly",do_L_from_true_anomaly},
     {"make_retrograde",do_make_retrograde},
     {"make_not_retrograde",do_make_not_retrograde},

@@ -4,7 +4,7 @@
 \****************************************************************************/
 
 #ifndef GENERIC_CONTAINER_HH
-  #include "GenericContainer.hh"
+  #include "GenericContainer/GenericContainer.hh"
 #endif
 #include "mex.h"
 

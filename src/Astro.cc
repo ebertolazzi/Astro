@@ -674,19 +674,19 @@ namespace AstroLib {
     real_type f = m_EQ.f;
     real_type g = m_EQ.g;
 
-   real_type t1 = pow(p,-1.5);
-   real_type t2 = sin(L);
-   real_type t3 = cos(L);
-   real_type t4 = m_muS * (f * f + g * g + 2 * (f * t3 + g * t2) + 1);
-   real_type t5 = 1/sqrt(t4);
-   real_type t6 = p * t1;
-
-   grad[0] = -t4 * t1 * t5 / 2;
-   grad[1] = m_muS * (f + t3) * t6 * t5;
-   grad[2] = m_muS * (g + t2) * t6 * t5;
-   grad[3] = 0;
-   grad[4] = 0;
-   grad[5] = -m_muS * (f * t2 - g * t3) * t6 * t5;
+    real_type t1 = sqrt(m_muS);
+    real_type t2 = pow(p, -1.5);
+    real_type t3 = sin(L);
+    real_type t4 = cos(L);
+    real_type t5 = f * f + g * g + 2 * (f * t4 + g * t3) + 1;
+    real_type t6 = 1/sqrt(t5);
+    real_type t7 = p * t2;
+    grad[0] = -t1 * t2 * t5 * t6 / 2;
+    grad[1] = t1 * (f + t4) * t7 * t6;
+    grad[2] = t1 * (g + t3) * t7 * t6;
+    grad[3] = 0;
+    grad[4] = 0;
+    grad[5] = -t1 * (f * t3 - g * t4) * t7 * t6;
   }
 
   /*

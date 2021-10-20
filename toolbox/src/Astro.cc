@@ -7,7 +7,7 @@
  |         | __/ _   ,_         | __/ _   ,_                                |
  |         |   \|/  /  |  |   | |   \|/  /  |  |   |                        |
  |         |(__/|__/   |_/ \_/|/|(__/|__/   |_/ \_/|/                       |
- |                           /|                   /|                        |
+ |                          /|                   /|                        |
  |                           \|                   \|                        |
  |                                                                          |
  |      Enrico Bertolazzi                                                   |
@@ -24,16 +24,16 @@ namespace AstroLib {
 
   Astro::Astro()
   : m_name("noname")
-  , t0(0)
-  , M0(0)
-  , Mdot(0)
+  , m_t0(0)
+  , m_M0(0)
+  , m_Mdot(0)
   {}
 
   Astro::Astro( string const & __name )
   : m_name(__name)
-  , t0(0)
-  , M0(0)
-  , Mdot(0)
+  , m_t0(0)
+  , m_M0(0)
+  , m_Mdot(0)
   {}
 
   Astro::Astro( Astro const & ast ) {
@@ -46,12 +46,12 @@ namespace AstroLib {
   Astro const &
   Astro::operator = ( Astro const & ast ) {
     this->m_name = ast.m_name;
-    this->EQ     = ast.EQ;
-    this->K      = ast.K;
-    this->t0     = ast.t0; // days
-    this->M0     = ast.M0; // Angle corresponding to time t0
-    this->Mdot   = ast.Mdot;
-    this->muS    = ast.muS;
+    m_EQ   = ast.m_EQ;
+    m_K    = ast.m_K;
+    m_t0   = ast.m_t0; // days
+    m_M0   = ast.m_M0; // Angle corresponding to time t0
+    m_Mdot = ast.m_Mdot;
+    m_muS  = ast.m_muS;
     return *this;
   }
 
@@ -59,29 +59,29 @@ namespace AstroLib {
   Astro::check_for_consistency() const {
     //ASSERT( p>0,         "Astro::check p = " << p << " must be positive!");
     //ASSERT( f*f+g*g < 1, "Astro::check f*f+g*g = " << f*f+g*g << " must be less than 1!");
-    real_type h  = EQ.h;
-    real_type k  = EQ.k;
+    real_type h  = m_EQ.h;
+    real_type k  = m_EQ.k;
     real_type e2 = h*h+k*k;
     UTILS_ASSERT(
       e2 < 1,
       "Astro::check_for_consistency h*h+k*k = {} must be less than 1!\n", e2
     );
     UTILS_ASSERT(
-      muS > 0,
-      "Astro::check_for_consistency muS = {} must be positive!\n", muS
+      m_muS > 0,
+      "Astro::check_for_consistency muS = {} must be positive!\n", m_muS
     );
   }
 
   real_type
   Astro::latitude_of_periapsis() const {
-    real_type angle = K.omega+K.Omega;
+    real_type angle = m_K.omega+m_K.Omega;
     angle_in_range(angle);
     return angle;
   }
 
   real_type
   Astro::latitude_of_apoapsis() const {
-    real_type angle = K.omega+K.Omega+m_pi;
+    real_type angle = m_K.omega+m_K.Omega+m_pi;
     angle_in_range(angle);
     return angle;
   }
@@ -118,13 +118,13 @@ namespace AstroLib {
       "omega = {} [degree]\n"
       "Other infos\n"
       "period = {}\n",
-      m_name, (EQ.retrograde?"RETROGRADE":"NORMAL"),
-      t0, M0, Mdot, muS,
-      EQ.p, EQ.f, EQ.g, EQ.h, EQ.k,
-      K.e, K.a,
-      radiants_to_degrees(K.i),
-      radiants_to_degrees(K.Omega),
-      radiants_to_degrees(K.omega),
+      m_name, (m_EQ.retrograde?"RETROGRADE":"NORMAL"),
+      m_t0, m_M0, m_Mdot, m_muS,
+      m_EQ.p, m_EQ.f, m_EQ.g, m_EQ.h, m_EQ.k,
+      m_K.e, m_K.a,
+      radiants_to_degrees(m_K.i),
+      radiants_to_degrees(m_K.Omega),
+      radiants_to_degrees(m_K.omega),
       period()
     );
   }
@@ -132,29 +132,29 @@ namespace AstroLib {
   Astro const &
   Astro::setup_Keplerian(
     string const & n,
-    real_type _t0,
-    real_type _a,
-    real_type _e,
-    real_type _Omega, // sempre prima Omega "Grande"!!!
-    real_type _omega,
-    real_type _i,
-    real_type _M0,
-    real_type _muS
+    real_type t0,
+    real_type a,
+    real_type e,
+    real_type Omega, // sempre prima Omega "Grande"!!!
+    real_type omega,
+    real_type i,
+    real_type M0,
+    real_type muS
   ) {
     m_name = n;
 
-    K.a     = _a;
-    K.e     = _e;
-    K.i     = _i;
-    K.Omega = _Omega;
-    K.omega = _omega;
-    t0      = _t0;
-    M0      = _M0;
-    muS     = _muS;
-    real_type absa = K.a > 0 ? K.a : -K.a;
-    this->Mdot = sqrt(muS/absa)/absa;
+    m_K.a     = a;
+    m_K.e     = e;
+    m_K.i     = i;
+    m_K.Omega = Omega;
+    m_K.omega = omega;
+    m_t0      = t0;
+    m_M0      = M0;
+    m_muS     = muS;
+    real_type absa = m_K.a > 0 ? m_K.a : -m_K.a;
+    m_Mdot = sqrt(m_muS/absa)/absa;
 
-    from_Keplerian_to_Equinoctial( K, EQ );
+    from_Keplerian_to_Equinoctial( m_K, m_EQ );
     check_for_consistency();
     return *this;
   }
@@ -162,32 +162,39 @@ namespace AstroLib {
   Astro const &
   Astro::setup_Equinoctial(
     string const & n,
-    real_type      _t0,
-    real_type      _p,
-    real_type      _f,
-    real_type      _g,
-    real_type      _h,
-    real_type      _k,
-    bool           _retrograde,
-    real_type      _M0,
-    real_type      _muS
+    real_type      t0,
+    real_type      p,
+    real_type      f,
+    real_type      g,
+    real_type      h,
+    real_type      k,
+    bool           retrograde,
+    real_type      L,
+    real_type      muS
   ) {
 
-    EQ.p          = _p;
-    EQ.f          = _f;
-    EQ.g          = _g;
-    EQ.h          = _h;
-    EQ.k          = _k;
-    EQ.retrograde = _retrograde;
+    m_EQ.p          = p;
+    m_EQ.f          = f;
+    m_EQ.g          = g;
+    m_EQ.h          = h;
+    m_EQ.k          = k;
+    m_EQ.retrograde = retrograde;
 
-    from_equinoctial_to_Keplerian( EQ, K );
+    from_equinoctial_to_Keplerian( m_EQ, m_K );
 
     m_name = n;
-    t0     = _t0;
-    M0     = _M0; // Angle corresponding to time t0
-    muS    = _muS;
-    real_type absa = K.a > 0 ? K.a : -K.a;
-    Mdot = sqrt(muS/absa)/absa;
+    m_t0   = t0;
+    m_muS  = muS;
+    // Angle corresponding to time t0
+    real_type theta = L-m_K.omega;
+
+    if ( retrograde ) theta -= m_K.Omega;
+    else              theta += m_K.Omega;
+
+    m_M0 = true_anomaly_to_mean_anomaly( theta, m_K.e );
+
+    real_type absa = m_K.a > 0 ? m_K.a : -m_K.a;
+    m_Mdot = sqrt(m_muS/absa)/absa;
 
     check_for_consistency();
 
@@ -220,7 +227,7 @@ namespace AstroLib {
       vars("h")          . get_number(),
       vars("k")          . get_number(),
       vars("retrograde") . get_bool(),
-      vars("M0")         . get_number(),
+      vars("L")          . get_number(),
       vars("muS")        . get_number()
     );
   }
@@ -233,7 +240,7 @@ namespace AstroLib {
   //  |_|_| |_|\_/ \__,_|_|  |_|\__,_|_| |_|\__|___/
   */
   real_type
-  Astro::orbit_energy() const { return -muS/(2*K.a); }
+  Astro::orbit_energy() const { return -m_muS/(2*m_K.a); }
 
   /*
   // Elliptic
@@ -252,11 +259,11 @@ namespace AstroLib {
     real_type E[],
     integer   nderiv
   ) const {
-    real_type M = M0 + (t-t0) * Mdot;
-    if ( K.e <= 1 ) {
-      mean_anomaly_to_eccentric_anomaly_elliptic( M, Mdot, K.e, E, nderiv );
+    real_type M = m_M0 + (t-m_t0) * m_Mdot;
+    if ( m_K.e <= 1 ) {
+      mean_anomaly_to_eccentric_anomaly_elliptic( M, m_Mdot, m_K.e, E, nderiv );
     } else {
-      mean_anomaly_to_eccentric_anomaly_hyperbolic( M, Mdot, K.e, E, nderiv );
+      mean_anomaly_to_eccentric_anomaly_hyperbolic( M, m_Mdot, m_K.e, E, nderiv );
     }
   }
 
@@ -271,63 +278,63 @@ namespace AstroLib {
     real_type Lvalues[],
     integer   nderiv
   ) const {
-    real_type M = M0 + (t-t0) * Mdot;
-    if ( K.e <= 1 ) { // caso ellittico
+    real_type M = m_M0 + (t-m_t0) * m_Mdot;
+    if ( m_K.e <= 1 ) { // caso ellittico
       real_type E[4];
-      mean_anomaly_to_eccentric_anomaly_elliptic( M, Mdot, K.e, E, nderiv );
+      mean_anomaly_to_eccentric_anomaly_elliptic( M, m_Mdot, m_K.e, E, nderiv );
 
       // da E calcolo theta = 2 * atan( sqrt(1+e)/sqrt(1-e)*tan(E/2))
-      real_type theta = eccentric_anomaly_to_true_anomaly(E[0],K.e);
+      real_type theta = eccentric_anomaly_to_true_anomaly(E[0],m_K.e);
 
-      Lvalues[0] = theta + K.omega; // L = theta + omega + Omega
-      if ( EQ.retrograde ) Lvalues[0] -= K.Omega; // L = theta + omega + Omega
-      else                 Lvalues[0] += K.Omega; // L = theta + omega + Omega
+      Lvalues[0] = theta + m_K.omega; // L = theta + omega + Omega
+      if ( m_EQ.retrograde ) Lvalues[0] -= m_K.Omega; // L = theta + omega + Omega
+      else                   Lvalues[0] += m_K.Omega; // L = theta + omega + Omega
 
       if ( nderiv < 1 ) return;
 
       real_type cosE      = cos(E[0]);
-      real_type tmp       = 1-K.e*cosE;
-      real_type tmp1      = sqrt(1-K.e*K.e);
+      real_type tmp       = 1-m_K.e*cosE;
+      real_type tmp1      = sqrt(1-m_K.e*m_K.e);
       real_type dtheta_dE = tmp1/tmp;
       Lvalues[1] = dtheta_dE*E[1];
       if ( nderiv < 2 ) return;
 
       real_type sinE        = sin(E[0]);
-      real_type d2theta_d2E = -tmp1*K.e*sinE/power2(tmp);
+      real_type d2theta_d2E = -tmp1*m_K.e*sinE/power2(tmp);
       Lvalues[2] = dtheta_dE * E[2] + d2theta_d2E*power2(E[1]);
       if ( nderiv < 3 ) return;
 
-      real_type d3theta_d3E = K.e*tmp1*(cosE*(cosE*K.e+1)-2*K.e)/power3(tmp);
+      real_type d3theta_d3E = m_K.e*tmp1*(cosE*(cosE*m_K.e+1)-2*m_K.e)/power3(tmp);
       Lvalues[3] = d3theta_d3E*E[3]+3*d2theta_d2E*E[1]*power2(E[2])+dtheta_dE*E[3];
 
     } else {
 
       real_type F[4];
-      mean_anomaly_to_eccentric_anomaly_hyperbolic( M, Mdot, K.e, F, nderiv );
+      mean_anomaly_to_eccentric_anomaly_hyperbolic( M, m_Mdot, m_K.e, F, nderiv );
 
       // da F calcolo theta = 2 * atan( sqrt(1+e)/sqrt(1-e)*tanh(F/2))
-      real_type theta = eccentric_anomaly_to_true_anomaly( F[0], K.e );
+      real_type theta = eccentric_anomaly_to_true_anomaly( F[0], m_K.e );
 
-      Lvalues[0] = theta + K.omega; // L = theta + omega + Omega
-      if ( EQ.retrograde ) Lvalues[0] -= K.Omega; // L = theta + omega + Omega
-      else                 Lvalues[0] += K.Omega; // L = theta + omega + Omega
+      Lvalues[0] = theta + m_K.omega; // L = theta + omega + Omega
+      if ( m_EQ.retrograde ) Lvalues[0] -= m_K.Omega; // L = theta + omega + Omega
+      else                   Lvalues[0] += m_K.Omega; // L = theta + omega + Omega
 
       if ( nderiv < 1 ) return;
 
       real_type cosh_F    = cosh(F[0]);
-      real_type tmp       = K.e*cosh_F-1;
-      real_type tmp1      = sqrt(K.e*K.e-1);
+      real_type tmp       = m_K.e*cosh_F-1;
+      real_type tmp1      = sqrt(m_K.e*m_K.e-1);
       real_type dtheta_dF = tmp1/tmp;
       Lvalues[1] = dtheta_dF*F[1];
       if ( nderiv < 2 ) return;
 
-      real_type tmp2        = tmp1*K.e/power2(tmp);
+      real_type tmp2        = tmp1*m_K.e/power2(tmp);
       real_type sinh_F      = sinh(F[0]);
       real_type d2theta_d2F = -tmp2*sinh_F;
       Lvalues[2] = dtheta_dF * F[2] + d2theta_d2F*power2(F[1]);
       if ( nderiv < 3 ) return;
 
-      real_type d3theta_d3F = ((cosh_F*K.e+1)*cosh_F-2*K.e)*tmp2/tmp;
+      real_type d3theta_d3F = ((cosh_F*m_K.e+1)*cosh_F-2*m_K.e)*tmp2/tmp;
       Lvalues[3] = d3theta_d3F*F[3]+3*d2theta_d2F*F[1]*power2(F[2])+dtheta_dF*F[3];
 
     }
@@ -356,7 +363,7 @@ namespace AstroLib {
 
   real_type
   Astro::L_orbital( real_type _t0, real_type dt ) const {
-    if ( K.e < 1 ) {
+    if ( m_K.e < 1 ) {
       real_type L0 = L_orbital( _t0 );
       real_type dL = L_orbital( _t0 + dt ) - L0;
       real_type pf = dt / period(); // frazione di periodo da aggiungere togliere
@@ -380,12 +387,12 @@ namespace AstroLib {
   real_type
   Astro::time_from_L_angle( real_type tbase, real_type L ) const {
     UTILS_ASSERT0(
-      K.e < 1,
+      m_K.e < 1,
       "Astro::time_from_L_angle(tbase,L), can be used only for elliptic orbits\n"
     );
-    real_type theta = L - K.omega;
-    if ( EQ.retrograde ) theta += K.Omega;
-    else                 theta -= K.Omega;
+    real_type theta = L - m_K.omega;
+    if ( m_EQ.retrograde ) theta += m_K.Omega;
+    else                   theta -= m_K.Omega;
 
     angle_in_range(theta);
     //real_type E     = 2*atan(sqrt((1-e)/(1+e))*tan(theta/2));
@@ -395,9 +402,9 @@ namespace AstroLib {
     //real_type sinE  = sqrt(1-e*e)*(sin(theta)/(1+e*cos(theta)));
     //if ( sinE > 1 ) sinE = 1; else if ( sinE < -1 ) sinE = -1;
     //real_type M     = asin(sinE)-e*sinE;
-    real_type E    = 2*atan2(sqrt(1-K.e)*sin(theta/2),sqrt(1+K.e)*cos(theta/2));
-    real_type M    = E-K.e*sin(E);
-    real_type tres = t0 + (M-M0)/Mdot;
+    real_type E    = 2*atan2(sqrt(1-m_K.e)*sin(theta/2),sqrt(1+m_K.e)*cos(theta/2));
+    real_type M    = E-m_K.e*sin(E);
+    real_type tres = m_t0 + (M-m_M0)/m_Mdot;
     real_type per  = this->period(); // m_2pi/Mdot
     UTILS_ASSERT( per > 0, "Bad period = {}\n", per );
     if ( tres > tbase ) {
@@ -418,7 +425,7 @@ namespace AstroLib {
   Astro::true_anomaly( real_type t ) const {
     real_type E;
     eval_E( t, &E, 0 );
-    return eccentric_anomaly_to_true_anomaly(E,K.e);
+    return eccentric_anomaly_to_true_anomaly(E,m_K.e);
   }
 
   /*
@@ -437,11 +444,11 @@ namespace AstroLib {
     real_type & y,
     real_type & z
   ) const {
-    real_type p    = EQ.p;
-    real_type f    = EQ.f;
-    real_type g    = EQ.g;
-    real_type h    = EQ.h;
-    real_type k    = EQ.k;
+    real_type p    = m_EQ.p;
+    real_type f    = m_EQ.f;
+    real_type g    = m_EQ.g;
+    real_type h    = m_EQ.h;
+    real_type k    = m_EQ.k;
     real_type cosL = cos(L);
     real_type sinL = sin(L);
     real_type h2   = h*h;
@@ -451,7 +458,7 @@ namespace AstroLib {
     real_type X    = bf*cosL;
     real_type Y    = bf*sinL;
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     x = (1+h2-k2)*X+2*I*hk*Y;
     y = I*(1-h2+k2)*Y+2*hk*X;
@@ -470,6 +477,91 @@ namespace AstroLib {
     position_by_L( L[0], x, y, z );
   }
 
+  void
+  Astro::position_by_L_jacobian_EQ( real_type L, real_type JP[3][6] ) const {
+    real_type p = m_EQ.p;
+    real_type f = m_EQ.f;
+    real_type g = m_EQ.g;
+    real_type h = m_EQ.h;
+    real_type k = m_EQ.k;
+    real_type I = m_EQ.retrograde ? -1 : 1;
+
+    real_type t1 = h * h;
+    real_type t2 = k * k;
+    real_type t3 = 1 + t1 - t2;
+    real_type t4 = cos(L);
+    real_type t5 = sin(L);
+    real_type t6 = t5 * h;
+    real_type t7 = 2 * t6;
+    real_type t8 = t7 * I;
+    real_type t9 = t3 * t4;
+    real_type t10 = t8 * k + t9;
+    real_type t11 = f * t4;
+    real_type t12 = g * t5;
+    real_type t13 = 1 + t12 + t11;
+    real_type t14 = 1 + t1 + t2;
+    real_type t15 = 1 - t1 + t2;
+    real_type t16 = 2 * h;
+    real_type t17 = t16 * k;
+    real_type t18 = t17 * t4;
+    real_type t19 = I * t15;
+    real_type t20 = -t19 * t5 - t18;
+    real_type t21 = 2 * k;
+    real_type t22 = -t3 / 2;
+    real_type t23 = f * h * k * I + t22 * g;
+    real_type t24 = t5*t5;
+              t13 = 1 / t13;
+              t14 = 1 / t14;
+    real_type t25 = t13*t13;
+    real_type t26 = t14*t14;
+    real_type t27 = 2 * p;
+    real_type t28 = p * t10;
+    real_type t29 = t28 * t25 * t14;
+    real_type t30 = -t19 * f + t17 * g;
+    real_type t31 = t20 * p * t25 * t14;
+    real_type t32 = k * t4 * I - t6;
+    real_type t33 = t27 * t32 * t25 * t14;
+
+    JP[0][0] = t10 * t13 * t14;
+    JP[0][1] = -t29 * t4;
+    JP[0][2] = -t29 * t5;
+    JP[0][3] = -t21 * t20 * p * t13 * t26;
+    JP[0][4] = (2 * t6 * I * t3 - 2 * t21 * t4 * (1 + t1)) * p * t13 * t26;
+    JP[0][5] = t27 * (t22 * t5 + t23 * t24 + t4 * (h * k * I + t23 * t4)) * t25 * t14;
+    JP[1][0] = -t20 * t13 * t14;
+    JP[1][1] = t31 * t4;
+    JP[1][2] = t31 * t5;
+    JP[1][3] = -t27 * (t8 * (1 + t2) - k * t15 * t4) * t13 * t26;
+    JP[1][4] = t28 * t16 * t13 * t26;
+    JP[1][5] = p * (t4 * (-t30 * t4 + t19) - t5 * (t30 * t5 + t17)) * t25 * t14;
+    JP[2][0] = -2 * t32 * t13 * t14;
+    JP[2][1] = t33 * t4;
+    JP[2][2] = t33 * t5;
+    JP[2][3] = -t27 * (-t15 * t5 - t18 * I) * t13 * t26;
+    JP[2][4] = -t27 * (t7 * k + t9 * I) * t13 * t26;
+    JP[2][5] = t27 * (h * (f * t24 + t4 * (1 + t11)) + (g * (t4*t4) + t5 * (1 + t12)) * I * k) * t25 * t14;
+  }
+
+  void
+  Astro::ray_by_L_gradient( real_type L, real_type grad[6] ) const {
+    real_type p = m_EQ.p;
+    real_type f = m_EQ.f;
+    real_type g = m_EQ.g;
+
+    real_type t1 = cos(L);
+    real_type t2 = sin(L);
+    real_type t3 = 1/(f * t1 + g * t2 + 1);
+    real_type t4 = t3*t3;
+    real_type t5 = p * t4;
+
+    grad[0] = t3;
+    grad[1] = -t5 * t1;
+    grad[2] = -t5 * t2;
+    grad[3] = 0;
+    grad[4] = 0;
+    grad[5] = p * (f * t2 - g * t1) * t4;
+  }
+
   /*
   //             _            _ _
   //  __   _____| | ___   ___(_) |_ _   _
@@ -486,19 +578,19 @@ namespace AstroLib {
     real_type & vy,
     real_type & vz
   ) const {
-    real_type p     = EQ.p;
-    real_type f     = EQ.f;
-    real_type g     = EQ.g;
-    real_type h     = EQ.h;
-    real_type k     = EQ.k;
+    real_type p     = m_EQ.p;
+    real_type f     = m_EQ.f;
+    real_type g     = m_EQ.g;
+    real_type h     = m_EQ.h;
+    real_type k     = m_EQ.k;
     real_type h2    = h*h;
     real_type k2    = k*k;
     real_type hk    = h*k;
-    real_type bf    = sqrt(muS/p)/(1+h2+k2);
+    real_type bf    = sqrt(m_muS/p)/(1+h2+k2);
     real_type cosLf = bf * (cos(L)+f);
     real_type sinLg = bf * (sin(L)+g);
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     vx = I*2*hk*cosLf - (1+h2-k2)*sinLg;
     vy = I*(1-h2+k2)*cosLf - 2*hk*sinLg;
@@ -515,6 +607,86 @@ namespace AstroLib {
     real_type L[4];
     eval_L( t, L, 0 );
     velocity_by_L( L[0], vx, vy, vz );
+  }
+
+  void
+  Astro::velocity_by_L_jacobian_EQ( real_type L, real_type JV[3][6] ) const {
+    real_type p = m_EQ.p;
+    real_type f = m_EQ.f;
+    real_type g = m_EQ.g;
+    real_type h = m_EQ.h;
+    real_type k = m_EQ.k;
+    real_type I = m_EQ.retrograde ? -1 : 1;
+
+    real_type t1 = pow(p, -1.5);
+    real_type t2 = sqrt(m_muS);
+    real_type t3 = h * h;
+    real_type t4 = k * k;
+    real_type t5 = 1 + t3 - t4;
+    real_type t6 = sin(L);
+    real_type t7 = cos(L);
+    real_type t8 = f + t7;
+    real_type t9 = t8 * h;
+    real_type t10 = t9 * k;
+    real_type t11 = 2;
+    real_type t12 = -t10 * t11 * I + g * t5 + t5 * t6;
+    real_type t13 = 1 + t3 + t4;
+    real_type t14 = p * t1;
+    real_type t15 = 1 - t3 + t4;
+    real_type t16 = I * t15;
+    real_type t17 = g + t6;
+    real_type t18 = h * k;
+    real_type t19 = t18 * t17;
+              t8  = t19 -t16 * t8 / 2;
+    real_type t20 = t5 * t7;
+    real_type t21 = I * h;
+              t18 *= t11;
+    real_type t22 = t18 * I;
+              t13 = 1/t13;
+    real_type t23 = t13*t13;
+    real_type t24 = t14 * t2;
+    real_type t25 = t24 * t11;
+    real_type t26 = k * I;
+
+    JV[0][0] = t1 * t2 * t12 * t13 / 2;
+    JV[0][1] = t22 * t14 * t2 * t13;
+    JV[0][2] = -t24 * t5 * t13;
+    JV[0][3] = -4 * t8 * t14 * t2 * t23 * k;
+    JV[0][4] = 4 * t24 * (k * ((t3 + 1) * g + t6 * (t3 + 1)) + t21 * (((1 - k) * (k + 1) + t3) * f + t20) / 2) * t23;
+    JV[0][5] = -t24 * (t22 * t6 + t20) * t13;
+    JV[1][0] = t8 * t1 * t2 * t13;
+    JV[1][1] = t24 * t16 * t13;
+    JV[1][2] = -t24 * t18 * t13;
+    JV[1][3] = t25 * (-t11 * t21 * ((t4 + 1) * f + t7 * (t4 + 1)) - (g * t4 + t15 * t6 + g * (1 - t3)) * k) * t23;
+    JV[1][4] = -t25 * t12 * t23 * h;
+    JV[1][5] = t24 * (-t16 * t6 - t18 * t7) * t13;
+    JV[2][0] = -t2 * (t26 * t17 + t9) * t1 * t13;
+    JV[2][1] = t25 * h * t13;
+    JV[2][2] = t26 * t25 * t13;
+    JV[2][3] = t24 * (t11 * (f * t15 + t15 * t7) - 4 * t19 * I) * t23;
+    JV[2][4] = t25 * (I * t5 * t17 - t10 * t11) * t23;
+    JV[2][5] = t25 * (-h * t6 + t26 * t7) * t13;
+  }
+
+  void
+  Astro::absolute_velocity_by_angle_gradient( real_type L, real_type grad[6] ) const {
+    real_type p = m_EQ.p;
+    real_type f = m_EQ.f;
+    real_type g = m_EQ.g;
+
+    real_type t1 = sqrt(m_muS);
+    real_type t2 = pow(p, -1.5);
+    real_type t3 = sin(L);
+    real_type t4 = cos(L);
+    real_type t5 = f * f + g * g + 2 * (f * t4 + g * t3) + 1;
+    real_type t6 = 1/sqrt(t5);
+    real_type t7 = p * t2;
+    grad[0] = -t1 * t2 * t5 * t6 / 2;
+    grad[1] = t1 * (f + t4) * t7 * t6;
+    grad[2] = t1 * (g + t3) * t7 * t6;
+    grad[3] = 0;
+    grad[4] = 0;
+    grad[5] = -t1 * (f * t3 - g * t4) * t7 * t6;
   }
 
   /*
@@ -534,17 +706,17 @@ namespace AstroLib {
   ) const {
     real_type L[4];
     eval_L( t, L, 1 );
-    real_type p      = EQ.p;
-    real_type h      = EQ.h;
-    real_type k      = EQ.k;
+    real_type p      = m_EQ.p;
+    real_type h      = m_EQ.h;
+    real_type k      = m_EQ.k;
     real_type h2     = h*h;
     real_type k2     = k*k;
     real_type hk     = h*k;
-    real_type bf     = sqrt(muS/p)/(1+h2+k2);
+    real_type bf     = sqrt(m_muS/p)/(1+h2+k2);
     real_type cosL_D = -bf*sin(L[0])*L[1];
     real_type sinL_D =  bf*cos(L[0])*L[1];
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     ax = I*2*hk*cosL_D - (1+h2-k2)*sinL_D;
     ay = I*(1-h2+k2)*cosL_D - 2*hk*sinL_D;
@@ -562,17 +734,17 @@ namespace AstroLib {
   ) const {
     real_type L[4];
     eval_L( t, L, 2 );
-    real_type p      = EQ.p;
-    real_type h      = EQ.h;
-    real_type k      = EQ.k;
+    real_type p      = m_EQ.p;
+    real_type h      = m_EQ.h;
+    real_type k      = m_EQ.k;
     real_type h2     = h*h;
     real_type k2     = k*k;
     real_type hk     = h*k;
-    real_type bf     = sqrt(muS/p)/(1+h2+k2);
+    real_type bf     = sqrt(m_muS/p)/(1+h2+k2);
     real_type cosL_2 = bf * ( -sin(L[0])*L[2] - cos(L[0]) * power2(L[1]) );
     real_type sinL_2 = bf * (  cos(L[0])*L[2] - sin(L[0]) * power2(L[1]) );
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     jx = I*2*hk*cosL_2 - (1+h2-k2)*sinL_2;
     jy = I*(1-h2+k2)*cosL_2 - 2*hk*sinL_2;
@@ -586,11 +758,11 @@ namespace AstroLib {
   Astro::x_position( real_type t ) const {
     real_type L[4];
     eval_L( t, L, 0 );
-    real_type p    = EQ.p;
-    real_type f    = EQ.f;
-    real_type g    = EQ.g;
-    real_type h    = EQ.h;
-    real_type k    = EQ.k;
+    real_type p    = m_EQ.p;
+    real_type f    = m_EQ.f;
+    real_type g    = m_EQ.g;
+    real_type h    = m_EQ.h;
+    real_type k    = m_EQ.k;
     real_type cosL = cos(L[0]);
     real_type sinL = sin(L[0]);
     real_type h2   = h*h;
@@ -600,7 +772,7 @@ namespace AstroLib {
     real_type X    = bf*cosL;
     real_type Y    = bf*sinL;
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     return (1+h2-k2)*X+2*I*hk*Y;
   }
@@ -611,11 +783,11 @@ namespace AstroLib {
     eval_L( t, L, 0 );
     real_type cosL = cos(L[0]);
     real_type sinL = sin(L[0]);
-    real_type p    = EQ.p;
-    real_type f    = EQ.f;
-    real_type g    = EQ.g;
-    real_type h    = EQ.h;
-    real_type k    = EQ.k;
+    real_type p    = m_EQ.p;
+    real_type f    = m_EQ.f;
+    real_type g    = m_EQ.g;
+    real_type h    = m_EQ.h;
+    real_type k    = m_EQ.k;
     real_type h2   = h*h;
     real_type k2   = k*k;
     real_type hk   = h*k;
@@ -623,7 +795,7 @@ namespace AstroLib {
     real_type X    = bf*cosL;
     real_type Y    = bf*sinL;
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     return I*(1-h2+k2)*Y+2*hk*X;
   }
@@ -634,18 +806,18 @@ namespace AstroLib {
     eval_L( t, L, 0 );
     real_type cosL = cos(L[0]);
     real_type sinL = sin(L[0]);
-    real_type p    = EQ.p;
-    real_type f    = EQ.f;
-    real_type g    = EQ.g;
-    real_type h    = EQ.h;
-    real_type k    = EQ.k;
+    real_type p    = m_EQ.p;
+    real_type f    = m_EQ.f;
+    real_type g    = m_EQ.g;
+    real_type h    = m_EQ.h;
+    real_type k    = m_EQ.k;
     real_type h2   = h*h;
     real_type k2   = k*k;
     real_type bf   = p/((1+f*cosL+g*sinL)*(1+h2+k2));
     real_type X    = bf*cosL;
     real_type Y    = bf*sinL;
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     return 2*(h*Y-I*k*X);
   }
@@ -656,19 +828,19 @@ namespace AstroLib {
   Astro::x_velocity( real_type t ) const {
     real_type L[4];
     eval_L( t, L, 0 );
-    real_type p     = EQ.p;
-    real_type f     = EQ.f;
-    real_type g     = EQ.g;
-    real_type h     = EQ.h;
-    real_type k     = EQ.k;
+    real_type p     = m_EQ.p;
+    real_type f     = m_EQ.f;
+    real_type g     = m_EQ.g;
+    real_type h     = m_EQ.h;
+    real_type k     = m_EQ.k;
     real_type h2    = h*h;
     real_type k2    = k*k;
     real_type hk    = h*k;
-    real_type bf    = sqrt(muS/p)/(1+h2+k2);
+    real_type bf    = sqrt(m_muS/p)/(1+h2+k2);
     real_type cosLf = bf * (cos(L[0])+f);
     real_type sinLg = bf * (sin(L[0])+g);
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     return I*2*hk*cosLf - (1+h2-k2)*sinLg;
   }
@@ -677,19 +849,19 @@ namespace AstroLib {
   Astro::y_velocity( real_type t ) const {
     real_type L[4];
     eval_L( t, L, 0 );
-    real_type p     = EQ.p;
-    real_type f     = EQ.f;
-    real_type g     = EQ.g;
-    real_type h     = EQ.h;
-    real_type k     = EQ.k;
+    real_type p     = m_EQ.p;
+    real_type f     = m_EQ.f;
+    real_type g     = m_EQ.g;
+    real_type h     = m_EQ.h;
+    real_type k     = m_EQ.k;
     real_type h2    = h*h;
     real_type k2    = k*k;
     real_type hk    = h*k;
-    real_type bf    = sqrt(muS/p)/(1+h2+k2);
+    real_type bf    = sqrt(m_muS/p)/(1+h2+k2);
     real_type cosLf = bf * (cos(L[0])+f);
     real_type sinLg = bf * (sin(L[0])+g);
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     return I*(1-h2+k2)*cosLf - 2*hk*sinLg;
   }
@@ -698,18 +870,18 @@ namespace AstroLib {
   Astro::z_velocity( real_type t ) const {
     real_type L[4];
     eval_L( t, L, 0 );
-    real_type p     = EQ.p;
-    real_type f     = EQ.f;
-    real_type g     = EQ.g;
-    real_type h     = EQ.h;
-    real_type k     = EQ.k;
+    real_type p     = m_EQ.p;
+    real_type f     = m_EQ.f;
+    real_type g     = m_EQ.g;
+    real_type h     = m_EQ.h;
+    real_type k     = m_EQ.k;
     real_type h2    = h*h;
     real_type k2    = k*k;
-    real_type bf    = sqrt(muS/p)/(1+h2+k2);
+    real_type bf    = sqrt(m_muS/p)/(1+h2+k2);
     real_type cosLf = bf * (cos(L[0])+f);
     real_type sinLg = bf * (sin(L[0])+g);
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     return 2 * ( h*cosLf + I*k*sinLg );
   }
@@ -720,17 +892,17 @@ namespace AstroLib {
   Astro::x_acceleration( real_type t ) const {
     real_type L[4];
     eval_L( t, L, 1 );
-    real_type p      = EQ.p;
-    real_type h      = EQ.h;
-    real_type k      = EQ.k;
+    real_type p      = m_EQ.p;
+    real_type h      = m_EQ.h;
+    real_type k      = m_EQ.k;
     real_type h2     = h*h;
     real_type k2     = k*k;
     real_type hk     = h*k;
-    real_type bf     = sqrt(muS/p)/(1+h2+k2);
+    real_type bf     = sqrt(m_muS/p)/(1+h2+k2);
     real_type cosL_D = -bf*sin(L[0])*L[1];
     real_type sinL_D =  bf*cos(L[0])*L[1];
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     return I*2*hk*cosL_D - (1+h2-k2)*sinL_D;
   }
@@ -739,17 +911,17 @@ namespace AstroLib {
   Astro::y_acceleration( real_type t ) const {
     real_type L[4];
     eval_L( t, L, 1 );
-    real_type p      = EQ.p;
-    real_type h      = EQ.h;
-    real_type k      = EQ.k;
+    real_type p      = m_EQ.p;
+    real_type h      = m_EQ.h;
+    real_type k      = m_EQ.k;
     real_type h2     = h*h;
     real_type k2     = k*k;
     real_type hk     = h*k;
-    real_type bf     = sqrt(muS/p)/(1+h2+k2);
+    real_type bf     = sqrt(m_muS/p)/(1+h2+k2);
     real_type cosL_D = -bf*sin(L[0])*L[1];
     real_type sinL_D =  bf*cos(L[0])*L[1];
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     return I*(1-h2+k2)*cosL_D - 2*hk*sinL_D;
   }
@@ -758,16 +930,16 @@ namespace AstroLib {
   Astro::z_acceleration( real_type t ) const {
     real_type L[4];
     eval_L( t, L, 1 );
-    real_type p      = EQ.p;
-    real_type h      = EQ.h;
-    real_type k      = EQ.k;
+    real_type p      = m_EQ.p;
+    real_type h      = m_EQ.h;
+    real_type k      = m_EQ.k;
     real_type h2     = h*h;
     real_type k2     = k*k;
-    real_type bf     = sqrt(muS/p)/(1+h2+k2);
+    real_type bf     = sqrt(m_muS/p)/(1+h2+k2);
     real_type cosL_D = -bf*sin(L[0])*L[1];
     real_type sinL_D =  bf*cos(L[0])*L[1];
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     return 2 * ( h*cosL_D + I*k*sinL_D );
   }
@@ -778,19 +950,19 @@ namespace AstroLib {
   Astro::x_jerk( real_type t ) const {
     real_type L[4];
     eval_L( t, L, 2 );
-    real_type p      = EQ.p;
-    real_type h      = EQ.h;
-    real_type k      = EQ.k;
+    real_type p      = m_EQ.p;
+    real_type h      = m_EQ.h;
+    real_type k      = m_EQ.k;
     real_type h2     = h*h;
     real_type k2     = k*k;
     real_type hk     = h*k;
-    real_type bf     = sqrt(muS/p)/(1+h2+k2);
+    real_type bf     = sqrt(m_muS/p)/(1+h2+k2);
     real_type cosL   = cos(L[0]);
     real_type sinL   = sin(L[0]);
     real_type cosL_2 = bf * ( -sinL*L[2] - cosL * power2(L[1]) );
     real_type sinL_2 = bf * (  cosL*L[2] - sinL * power2(L[1]) );
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     return I*2*hk*cosL_2 - (1+h2-k2)*sinL_2;
   }
@@ -799,19 +971,19 @@ namespace AstroLib {
   Astro::y_jerk( real_type t ) const {
     real_type L[4];
     eval_L( t, L, 2 );
-    real_type p      = EQ.p;
-    real_type h      = EQ.h;
-    real_type k      = EQ.k;
+    real_type p      = m_EQ.p;
+    real_type h      = m_EQ.h;
+    real_type k      = m_EQ.k;
     real_type h2     = h*h;
     real_type k2     = k*k;
     real_type hk     = h*k;
-    real_type bf     = sqrt(muS/p)/(1+h2+k2);
+    real_type bf     = sqrt(m_muS/p)/(1+h2+k2);
     real_type cosL   = cos(L[0]);
     real_type sinL   = sin(L[0]);
     real_type cosL_2 = bf * ( -sinL*L[2] - cosL * power2(L[1]) );
     real_type sinL_2 = bf * (  cosL*L[2] - sinL * power2(L[1]) );
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     return I*(1-h2+k2)*cosL_2 - 2*hk*sinL_2;
   }
@@ -820,37 +992,37 @@ namespace AstroLib {
   Astro::z_jerk( real_type t ) const {
     real_type L[4];
     eval_L( t, L, 2 );
-    real_type p      = EQ.p;
-    real_type h      = EQ.h;
-    real_type k      = EQ.k;
+    real_type p      = m_EQ.p;
+    real_type h      = m_EQ.h;
+    real_type k      = m_EQ.k;
     real_type h2     = h*h;
     real_type k2     = k*k;
-    real_type bf     = sqrt(muS/p)/(1+h2+k2);
+    real_type bf     = sqrt(m_muS/p)/(1+h2+k2);
     real_type cosL   = cos(L[0]);
     real_type sinL   = sin(L[0]);
     real_type cosL_2 = bf * ( -sinL*L[2] - cosL * power2(L[1]) );
     real_type sinL_2 = bf * (  cosL*L[2] - sinL * power2(L[1]) );
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
-    return 2 * ( EQ.h*cosL_2 + I*EQ.k*sinL_2 );
+    return 2 * ( h*cosL_2 + I*k*sinL_2 );
   }
 
   //////////////////////////////////////////////////////////
 
   real_type
   Astro::ray_by_L( real_type L ) const {
-    real_type p = EQ.p;
-    real_type f = EQ.f;
-    real_type g = EQ.g;
+    real_type p = m_EQ.p;
+    real_type f = m_EQ.f;
+    real_type g = m_EQ.g;
     return p/(1+f*cos(L)+g*sin(L));
   }
 
   real_type
   Astro::ray_by_L_D( real_type L ) const {
-    real_type p    = EQ.p;
-    real_type f    = EQ.f;
-    real_type g    = EQ.g;
+    real_type p    = m_EQ.p;
+    real_type f    = m_EQ.f;
+    real_type g    = m_EQ.g;
     real_type sinL = sin(L);
     real_type cosL = cos(L);
     return p*(f*sinL-g*cosL)/power2(1+f*cosL+g*sinL);
@@ -858,9 +1030,9 @@ namespace AstroLib {
 
   real_type
   Astro::ray_by_L_DD( real_type L ) const {
-    real_type p     = EQ.p;
-    real_type f     = EQ.f;
-    real_type g     = EQ.g;
+    real_type p     = m_EQ.p;
+    real_type f     = m_EQ.f;
+    real_type g     = m_EQ.g;
     real_type cosL  = cos(L);
     real_type sinL  = sin(L);
     real_type fcosL = f*cosL;
@@ -874,15 +1046,15 @@ namespace AstroLib {
   // normale al piano dell'ellisse
   void
   Astro::normal( real_type N[3] ) const {
-    real_type h  = EQ.h;
-    real_type k  = EQ.k;
+    real_type h  = m_EQ.h;
+    real_type k  = m_EQ.k;
     real_type k2 = k*k;
     real_type h2 = h*h;
     real_type tmp = 1/(k2+h2+1);
     N[0] =  2*tmp*k;
     N[1] = -2*tmp*h;
     N[2] =  tmp*(1-k2-h2);
-    if ( EQ.retrograde ) N[2] = -N[2];
+    if ( m_EQ.retrograde ) N[2] = -N[2];
   }
 
   /*
@@ -894,11 +1066,11 @@ namespace AstroLib {
   */
   void
   Astro::local_frame_by_L( real_type L, real_type M[3][3] ) const {
-    real_type p    = EQ.p;
-    real_type f    = EQ.f;
-    real_type g    = EQ.g;
-    real_type h    = EQ.h;
-    real_type k    = EQ.k;
+    real_type p    = m_EQ.p;
+    real_type f    = m_EQ.f;
+    real_type g    = m_EQ.g;
+    real_type h    = m_EQ.h;
+    real_type k    = m_EQ.k;
     real_type cosL = cos(L);
     real_type sinL = sin(L);
     real_type h2   = h*h;
@@ -908,19 +1080,19 @@ namespace AstroLib {
     real_type X    = bf*cosL;
     real_type Y    = bf*sinL;
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     real_type x = (1+h2-k2)*X+2*I*hk*Y;
     real_type y = I*(1-h2+k2)*Y+2*hk*X;
-    real_type z = 2*(EQ.h*Y-I*EQ.k*X);
+    real_type z = 2*(h*Y-I*k*X);
 
-    real_type bf1   = sqrt(muS/p)/(1+h2+k2);
+    real_type bf1   = sqrt(m_muS/p)/(1+h2+k2);
     real_type cosLf = bf1 * (cos(L)+f);
     real_type sinLg = bf1 * (sin(L)+g);
 
     real_type vx = I*2*hk*cosLf - (1+h2-k2)*sinLg;
     real_type vy = I*(1-h2+k2)*cosLf - 2*hk*sinLg;
-    real_type vz = 2 * ( EQ.h*cosLf + I*EQ.k*sinLg );
+    real_type vz = 2 * ( h*cosLf + I*k*sinLg );
 
     real_type r = sqrt(x*x+y*y+z*z);
     x /= r;
@@ -970,48 +1142,49 @@ namespace AstroLib {
   */
   void
   Astro::ellipse_frame( real_type M[3][3] ) const {
-    real_type h = EQ.h;
-    real_type k = EQ.k;
+    real_type h = m_EQ.h;
+    real_type k = m_EQ.k;
 
     real_type h2 = h*h;
     real_type k2 = k*k;
     real_type hk = h*k;
     real_type bf = 1+h2+k2;
 
-    real_type I = EQ.retrograde ? -1 : 1;
+    real_type I = m_EQ.retrograde ? -1 : 1;
 
     M[0][0] = ( 1-k2+h2 ) / bf;
     M[0][1] = ( 2*hk ) / bf;
-    M[0][2] = ( -2*I*EQ.k ) / bf;
+    M[0][2] = ( -2*I*k ) / bf;
 
     M[1][0] = ( 2*I*hk ) / bf;
     M[1][1] = ( (1+k2-h2)*I ) / bf;
-    M[1][2] = ( 2*EQ.h ) / bf;
+    M[1][2] = ( 2*h ) / bf;
 
-    M[2][0] = ( 2*EQ.k ) / bf;
-    M[2][1] = ( -2*EQ.h ) / bf;
+    M[2][0] = ( 2*k ) / bf;
+    M[2][1] = ( -2*h ) / bf;
     M[2][2] = ( I*(1-h2-k2) ) / bf;
   }
 
   void
   Astro::make_retrograde() {
-    if ( EQ.retrograde ) return;
-    EQ.f = K.e*cos(K.omega-K.Omega);
-    EQ.g = K.e*sin(K.omega-K.Omega);
-    real_type tg = tan(K.i/2);
-    EQ.h = cos(K.Omega)/tg;
-    EQ.k = sin(K.Omega)/tg;
-    EQ.retrograde = true;
+    if ( m_EQ.retrograde ) return;
+    real_type dO = m_K.omega-m_K.Omega;
+    m_EQ.f = m_K.e*cos(dO);
+    m_EQ.g = m_K.e*sin(dO);
+    real_type tg = tan(m_K.i/2);
+    m_EQ.h = cos(m_K.Omega)/tg;
+    m_EQ.k = sin(m_K.Omega)/tg;
+    m_EQ.retrograde = true;
   }
 
   void
   Astro::make_not_retrograde() {
-    if ( !EQ.retrograde ) return;
-    EQ.f = K.e*cos(K.omega+K.Omega);
-    EQ.g = K.e*sin(K.omega+K.Omega);
-    real_type tg = tan(K.i/2);
-    EQ.h = tg*cos(K.Omega);
-    EQ.k = tg*sin(K.Omega);
-    EQ.retrograde = false;
+    if ( !m_EQ.retrograde ) return;
+    m_EQ.f = m_K.e*cos(m_K.omega+m_K.Omega);
+    m_EQ.g = m_K.e*sin(m_K.omega+m_K.Omega);
+    real_type tg = tan(m_K.i/2);
+    m_EQ.h = tg*cos(m_K.Omega);
+    m_EQ.k = tg*sin(m_K.Omega);
+    m_EQ.retrograde = false;
   }
 }

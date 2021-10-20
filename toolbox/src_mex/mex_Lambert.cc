@@ -12,7 +12,6 @@
   GNU General Public License for more details.
 \****************************************************************************/
 
-#include "GenericContainerMatlabInterface.hh"
 #include "mex_utils.hh"
 #include "Astro.hh"
 
@@ -70,38 +69,36 @@ static scoped_redirect_cout mycout_redirect;
 namespace AstroLib {
   // function [V1,V2,ok] = Lambert(t1,P1,t2,P2,m,mu)
 
-  using namespace std ;
-
-  static real_type const oneDay_s = 86400 ;
+  using namespace std;
 
   extern "C"
   void
   mexFunction( int nlhs, mxArray       *plhs[],
                int nrhs, mxArray const *prhs[] ) {
     try {
-      MEX_ASSERT( nrhs == 6, "lambert: Expected 6 arguments" ) ;
-      MEX_ASSERT( nlhs == 3, "lambert: Expected 3 outputs" ) ;
+      MEX_ASSERT( nrhs == 6, "lambert: Expected 6 arguments" );
+      MEX_ASSERT( nlhs == 3, "lambert: Expected 3 outputs" );
 
       // Get values of the scalar inputs
       // Check for the proper type of argument
-      real_type t1_day = getScalarValue(
+      real_type t1 = getScalarValue(
         arg_in_0,
         "Lambert first argument (t1) must be a scalar\n"
       );
 
-      real_type t2_day = getScalarValue(
+      real_type t2 = getScalarValue(
         arg_in_2,
         "Lambert 3rd argument (t2) must be a scalar\n"
       );
 
       mwSize n;
-      double const * R1_m = getVectorPointer(
+      double const * R1 = getVectorPointer(
         arg_in_1, n, "Lambert second argument must be a 3d vector\n"
       );
       if ( n != 3 )
         mexErrMsgTxt("Lambert second argument must be a 3d vector\n");
         
-      double const * R2_m = getVectorPointer(
+      double const * R2 = getVectorPointer(
         arg_in_3, n, "Lambert 4th argument must be a 3d vector\n"
       );
       if ( n != 3 )
@@ -112,28 +109,27 @@ namespace AstroLib {
         "Lambert 5th argument (m) must be an integer\n"
       );
 
-      real_type mu_m3_over_s2 = getScalarValue(
+      real_type mu = getScalarValue(
         arg_in_5,
         "Lambert 6th argument (mu) must be a scalar\n"
       );
 
-      double * V1_ms = createMatrixValue(arg_out_0,3,1);
-      double * V2_ms = createMatrixValue(arg_out_1,3,1);
+      double * V1 = createMatrixValue(arg_out_0,3,1);
+      double * V2 = createMatrixValue(arg_out_1,3,1);
       
-      real_type dt_day = t2_day-t1_day ;
-      MEX_ASSERT( dt_day > 0, "lambert, bad t2-t1 = " << dt_day ) ;
+      real_type dt = t2-t1;
+      MEX_ASSERT2( dt > 0, "lambert, bad t2-t1 = {}\n", dt );
 
-      real_type dt_s = oneDay_s * dt_day ;
-      int ok = Lambert( R1_m, R2_m, dt_s, m, mu_m3_over_s2, V1_ms, V2_ms ) ;
+      int ok = Lambert( R1, R2, dt, m, mu, V1, V2 );
       
       setScalarInt(arg_out_2,ok);
 
     }
     catch ( std::exception & exc ) {
-      mexPrintf("Error: %s\n", exc.what() ) ;
+      mexPrintf("Error: %s\n", exc.what() );
     }
     catch (...) {
-      mexPrintf("Unknown error\n") ;
+      mexPrintf("Unknown error\n");
     }
   }
 }

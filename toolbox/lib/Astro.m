@@ -78,7 +78,7 @@ classdef Astro < handle
       AstroMexWrapper( 'setup_Keplerian', self.objectHandle, varargin{:} );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    % name, t0, p, f, g, h, k, retrograde, M0, muS
+    % name, t0, p, f, g, h, k, retrograde, L, muS
     function setup_Equinoctial( self, varargin )
       AstroMexWrapper( 'setup_Equinoctial', self.objectHandle, varargin{:} );
     end
@@ -173,8 +173,16 @@ classdef Astro < handle
       res = AstroMexWrapper( 'ray_by_L_DD', self.objectHandle, L );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = ray_by_L_grad( self, L )
+      res = AstroMexWrapper( 'ray_by_L_grad', self.objectHandle, L );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function res = absolute_velocity_by_angle( self, L )
       res = AstroMexWrapper( 'absolute_velocity_by_angle', self.objectHandle, L );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = absolute_velocity_by_angle_grad( self, L )
+      res = AstroMexWrapper( 'absolute_velocity_by_angle_grad', self.objectHandle, L );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function res = L_from_true_anomaly( self, nu )

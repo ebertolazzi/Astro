@@ -1,20 +1,19 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="3151401989" file="/Users/enrico/GTOC11/submodules/Astro/Astro.prj" location="/Users/enrico/GTOC11/submodules/Astro" name="Astro" target="target.toolbox" target-name="Package Toolbox">
+  <configuration build-checksum="1919082438" file="/Users/enrico/GTOC11/submodules/Astro/Astro.prj" location="/Users/enrico/GTOC11/submodules/Astro" name="Astro" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>Astro</param.appname>
     <param.authnamewatermark>Enrico Bertolazzi</param.authnamewatermark>
     <param.email>enrico.bertolazzi@unitn.it</param.email>
     <param.company>Unversità Degli Studi di Trento</param.company>
-    <param.summary>Utilities for Astonomical computation</param.summary>
-    <param.description>Utilities classes and function for Astonomical computation.
-Support for Keplerian and Equinoctioal coordinates</param.description>
-    <param.screenshot>${PROJECT_ROOT}/doc/figs/coordinates.png</param.screenshot>
+    <param.summary />
+    <param.description />
+    <param.screenshot />
     <param.version>1.0</param.version>
     <param.output>${PROJECT_ROOT}/Astro.mltbx</param.output>
     <param.products.name />
     <param.products.id />
     <param.products.version />
     <param.platforms />
-    <param.guid>01c629ca-ff4a-417f-b9db-0666e1e250cb</param.guid>
+    <param.guid>4d84b742-6488-4736-9a11-e9803a2d2a98</param.guid>
     <param.exclude.filters>% List files contained in your toolbox folder that you would like to exclude
 % from packaging.  Excludes should be listed relative to the toolbox folder.
 % Some examples of how to specify excludes are provided below:
@@ -34,9 +33,9 @@ Support for Keplerian and Equinoctioal coordinates</param.description>
 % All files matching a pattern in all subfolders of the toolbox folder:
 % **/*.bak
 %
-Icon?
-.DS_Store
-populate_toolbox.rb</param.exclude.filters>
+setup.m
+populate_toolbox.rb
+.DS_Store</param.exclude.filters>
     <param.exclude.pcodedmfiles>true</param.exclude.pcodedmfiles>
     <param.examples />
     <param.demosxml />
@@ -67,6 +66,9 @@ populate_toolbox.rb</param.exclude.filters>
       <param.authnamewatermark />
       <param.email />
       <param.company />
+      <param.summary />
+      <param.description />
+      <param.screenshot />
       <param.version />
       <param.output />
       <param.products.name />
@@ -105,15 +107,12 @@ populate_toolbox.rb</param.exclude.filters>
     </fileset.rootdir>
     <fileset.rootfiles>
       <file>${PROJECT_ROOT}/toolbox/CompileAstroLib.m</file>
-      <file>${PROJECT_ROOT}/toolbox/Icon</file>
       <file>${PROJECT_ROOT}/toolbox/bin</file>
       <file>${PROJECT_ROOT}/toolbox/lib</file>
       <file>${PROJECT_ROOT}/toolbox/license.txt</file>
-      <file>${PROJECT_ROOT}/toolbox/setup.m</file>
       <file>${PROJECT_ROOT}/toolbox/src</file>
       <file>${PROJECT_ROOT}/toolbox/src_mex</file>
       <file>${PROJECT_ROOT}/toolbox/tests</file>
-      <file>${PROJECT_ROOT}/toolbox/tests_mlx</file>
     </fileset.rootfiles>
     <fileset.depfun.included />
     <fileset.depfun.excluded />

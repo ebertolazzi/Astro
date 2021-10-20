@@ -24,7 +24,7 @@
 #define ASTRO_dot_HH
 
 #if !defined(GENERIC_CONTAINER_HH) && !defined(GENERIC_CONTAINER_dot_HH)
-  #include "GenericContainer.hh"
+  #include "GenericContainer/GenericContainer.hh"
 #endif
 
 #ifndef UTILS_dot_HH
@@ -97,13 +97,13 @@ namespace AstroLib {
   protected:
 
     // mantengo entrambe le rappresentazioni
-    Equinoctial EQ;
-    Keplerian   K;
+    Equinoctial m_EQ;
+    Keplerian   m_K;
 
-    real_type   t0;  //!< days
-    real_type   M0;  //!< Angle corresponding to time t0
-    real_type   Mdot;
-    real_type   muS; // attorno a quale astro gira!.
+    real_type   m_t0;  //!< days
+    real_type   m_M0;  //!< Angle corresponding to time t0
+    real_type   m_Mdot;
+    real_type   m_muS; // attorno a quale astro gira!.
 
   public:
 
@@ -150,7 +150,7 @@ namespace AstroLib {
       real_type      h,
       real_type      k,
       bool           retrograde,
-      real_type      M0,
+      real_type      L,
       real_type      muS
     );
 
@@ -172,11 +172,11 @@ namespace AstroLib {
       string const &      n,
       real_type           _t0,
       Equinoctial const & _EQ,
-      real_type           _M0,
+      real_type           _L,
       real_type           _muS
     ) {
       return setup_Equinoctial(
-        n, _t0, _EQ.p, _EQ.f, _EQ.g, _EQ.h, _EQ.k, _EQ.retrograde, _M0, _muS
+        n, _t0, _EQ.p, _EQ.f, _EQ.g, _EQ.h, _EQ.k, _EQ.retrograde, _L, _muS
       );
     }
 
@@ -196,15 +196,17 @@ namespace AstroLib {
     setup_using_point_and_velocity(
       real_type const P[3],
       real_type const V[3],
-      real_type       _muS,
-      real_type       _t0
+      real_type       muS,
+      real_type       t0
     ) {
       real_type L0, theta;
-      t0  = _t0;
-      muS = _muS;
-      point_and_velocity_to_Equinoctial_and_Keplerian( P, V, muS, EQ, L0, K, theta, this->M0 );
-      real_type absa = std::abs(K.a);
-      this->Mdot = sqrt(muS/absa)/absa;
+      m_t0  = t0;
+      m_muS = muS;
+      point_and_velocity_to_Equinoctial_and_Keplerian(
+        P, V, m_muS, m_EQ, L0, m_K, theta, m_M0
+      );
+      real_type absa = std::abs(m_K.a);
+      m_Mdot = sqrt(m_muS/absa)/absa;
       return true;
     }
 
@@ -218,12 +220,12 @@ namespace AstroLib {
     Astro const & setup_Keplerian   ( string const & n, GenericContainer & vars );
     Astro const & setup_Equinoctial ( string const & n, GenericContainer & vars );
 
-    Equinoctial const & get_EQ() const { return this->EQ; }
-    Keplerian   const & get_K()  const { return this->K;  }
+    Equinoctial const & get_EQ() const { return m_EQ; }
+    Keplerian   const & get_K()  const { return m_K;  }
 
     //real_type fromL0toM0( real_type L0 ) const;
 
-    real_type mean_anomaly ( real_type t ) const { return M0 + (t-t0) * Mdot; }
+    real_type mean_anomaly ( real_type t ) const { return m_M0 + (t-m_t0) * m_Mdot; }
     real_type true_anomaly ( real_type t ) const; // true anormality
     real_type L_orbital    ( real_type t ) const;
     real_type L_orbital_D  ( real_type t ) const;
@@ -233,28 +235,28 @@ namespace AstroLib {
     real_type latitude_of_periapsis() const;
     real_type latitude_of_apoapsis() const;
 
-    real_type p_orbital()  const { return EQ.p; }
-    real_type f_orbital()  const { return EQ.f; }
-    real_type g_orbital()  const { return EQ.g; }
-    real_type h_orbital()  const { return EQ.h; }
-    real_type k_orbital()  const { return EQ.k; }
-    bool      retrograde() const { return EQ.retrograde; }
+    real_type p_orbital()  const { return m_EQ.p; }
+    real_type f_orbital()  const { return m_EQ.f; }
+    real_type g_orbital()  const { return m_EQ.g; }
+    real_type h_orbital()  const { return m_EQ.h; }
+    real_type k_orbital()  const { return m_EQ.k; }
+    bool      retrograde() const { return m_EQ.retrograde; }
 
-    real_type a_orbital()     const { return K.a; }
-    real_type e_orbital()     const { return K.e; }
-    real_type i_orbital()     const { return K.i; }
-    real_type Omega_orbital() const { return K.Omega; }
-    real_type omega_orbital() const { return K.omega; }
+    real_type a_orbital()     const { return m_K.a; }
+    real_type e_orbital()     const { return m_K.e; }
+    real_type i_orbital()     const { return m_K.i; }
+    real_type Omega_orbital() const { return m_K.Omega; }
+    real_type omega_orbital() const { return m_K.omega; }
 
-    real_type t0_orbital() const { return t0; }
-    real_type M0_orbital() const { return M0; } // mean anomaly al time t0
+    real_type t0_orbital() const { return m_t0; }
+    real_type M0_orbital() const { return m_M0; } // mean anomaly al time t0
     //integer numRevolution( real_type t ) const { return std::floor((t-t0)/period()-M0/m_2pi); }
     integer number_of_revolution( real_type t ) const { return integer(std::floor(mean_anomaly(t)/m_2pi)); }
 
     real_type time_from_L_angle( real_type t, real_type L ) const;
 
-    real_type absolute_position( real_type t ) const { return equinoctial_to_ray(EQ,L_orbital(t)); }
-    real_type absolute_velocity( real_type t ) const { return equinoctial_to_velocity(EQ,L_orbital(t),muS); }
+    real_type absolute_position( real_type t ) const { return equinoctial_to_ray(m_EQ,L_orbital(t)); }
+    real_type absolute_velocity( real_type t ) const { return equinoctial_to_velocity(m_EQ,L_orbital(t),m_muS); }
 
     void eval_E( real_type t, real_type E[], integer nderiv ) const;
     void eval_L( real_type t, real_type L[], integer nderiv ) const;
@@ -309,47 +311,47 @@ namespace AstroLib {
 
     void
     get_Keplerian_orbital(
-      real_type & _e,
-      real_type & _a,
-      real_type & _i,
-      real_type & _Omega,
-      real_type & _omega
+      real_type & e,
+      real_type & a,
+      real_type & i,
+      real_type & Omega,
+      real_type & omega
     ) const {
-      _e     = K.e;
-      _a     = K.a;
-      _i     = K.i;
-      _Omega = K.Omega;
-      _omega = K.omega;
+      e     = m_K.e;
+      a     = m_K.a;
+      i     = m_K.i;
+      Omega = m_K.Omega;
+      omega = m_K.omega;
     }
 
     void
     get_Equinoctial_orbital(
-      real_type & _p,
-      real_type & _f,
-      real_type & _g,
-      real_type & _h,
-      real_type & _k
+      real_type & p,
+      real_type & f,
+      real_type & g,
+      real_type & h,
+      real_type & k
     ) const {
-      _p = EQ.p;
-      _f = EQ.f;
-      _g = EQ.g;
-      _h = EQ.h;
-      _k = EQ.k;
+      p = m_EQ.p;
+      f = m_EQ.f;
+      g = m_EQ.g;
+      h = m_EQ.h;
+      k = m_EQ.k;
     }
 
-    real_type get_muS()   const { return muS; }
-    real_type period()    const { return m_2pi/Mdot; }
-    real_type apoapsis()  const { return K.a*(1+K.e); }
-    real_type periapsis() const { return K.a*(1-K.e); }
+    real_type get_muS()   const { return m_muS; }
+    real_type period()    const { return m_2pi/m_Mdot; }
+    real_type apoapsis()  const { return m_K.a*(1+m_K.e); }
+    real_type periapsis() const { return m_K.a*(1-m_K.e); }
 
     real_type
     absolute_velocity_by_angle( real_type L ) const
-    { return equinoctial_to_velocity(EQ,L,muS); }
+    { return equinoctial_to_velocity(m_EQ,L,m_muS); }
 
     real_type
     L_from_true_anomaly( real_type const nu ) const {
-      if ( EQ.retrograde ) return nu - K.Omega + K.omega;
-      else                 return nu + K.Omega + K.omega;
+      if ( m_EQ.retrograde ) return nu - m_K.Omega + m_K.omega;
+      else                   return nu + m_K.Omega + m_K.omega;
     }
 
     real_type ray_by_L   ( real_type L ) const;
@@ -366,6 +368,17 @@ namespace AstroLib {
 
     void make_retrograde();
     void make_not_retrograde();
+
+    // gradient and jacobians
+
+    // gradient respect to p, f, g, h, k, l
+    void ray_by_L_gradient( real_type L, real_type grad[6] ) const;
+
+    // gradient respect to p, f, g, h, k, l
+    void absolute_velocity_by_angle_gradient( real_type L, real_type grad[6] ) const;
+
+    void position_by_L_jacobian_EQ( real_type L, real_type JP[3][6] ) const;
+    void velocity_by_L_jacobian_EQ( real_type L, real_type JV[3][6] ) const;
 
   };
 
