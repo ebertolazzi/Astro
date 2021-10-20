@@ -152,6 +152,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_copy(
@@ -171,6 +172,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_name(
@@ -186,6 +188,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_position(
@@ -194,19 +197,28 @@ namespace AstroLib {
   ) {
     #define CMD "AstroMexWrapper('position',obj,t): "
     CHECK_IN(3);
-    CHECK_OUT(3);
     Astro * ptr = DATA_GET( arg_in_1 );
     mwSize sz;
     double const * t = getVectorPointer( arg_in_2, sz, CMD " param t" );
-    GC_namespace::vec_real_type x(sz), y(sz), z(sz);
-    for ( mwSize i = 0 ; i < sz ; ++i ) ptr->position( t[i], x[i], y[i], z[i] );
-    GC_namespace::to_mxArray(x,arg_out_0);
-    GC_namespace::to_mxArray(y,arg_out_1);
-    GC_namespace::to_mxArray(z,arg_out_2);
+    if ( nlhs == 1 ) {
+      GC_namespace::mat_real_type xyz;
+      xyz.resize(3,sz);
+      for ( mwSize i = 0 ; i < sz ; ++i ) ptr->position( t[i], xyz(0,i), xyz(1,i), xyz(2,i) );
+      GC_namespace::to_mxArray(xyz,arg_out_0);
+    } else if ( nlhs == 3 ) {
+      GC_namespace::vec_real_type x(sz), y(sz), z(sz);
+      for ( mwSize i = 0 ; i < sz ; ++i ) ptr->position( t[i], x[i], y[i], z[i] );
+      GC_namespace::to_mxArray(x,arg_out_0);
+      GC_namespace::to_mxArray(y,arg_out_1);
+      GC_namespace::to_mxArray(z,arg_out_2);
+    } else {
+      MEX_ASSERT2( false, CMD "expected 1 or 3 output, nlhs = {}\n", nlhs );
+    }
     #undef CMD
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_velocity(
@@ -219,15 +231,25 @@ namespace AstroLib {
     Astro * ptr = DATA_GET( arg_in_1 );
     mwSize sz;
     double const * t = getVectorPointer( arg_in_2, sz, CMD " param t" );
-    GC_namespace::vec_real_type vx(sz), vy(sz), vz(sz);
-    for ( mwSize i = 0 ; i < sz ; ++i ) ptr->velocity( t[i], vx[i], vy[i], vz[i] );
-    GC_namespace::to_mxArray(vx,arg_out_0);
-    GC_namespace::to_mxArray(vy,arg_out_1);
-    GC_namespace::to_mxArray(vz,arg_out_2);
+    if ( nlhs == 1 ) {
+      GC_namespace::mat_real_type vxyz;
+      vxyz.resize(3,sz);
+      for ( mwSize i = 0 ; i < sz ; ++i ) ptr->velocity( t[i], vxyz(0,i), vxyz(1,i), vxyz(2,i) );
+      GC_namespace::to_mxArray(vxyz,arg_out_0);
+    } else if ( nlhs == 3 ) {
+      GC_namespace::vec_real_type vx(sz), vy(sz), vz(sz);
+      for ( mwSize i = 0 ; i < sz ; ++i ) ptr->velocity( t[i], vx[i], vy[i], vz[i] );
+      GC_namespace::to_mxArray(vx,arg_out_0);
+      GC_namespace::to_mxArray(vy,arg_out_1);
+      GC_namespace::to_mxArray(vz,arg_out_2);
+    } else {
+      MEX_ASSERT2( false, CMD "expected 1 or 3 output, nlhs = {}\n", nlhs );
+    }
     #undef CMD
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_acceleration(
@@ -240,15 +262,25 @@ namespace AstroLib {
     Astro * ptr = DATA_GET( arg_in_1 );
     mwSize sz;
     double const * t = getVectorPointer( arg_in_2, sz, CMD " param t" );
-    GC_namespace::vec_real_type ax(sz), ay(sz), az(sz);
-    for ( mwSize i = 0 ; i < sz ; ++i ) ptr->acceleration( t[i], ax[i], ay[i], az[i] );
-    GC_namespace::to_mxArray(ax,arg_out_0);
-    GC_namespace::to_mxArray(ay,arg_out_1);
-    GC_namespace::to_mxArray(az,arg_out_2);
+    if ( nlhs == 1 ) {
+      GC_namespace::mat_real_type xyz;
+      xyz.resize(3,sz);
+      for ( mwSize i = 0 ; i < sz ; ++i ) ptr->acceleration( t[i], xyz(0,i), xyz(1,i), xyz(2,i) );
+      GC_namespace::to_mxArray(xyz,arg_out_0);
+    } else if ( nlhs == 3 ) {
+      GC_namespace::vec_real_type ax(sz), ay(sz), az(sz);
+      for ( mwSize i = 0 ; i < sz ; ++i ) ptr->acceleration( t[i], ax[i], ay[i], az[i] );
+      GC_namespace::to_mxArray(ax,arg_out_0);
+      GC_namespace::to_mxArray(ay,arg_out_1);
+      GC_namespace::to_mxArray(az,arg_out_2);
+    } else {
+      MEX_ASSERT2( false, CMD "expected 1 or 3 output, nlhs = {}\n", nlhs );
+    }
     #undef CMD
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_jerk(
@@ -261,15 +293,25 @@ namespace AstroLib {
     Astro * ptr = DATA_GET( arg_in_1 );
     mwSize sz;
     double const * t = getVectorPointer( arg_in_2, sz, CMD " param t" );
-    GC_namespace::vec_real_type jx(sz), jy(sz), jz(sz);
-    for ( mwSize i = 0 ; i < sz ; ++i ) ptr->jerk( t[i], jx[i], jy[i], jz[i] );
-    GC_namespace::to_mxArray(jx,arg_out_0);
-    GC_namespace::to_mxArray(jy,arg_out_1);
-    GC_namespace::to_mxArray(jz,arg_out_2);
+    if ( nlhs == 1 ) {
+      GC_namespace::mat_real_type xyz;
+      xyz.resize(3,sz);
+      for ( mwSize i = 0 ; i < sz ; ++i ) ptr->jerk( t[i], xyz(0,i), xyz(1,i), xyz(2,i) );
+      GC_namespace::to_mxArray(xyz,arg_out_0);
+    } else if ( nlhs == 3 ) {
+      GC_namespace::vec_real_type jx(sz), jy(sz), jz(sz);
+      for ( mwSize i = 0 ; i < sz ; ++i ) ptr->jerk( t[i], jx[i], jy[i], jz[i] );
+      GC_namespace::to_mxArray(jx,arg_out_0);
+      GC_namespace::to_mxArray(jy,arg_out_1);
+      GC_namespace::to_mxArray(jz,arg_out_2);
+    } else {
+      MEX_ASSERT2( false, CMD "expected 1 or 3 output, nlhs = {}\n", nlhs );
+    }
     #undef CMD
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_setup_Keplerian(
@@ -317,17 +359,18 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_setup_Equinoctial(
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "AstroMexWrapper('setup_Equinoctial',obj,[name,t0,p,f,g,h,k,retrograde,M0,muS]||struct): "
+    #define CMD "AstroMexWrapper('setup_Equinoctial',obj,[name,t0,p,f,g,h,k,retrograde,L0,muS]||struct): "
     MEX_ASSERT2( nrhs == 3 || nrhs == 12, CMD "expected 3 or 12 input, nrhs = {}\n", nrhs );
     CHECK_OUT(0);
     Astro * ptr = DATA_GET( arg_in_1 );
-    GC_namespace::real_type t0(0), p(0), f(0), g(0), h(0), k(0), M0(0), muS(0);
+    GC_namespace::real_type t0(0), p(0), f(0), g(0), h(0), k(0), L0(0), muS(0);
     bool retrograde = false;
     string name = "";
     if ( nrhs == 12 ) {
@@ -340,7 +383,7 @@ namespace AstroLib {
       h          = getScalarValue( arg_in_7,  CMD " param h" );
       k          = getScalarValue( arg_in_8,  CMD " param k" );
       retrograde = getBool( arg_in_9, CMD " param 'retrograde'" );
-      M0         = getScalarValue( arg_in_10, CMD " param M0" );
+      L0         = getScalarValue( arg_in_10, CMD " param L0" );
       muS        = getScalarValue( arg_in_11, CMD " param muS" );
     } else {
       GC_namespace::GenericContainer gc;
@@ -359,15 +402,16 @@ namespace AstroLib {
       g          = gc("g").get_number();
       h          = gc("h").get_number();
       k          = gc("k").get_number();
-      retrograde =  gc("retrograde").get_bool();
-      M0         = gc("M0").get_number();
+      retrograde = gc("retrograde").get_bool();
+      L0         = gc("L0").get_number();
       muS        = gc("muS").get_number();
     }
-    ptr->setup_Equinoctial( name, t0, p, f, g, h, k, retrograde, M0, muS );
+    ptr->setup_Equinoctial( name, t0, p, f, g, h, k, retrograde, L0, muS );
     #undef CMD
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_setup_PV(
@@ -392,6 +436,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_mean_anomaly(
@@ -412,6 +457,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_true_anomaly(
@@ -432,6 +478,87 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_p_orbital(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('p_orbital',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    setScalarValue( arg_out_0, ptr->p_orbital() );
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_f_orbital(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('f_orbital',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    setScalarValue( arg_out_0, ptr->f_orbital() );
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_g_orbital(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('g_orbital',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    setScalarValue( arg_out_0, ptr->g_orbital() );
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_h_orbital(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('h_orbital',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    setScalarValue( arg_out_0, ptr->h_orbital() );
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_k_orbital(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('k_orbital',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    setScalarValue( arg_out_0, ptr->k_orbital() );
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_L_orbital(
@@ -464,6 +591,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_L_orbital_D(
@@ -484,6 +612,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_L_orbital_DD(
@@ -504,6 +633,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_latitude_of_periapsis(
@@ -519,6 +649,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_latitude_of_apoapsis(
@@ -534,6 +665,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_info(
@@ -568,6 +700,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_print_info(
@@ -583,6 +716,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_number_of_revolution(
@@ -599,6 +733,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_time_from_L_angle(
@@ -616,6 +751,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_absolute_position(
@@ -632,6 +768,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_absolute_velocity(
@@ -648,6 +785,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_period(
@@ -663,6 +801,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_apoapsis(
@@ -678,6 +817,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_periapsis(
@@ -693,6 +833,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_muS(
@@ -708,6 +849,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_orbit_energy(
@@ -723,13 +865,14 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
-  do_ray_by_L(
+  do_radius_by_L(
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "AstroMexWrapper('ray_by_L',obj,L): "
+    #define CMD "AstroMexWrapper('radius_by_L',obj,L): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -737,19 +880,20 @@ namespace AstroLib {
     double const * L = getVectorPointer( arg_in_2, sz, CMD " param L" );
     GC_namespace::vec_real_type ray;
     ray.reserve(sz);
-    for ( mwSize i = 0 ; i < sz ; ++i ) ray.push_back( ptr->ray_by_L( L[i] ) );
+    for ( mwSize i = 0 ; i < sz ; ++i ) ray.push_back( ptr->radius_by_L( L[i] ) );
     GC_namespace::to_mxArray(ray,arg_out_0);
     #undef CMD
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
-  do_ray_by_L_D(
+  do_radius_by_L_D(
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "AstroMexWrapper('ray_by_L_D',obj,L): "
+    #define CMD "AstroMexWrapper('radius_by_L_D',obj,L): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -757,19 +901,20 @@ namespace AstroLib {
     double const * L = getVectorPointer( arg_in_2, sz, CMD " param L" );
     GC_namespace::vec_real_type ray;
     ray.reserve(sz);
-    for ( mwSize i = 0 ; i < sz ; ++i ) ray.push_back( ptr->ray_by_L_D( L[i] ) );
+    for ( mwSize i = 0 ; i < sz ; ++i ) ray.push_back( ptr->radius_by_L_D( L[i] ) );
     GC_namespace::to_mxArray(ray,arg_out_0);
     #undef CMD
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
-  do_ray_by_L_DD(
+  do_radius_by_L_DD(
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "AstroMexWrapper('ray_by_L_DD',obj,L): "
+    #define CMD "AstroMexWrapper('radius_by_L_DD',obj,L): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
@@ -777,29 +922,203 @@ namespace AstroLib {
     double const * L = getVectorPointer( arg_in_2, sz, CMD " param L" );
     GC_namespace::vec_real_type ray;
     ray.reserve(sz);
-    for ( mwSize i = 0 ; i < sz ; ++i ) ray.push_back( ptr->ray_by_L_DD( L[i] ) );
+    for ( mwSize i = 0 ; i < sz ; ++i ) ray.push_back( ptr->radius_by_L_DD( L[i] ) );
     GC_namespace::to_mxArray(ray,arg_out_0);
     #undef CMD
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
-  do_ray_by_L_grad(
+  do_M0(
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "AstroMexWrapper('ray_by_L_grad',obj,L): "
+    #define CMD "AstroMexWrapper('M0',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    setScalarValue( arg_out_0, ptr->M0_orbital() );
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_M0_EQ_gradient(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('M0_EQ_gradient',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    GC_namespace::vec_real_type G;
+    G.resize(6);
+    real_type grad[6];
+    ptr->M0_EQ_gradient( grad );
+    G[0] = grad[0]; G[1] = grad[1]; G[2] = grad[2];
+    G[3] = grad[3]; G[4] = grad[4]; G[5] = grad[5];
+    GC_namespace::to_mxArray(G,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_theta0(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('theta0',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    setScalarValue( arg_out_0, ptr->theta0_orbital() );
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_theta0_EQ_gradient(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('theta0_EQ_gradient',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    GC_namespace::vec_real_type G;
+    G.resize(6);
+    real_type grad[6];
+    ptr->theta0_EQ_gradient( grad );
+    G[0] = grad[0]; G[1] = grad[1]; G[2] = grad[2];
+    G[3] = grad[3]; G[4] = grad[4]; G[5] = grad[5];
+    GC_namespace::to_mxArray(G,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_E0_angle(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('E0_angle',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    setScalarValue( arg_out_0, ptr->E0_angle() );
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_E0_EQ_gradient(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('E0_EQ_gradient',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    GC_namespace::vec_real_type G;
+    G.resize(6);
+    real_type grad[6];
+    ptr->E0_EQ_gradient( grad );
+    G[0] = grad[0]; G[1] = grad[1]; G[2] = grad[2];
+    G[3] = grad[3]; G[4] = grad[4]; G[5] = grad[5];
+    GC_namespace::to_mxArray(G,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_H0_angle(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('H0_angle',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    setScalarValue( arg_out_0, ptr->H0_angle() );
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_H0_EQ_gradient(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('H0_EQ_gradient',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    GC_namespace::vec_real_type G;
+    G.resize(6);
+    real_type grad[6];
+    ptr->H0_EQ_gradient( grad );
+    G[0] = grad[0]; G[1] = grad[1]; G[2] = grad[2];
+    G[3] = grad[3]; G[4] = grad[4]; G[5] = grad[5];
+    GC_namespace::to_mxArray(G,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_E_angle(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('E_angle',obj,t): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
     mwSize sz;
-    double const * L = getVectorPointer( arg_in_2, sz, CMD " param L" );
+    double const * t = getVectorPointer( arg_in_2, sz, CMD " param t" );
+    GC_namespace::vec_real_type E;
+    E.reserve(sz);
+    for ( mwSize i = 0 ; i < sz ; ++i ) E.push_back( ptr->E_angle( t[i] ) );
+    GC_namespace::to_mxArray(E,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_E_EQ_gradient(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('E_EQ_gradient',obj,t): "
+    CHECK_IN(3);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    mwSize sz;
+    double const * t = getVectorPointer( arg_in_2, sz, CMD " param t" );
     GC_namespace::mat_real_type G;
     G.resize(sz,6);
     for ( mwSize i = 0 ; i < sz ; ++i ) {
       real_type grad[6];
-      ptr->ray_by_L_gradient( L[i], grad );
+      ptr->E_EQ_gradient( t[i], grad );
       G(i,0) = grad[0]; G(i,1) = grad[1]; G(i,2) = grad[2];
       G(i,3) = grad[3]; G(i,4) = grad[4]; G(i,5) = grad[5];
     }
@@ -808,6 +1127,127 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_H_angle(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('H_angle',obj,t): "
+    CHECK_IN(3);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    mwSize sz;
+    double const * t = getVectorPointer( arg_in_2, sz, CMD " param t" );
+    GC_namespace::vec_real_type H;
+    H.reserve(sz);
+    for ( mwSize i = 0 ; i < sz ; ++i ) H.push_back( ptr->H_angle( t[i] ) );
+    GC_namespace::to_mxArray(H,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_H_EQ_gradient(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('H_EQ_gradient',obj,t): "
+    CHECK_IN(3);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    mwSize sz;
+    double const * t = getVectorPointer( arg_in_2, sz, CMD " param t" );
+    GC_namespace::mat_real_type G;
+    G.resize(sz,6);
+    for ( mwSize i = 0 ; i < sz ; ++i ) {
+      real_type grad[6];
+      ptr->H_EQ_gradient( t[i], grad );
+      G(i,0) = grad[0]; G(i,1) = grad[1]; G(i,2) = grad[2];
+      G(i,3) = grad[3]; G(i,4) = grad[4]; G(i,5) = grad[5];
+    }
+    GC_namespace::to_mxArray(G,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_radius_EQ_gradient(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('radius_EQ_gradient',obj,t): "
+    CHECK_IN(3);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    mwSize sz;
+    double const * t = getVectorPointer( arg_in_2, sz, CMD " param t" );
+    GC_namespace::mat_real_type G;
+    G.resize(sz,6);
+    for ( mwSize i = 0 ; i < sz ; ++i ) {
+      real_type grad[6];
+      ptr->radius_EQ_gradient( t[i], grad );
+      G(i,0) = grad[0]; G(i,1) = grad[1]; G(i,2) = grad[2];
+      G(i,3) = grad[3]; G(i,4) = grad[4]; G(i,5) = grad[5];
+    }
+    GC_namespace::to_mxArray(G,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_position_EQ_jacobian(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('position_EQ_jacobian',obj,t): "
+    CHECK_IN(3);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    double t = getScalarValue( arg_in_2, CMD " param t" );
+    GC_namespace::mat_real_type G;
+    G.resize(3,6);
+    real_type JP[3][6];
+    ptr->position_EQ_jacobian( t, JP );
+    for ( integer i = 0; i < 3; ++i )
+      for ( integer j = 0; j < 6; ++j )
+        G(i,j) = JP[i][j];
+    GC_namespace::to_mxArray(G,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_position0_EQ_jacobian(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('position0_EQ_jacobian',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    GC_namespace::mat_real_type G;
+    G.resize(3,6);
+    real_type JP[3][6];
+    ptr->position0_EQ_jacobian( JP );
+    for ( integer i = 0; i < 3; ++i )
+      for ( integer j = 0; j < 6; ++j )
+        G(i,j) = JP[i][j];
+    GC_namespace::to_mxArray(G,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_absolute_velocity_by_angle(
@@ -824,23 +1264,24 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
-  do_absolute_velocity_by_angle_grad(
+  do_absolute_velocity_EQ_gradient(
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define CMD "AstroMexWrapper('absolute_velocity_by_angle_grad',obj,L): "
+    #define CMD "AstroMexWrapper('absolute_velocity_EQ_gradient',obj,t): "
     CHECK_IN(3);
     CHECK_OUT(1);
     Astro * ptr = DATA_GET( arg_in_1 );
     mwSize sz;
-    double const * L = getVectorPointer( arg_in_2, sz, CMD " param L" );
+    double const * t = getVectorPointer( arg_in_2, sz, CMD " param t" );
     GC_namespace::mat_real_type G;
     G.resize(sz,6);
     for ( mwSize i = 0 ; i < sz ; ++i ) {
       real_type grad[6];
-      ptr->absolute_velocity_by_angle_gradient( L[i], grad );
+      ptr->absolute_velocity_EQ_gradient( t[i], grad );
       G(i,0) = grad[0]; G(i,1) = grad[1]; G(i,2) = grad[2];
       G(i,3) = grad[3]; G(i,4) = grad[4]; G(i,5) = grad[5];
     }
@@ -849,6 +1290,54 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_velocity0_EQ_jacobian(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('velocity0_EQ_jacobian',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    GC_namespace::mat_real_type G;
+    G.resize(3,6);
+    real_type JP[3][6];
+    ptr->velocity0_EQ_jacobian( JP );
+    for ( integer i = 0; i < 3; ++i )
+      for ( integer j = 0; j < 6; ++j )
+        G(i,j) = JP[i][j];
+    GC_namespace::to_mxArray(G,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_velocity_EQ_jacobian(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('velocity_EQ_jacobian',obj,t): "
+    CHECK_IN(3);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    double t = getScalarValue( arg_in_2, CMD " param t" );
+    GC_namespace::mat_real_type G;
+    G.resize(3,6);
+    real_type JP[3][6];
+    ptr->velocity_EQ_jacobian( t, JP );
+    for ( integer i = 0; i < 3; ++i )
+      for ( integer j = 0; j < 6; ++j )
+        G(i,j) = JP[i][j];
+    GC_namespace::to_mxArray(G,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_L_from_true_anomaly(
@@ -869,6 +1358,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_make_retrograde(
@@ -884,6 +1374,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_make_not_retrograde(
@@ -899,6 +1390,23 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_retrograde(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('retrograde',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    setScalarValue( arg_out_0, ptr->retrograde() ? 1 : 0 );
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_normal(
@@ -915,6 +1423,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_local_frame(
@@ -936,6 +1445,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_local_frame_by_L(
@@ -957,6 +1467,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_ellipse_frame(
@@ -977,6 +1488,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_eval_E(
@@ -1002,6 +1514,7 @@ namespace AstroLib {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   void
   do_eval_L(
@@ -1088,6 +1601,11 @@ namespace AstroLib {
     {"setup_PV",do_setup_PV},
     {"mean_anomaly",do_mean_anomaly},
     {"true_anomaly",do_true_anomaly},
+    {"p_orbital",do_p_orbital},
+    {"f_orbital",do_f_orbital},
+    {"g_orbital",do_g_orbital},
+    {"h_orbital",do_h_orbital},
+    {"k_orbital",do_k_orbital},
     {"L_orbital",do_L_orbital},
     {"L_orbital_D",do_L_orbital_D},
     {"L_orbital_DD",do_L_orbital_DD},
@@ -1104,15 +1622,32 @@ namespace AstroLib {
     {"apoapsis",do_apoapsis},
     {"periapsis",do_periapsis},
     {"orbit_energy",do_orbit_energy},
-    {"ray_by_L",do_ray_by_L},
-    {"ray_by_L_D",do_ray_by_L_D},
-    {"ray_by_L_DD",do_ray_by_L_DD},
-    {"ray_by_L_grad",do_ray_by_L_grad},
+    {"radius_by_L",do_radius_by_L},
+    {"radius_by_L_D",do_radius_by_L_D},
+    {"radius_by_L_DD",do_radius_by_L_DD},
+    {"M0",do_M0},
+    {"M0_EQ_gradient",do_M0_EQ_gradient},
+    {"theta0",do_theta0},
+    {"theta0_EQ_gradient",do_theta0_EQ_gradient},
+    {"E0_angle",do_E0_angle},
+    {"E0_EQ_gradient",do_E0_EQ_gradient},
+    {"E_angle",do_E_angle},
+    {"E_EQ_gradient",do_E_EQ_gradient},
+    {"H0_angle",do_H0_angle},
+    {"H0_EQ_gradient",do_H0_EQ_gradient},
+    {"H_angle",do_H_angle},
+    {"H_EQ_gradient",do_H_EQ_gradient},
+    {"radius_EQ_gradient",do_radius_EQ_gradient},
+    {"position_EQ_jacobian",do_position_EQ_jacobian},
+    {"position0_EQ_jacobian",do_position0_EQ_jacobian},
+    {"velocity_EQ_jacobian",do_velocity_EQ_jacobian},
+    {"velocity0_EQ_jacobian",do_velocity0_EQ_jacobian},
     {"absolute_velocity_by_angle",do_absolute_velocity_by_angle},
-    {"do_absolute_velocity_by_angle_grad",do_absolute_velocity_by_angle_grad},
+    {"absolute_velocity_EQ_gradient",do_absolute_velocity_EQ_gradient},
     {"L_from_true_anomaly",do_L_from_true_anomaly},
     {"make_retrograde",do_make_retrograde},
     {"make_not_retrograde",do_make_not_retrograde},
+    {"retrograde",do_retrograde},
     {"normal",do_normal},
     {"local_frame",do_local_frame},
     {"local_frame_by_L",do_local_frame_by_L},

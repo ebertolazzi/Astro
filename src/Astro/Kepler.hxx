@@ -154,6 +154,9 @@ namespace AstroLib {
 
   ///////////////////////////////////////////////////////////////
 
+  real_type mean_anomaly_to_E( real_type M, real_type e );
+  real_type mean_anomaly_to_H( real_type M, real_type e );
+
   void
   mean_anomaly_to_eccentric_anomaly_elliptic(
     real_type M,    // non costante
@@ -174,11 +177,10 @@ namespace AstroLib {
 
   ///////////////////////////////////////////////////////////////
 
-  real_type
-  eccentric_anomaly_to_true_anomaly( real_type E, real_type e );
-
-  real_type
-  true_anomaly_to_mean_anomaly( real_type theta, real_type e );
+  real_type eccentric_anomaly_to_true_anomaly( real_type E, real_type e );
+  real_type E_to_true_anomaly( real_type E, real_type e );
+  real_type H_to_true_anomaly( real_type H, real_type e );
+  real_type true_anomaly_to_mean_anomaly( real_type theta, real_type e );
 
   //////////////////////////////////////////////////////////
 

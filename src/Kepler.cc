@@ -301,6 +301,55 @@ namespace AstroLib {
   }
   */
 
+  real_type
+  mean_anomaly_to_E( real_type M, real_type e ) {
+
+    angle_in_range(M);
+
+    real_type dE=0, E = M;
+    for ( integer k = 0; k < 100; ++k ) { // risolvo con Newton
+      dE = (E-e*sin(E)-M) / (1-e*cos(E));
+      for ( integer kk = 0; abs(dE) > 0.1 && kk < 10; ++kk ) dE /= 2; // scalo se passi troppo grandi
+      E -= dE; // per la convergenza quando e ~1
+      if ( std::abs( dE ) < 1E-12 ) break;
+    }
+
+    UTILS_ASSERT(
+      std::abs( dE ) < 1E-10,
+      "mean_anomaly_to_E, do not converge:"
+      "\nE  = {}"
+      "\ndE = {}"
+      "\nM  = {}"
+      "\ne  = {}\n",
+      E, dE, M, e
+    );
+    return E;
+  }
+
+  real_type
+  mean_anomaly_to_H( real_type M, real_type e ) {
+    // M non va messo "in range"!!!
+
+    real_type absM = M > 0 ? M : -M;
+    real_type dH=0, H = 5*e-2.5 > absM ? pow( 6*absM/e, 1./3.) : log( 2*absM/e);
+    for ( integer k = 0; k < 100; ++k ) { // risolvo con Newton
+      dH = (e*sinh(H)-H-absM) / (e*cosh(H)-1);
+      H -= dH;
+      if ( std::abs( dH ) < 1E-12 ) break;
+    }
+    UTILS_ASSERT(
+      std::abs( dH ) < 1E-10,
+      "mean_anomaly_to_H, do not converge:"
+      "\nE  = {}"
+      "\ndE = {}"
+      "\nM  = {}"
+      "\ne  = {}\n",
+      H, dH, M, e
+    );
+    if ( M < 0 ) H = -H;
+    return H;
+  }
+
   //////////////////////////////////////////////////////////
   // E = Eccentric Anomaly
   // M = Mean Anomaly
@@ -320,26 +369,7 @@ namespace AstroLib {
     integer   nderiv
   ) {
 
-    angle_in_range(M);
-
-    real_type dE=0, E = M;
-    for ( integer k = 0; k < 100; ++k ) { // risolvo con Newton
-      dE = (E-e*sin(E)-M) / (1-e*cos(E));
-      for ( integer kk = 0; abs(dE) > 0.1 && kk < 10; ++kk ) dE /= 2; // scalo se passi troppo grandi
-      E -= dE; // per la convergenza quando e ~1
-      if ( std::abs( dE ) < 1E-12 ) break;
-    }
-
-    UTILS_ASSERT(
-      std::abs( dE ) < 1E-10,
-      "mean_anomaly_to_eccentric_anomaly_elliptic, do not converge:"
-      "\nE  = {}"
-      "\ndE = {}"
-      "\nM  = {}"
-      "\ne  = {}\n",
-      E, dE, M, e
-    );
-
+    real_type E = mean_anomaly_to_E( M, e );
     Evalues[0] = E;
     if ( nderiv < 1 ) return;
 
@@ -354,7 +384,6 @@ namespace AstroLib {
 
     Evalues[3] = e*Evalues[1]*(cos_E*power2(Evalues[1])+3*sin_E*Evalues[2])/bf;
   }
-
 
   //////////////////////////////////////////////////////////
   // F = Hyperbolic Eccentric Anomaly
@@ -374,33 +403,21 @@ namespace AstroLib {
     integer   nderiv
   ) {
     // M non va messo "in range"!!!
+    real_type H = mean_anomaly_to_H( M, e );
 
-    real_type absM = M > 0 ? M : -M;
-    real_type dF=0, F = 5*e-2.5 > absM ? pow( 6*absM/e, 1./3.) : log( 2*absM/e);
-    for ( integer k = 0; k < 100; ++k ) { // risolvo con Newton
-      dF = (e*sinh(F)-F-absM) / (e*cosh(F)-1);
-      F -= dF;
-      if ( std::abs( dF ) < 1E-12 ) break;
-    }
-    UTILS_ASSERT(
-      std::abs( dF ) < 1E-10,
-      "mean_anomaly_to_eccentric_anomaly_hyperbolic, do not converge dF {}\n", dF
-    );
-    if ( M < 0 ) F = -F;
-
-    Fvalues[0] = F;
+    Fvalues[0] = H;
     if ( nderiv < 1 ) return;
 
-    real_type cosh_F = cosh(F);
-    real_type bf = e*cosh_F-1;
+    real_type cosh_H = cosh(H);
+    real_type bf = e*cosh_H-1;
     Fvalues[1] = Mdot/bf;
     if ( nderiv < 2 ) return;
 
-    real_type sinh_F = sinh(F);
-    Fvalues[2] = -e*sinh_F*power2(Fvalues[1])/bf;
+    real_type sinh_H = sinh(H);
+    Fvalues[2] = -e*sinh_H*power2(Fvalues[1])/bf;
     if ( nderiv < 3 ) return;
 
-    Fvalues[3] = -e*Fvalues[1]*(cosh_F*power2(Fvalues[1])+3*sinh_F*Fvalues[2])/bf;
+    Fvalues[3] = -e*Fvalues[1]*(cosh_H*power2(Fvalues[1])+3*sinh_H*Fvalues[2])/bf;
   }
 
   //////////////////////////////////////////////////////////
@@ -413,6 +430,22 @@ namespace AstroLib {
     } else {
       return 2*atan(sqrt( (e+1)/(e-1) )*tanh(E/2) ); // theta
     }
+  }
+
+  //////////////////////////////////////////////////////////
+
+  real_type
+  E_to_true_anomaly( real_type E, real_type e ) {
+    return 2*atan2(sqrt(1+e)*sin(E/2),sqrt(1-e)*cos(E/2)); // theta
+  }
+
+  //////////////////////////////////////////////////////////
+
+  real_type
+  H_to_true_anomaly( real_type H, real_type e ) {
+    // CONTROLLARE @@@@@@@@@@@@@@@@@@
+    // conto quanti giri (positivi o negativi ha fatto)
+    return 2*atan(sqrt( (e+1)/(e-1) )*tanh(H/2) ); // theta
   }
 
   //////////////////////////////////////////////////////////

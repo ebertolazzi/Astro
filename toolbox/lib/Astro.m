@@ -57,20 +57,40 @@ classdef Astro < handle
       res = AstroMexWrapper( 'name', self.objectHandle );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    function [ X, Y, Z ] = position( self, t )
-      [ X, Y, Z ] = AstroMexWrapper( 'position', self.objectHandle, t );
+    function varargout = position( self, t )
+      if nargout == 1
+        varargout{1} = AstroMexWrapper( 'position', self.objectHandle, t );
+      else
+        [varargout{1},varargout{2},varargout{3}] = ...
+          AstroMexWrapper( 'position', self.objectHandle, t );
+      end
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    function [ VX, VY, VZ ] = velocity( self, t )
-      [ VX, VY, VZ ] = AstroMexWrapper( 'velocity', self.objectHandle, t );
+    function varargout = velocity( self, t )
+      if nargout == 1
+        varargout{1} = AstroMexWrapper( 'velocity', self.objectHandle, t );
+      else
+        [varargout{1},varargout{2},varargout{3}] = ...
+          AstroMexWrapper( 'velocity', self.objectHandle, t );
+      end
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    function [ AX, AY, AZ ] = acceleration( self, t )
-      [ AX, AY, AZ ] = AstroMexWrapper( 'acceleration', self.objectHandle, t );
+    function varargout = acceleration( self, t )
+      if nargout == 1
+        varargout{1} = AstroMexWrapper( 'acceleration', self.objectHandle, t );
+      else
+        [varargout{1},varargout{2},varargout{3}] = ...
+          AstroMexWrapper( 'acceleration', self.objectHandle, t );
+      end
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    function [ JX, JY, JZ ] = jerk( self, t )
-      [ JX, JY, JZ ] = AstroMexWrapper( 'jerk', self.objectHandle, t );
+    function varargout = jerk( self, t )
+      if nargout == 1
+        varargout{1} = AstroMexWrapper( 'jerk', self.objectHandle, t );
+      else
+        [varargout{1},varargout{2},varargout{3}] = ...
+          AstroMexWrapper( 'jerk', self.objectHandle, t );
+      end
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % name, t0, a, e, Omega, omega, iorb, M0, muS
@@ -95,6 +115,26 @@ classdef Astro < handle
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function ta = true_anomaly( self, t )
       ta = AstroMexWrapper( 'true_anomaly', self.objectHandle, t );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function varargout = p_orbital( self )
+      [varargout{1:nargout}] = AstroMexWrapper( 'p_orbital', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function varargout = f_orbital( self )
+      [varargout{1:nargout}] = AstroMexWrapper( 'f_orbital', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function varargout = g_orbital( self )
+      [varargout{1:nargout}] = AstroMexWrapper( 'g_orbital', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function varargout = h_orbital( self )
+      [varargout{1:nargout}] = AstroMexWrapper( 'h_orbital', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function varargout = k_orbital( self )
+      [varargout{1:nargout}] = AstroMexWrapper( 'k_orbital', self.objectHandle );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function varargout = L_orbital( self, varargin )
@@ -161,28 +201,92 @@ classdef Astro < handle
       res = AstroMexWrapper( 'orbit_energy', self.objectHandle );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    function res = ray_by_L( self, L )
-      res = AstroMexWrapper( 'ray_by_L', self.objectHandle, L  );
+    function res = radius_by_L( self, L )
+      res = AstroMexWrapper( 'radius_by_L', self.objectHandle, L  );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    function res = ray_by_L_D( self, L )
-      res = AstroMexWrapper( 'ray_by_L_D', self.objectHandle, L  );
+    function res = radius_by_L_D( self, L )
+      res = AstroMexWrapper( 'radius_by_L_D', self.objectHandle, L  );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    function res = ray_by_L_DD( self, L )
-      res = AstroMexWrapper( 'ray_by_L_DD', self.objectHandle, L );
+    function res = radius_by_L_DD( self, L )
+      res = AstroMexWrapper( 'radius_by_L_DD', self.objectHandle, L );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    function res = ray_by_L_grad( self, L )
-      res = AstroMexWrapper( 'ray_by_L_grad', self.objectHandle, L );
+    function res = M0( self )
+      res = AstroMexWrapper( 'M0', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = M0_EQ_gradient( self )
+      res = AstroMexWrapper( 'M0_EQ_gradient', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = E0_angle( self )
+      res = AstroMexWrapper( 'E0_angle', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = E0_EQ_gradient( self )
+      res = AstroMexWrapper( 'E0_EQ_gradient', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = E_angle( self, t )
+      res = AstroMexWrapper( 'E_angle', self.objectHandle, t );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = E_EQ_gradient( self, t )
+      res = AstroMexWrapper( 'E_EQ_gradient', self.objectHandle, t );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = H0_angle( self )
+      res = AstroMexWrapper( 'H0_angle', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = H0_EQ_gradient( self )
+      res = AstroMexWrapper( 'H0_EQ_gradient', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = H_angle( self, t )
+      res = AstroMexWrapper( 'H_angle', self.objectHandle, t );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = H_EQ_gradient( self, t )
+      res = AstroMexWrapper( 'H_EQ_gradient', self.objectHandle, t );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = theta0( self )
+      res = AstroMexWrapper( 'theta0', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = theta0_EQ_gradient( self )
+      res = AstroMexWrapper( 'theta0_EQ_gradient', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = radius_EQ_gradient( self, t )
+      res = AstroMexWrapper( 'radius_EQ_gradient', self.objectHandle, t );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = position0_EQ_jacobian( self )
+      res = AstroMexWrapper( 'position0_EQ_jacobian', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = position_EQ_jacobian( self, t )
+      res = AstroMexWrapper( 'position_EQ_jacobian', self.objectHandle, t );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function res = absolute_velocity_by_angle( self, L )
       res = AstroMexWrapper( 'absolute_velocity_by_angle', self.objectHandle, L );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    function res = absolute_velocity_by_angle_grad( self, L )
-      res = AstroMexWrapper( 'absolute_velocity_by_angle_grad', self.objectHandle, L );
+    function res = absolute_velocity_EQ_gradient( self, t )
+      res = AstroMexWrapper( 'absolute_velocity_EQ_gradient', self.objectHandle, t );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = velocity0_EQ_jacobian( self )
+      res = AstroMexWrapper( 'velocity0_EQ_jacobian', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = velocity_EQ_jacobian( self, t )
+      res = AstroMexWrapper( 'velocity_EQ_jacobian', self.objectHandle, t );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function res = L_from_true_anomaly( self, nu )
@@ -195,6 +299,10 @@ classdef Astro < handle
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function make_not_retrograde( self )
       AstroMexWrapper( 'make_not_retrograde', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = retrograde( self )
+      res = AstroMexWrapper( 'retrograde', self.objectHandle );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function N = normal( self )

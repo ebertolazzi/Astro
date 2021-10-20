@@ -36,6 +36,41 @@ main() {
   int m = 0;
   int ok = AstroLib::Lambert( P1, P2, t2-t1, m, muSun_UA3DAY2, V1, V2 );
   std::cout << "ok = " << ok << "\n";
+
+
+  AstroLib::Astro A, B;
+
+  real_type AU_to_km = 1.49597870691E8;
+  real_type Y_to_s   = 86400*365.25;
+  real_type mu_SUN   = 1.32712440018E11;
+  mu_SUN /= (AU_to_km*AU_to_km*AU_to_km)/(Y_to_s*Y_to_s);
+
+  std::string name = "Earth";
+  real_type t0   = 54000;
+  real_type muS  = mu_SUN;
+  real_type p    = 0.999723;
+  real_type f    = 0;
+  real_type g    = 0.0001;
+  real_type h    = -1.33605e-07;
+  real_type k    = -0;
+  real_type L0   = 1.3;
+  bool retrograde = false;
+
+  A.setup_Equinoctial( name, t0, p, f, g, h, k, retrograde, L0, muS );
+
+  g -= 0.001;
+  B.setup_Equinoctial( name, t0, p, f, g, h, k, retrograde, L0, muS );
+
+  A.info( std::cout );
+  B.info( std::cout );
+
+  fmt::print(
+    "A.L_orbital(...) = {}\n"
+    "B.L_orbital(...) = {}\n",
+    A.L_orbital(t0,0),
+    B.L_orbital(t0,0)
+  );
+
   std::cout << "All done folks!!\n";
   return 0;
 }
