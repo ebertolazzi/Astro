@@ -213,6 +213,10 @@ classdef Astro < handle
       res = AstroMexWrapper( 'radius_by_L_DD', self.objectHandle, L );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = L_orbital_EQ_gradient( self, t )
+      res = AstroMexWrapper( 'L_orbital_EQ_gradient', self.objectHandle, t );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function res = M0( self )
       res = AstroMexWrapper( 'M0', self.objectHandle );
     end

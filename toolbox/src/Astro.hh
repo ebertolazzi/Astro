@@ -403,8 +403,8 @@ namespace AstroLib {
     void position_EQ_jacobian( real_type t, real_type JP[3][6] ) const;
     void velocity_EQ_jacobian( real_type t, real_type JV[3][6] ) const;
 
-    void position0_EQ_jacobian( real_type JP[3][6] ) const;
-    void velocity0_EQ_jacobian( real_type JV[3][6] ) const;
+    void position0_EQ_jacobian( real_type JP[3][6], real_type L0 ) const;
+    void velocity0_EQ_jacobian( real_type JV[3][6], real_type L0 ) const;
 
   };
 

@@ -340,7 +340,7 @@ namespace AstroLib {
     UTILS_ASSERT(
       std::abs( dH ) < 1E-10,
       "mean_anomaly_to_H, do not converge:"
-      "\nE  = {}"
+      "\nH  = {}"
       "\ndE = {}"
       "\nM  = {}"
       "\ne  = {}\n",
@@ -389,10 +389,10 @@ namespace AstroLib {
   // F = Hyperbolic Eccentric Anomaly
   // M = Mean Anomaly
   //
-  // solve e*sinh(F)-F=M
-  // solve e*cosh(F)F'-F'=Mdot
-  // solve e*cosh(F)F''-F''=-e*sinh(F)(F')^2
-  // solve e*cosh(F)F'''-F'''=-3*e*sinh(F) F' F'' -e*cosh(F)(F')^3
+  // solve e*sinh(H)-H=M
+  // solve e*cosh(H)H'-H'=Mdot
+  // solve e*cosh(H)H''-H''=-e*sinh(H)(H')^2
+  // solve e*cosh(H)H'''-H'''=-3*e*sinh(H) H' H'' -e*cosh(H)(H')^3
   //
   void
   mean_anomaly_to_eccentric_anomaly_hyperbolic(
@@ -460,9 +460,9 @@ namespace AstroLib {
       return E-e*sin(E);
     } else {
       // sinh( 2* atanh( X ) ) = 2*x/(1-x^2)
-      //real_type F = 2*atanh( sqrt( (e-1)/(e+1) ) * tan(th2) );
-      real_type F = 2*atan( sqrt( (e-1)/(e+1) ) * tanh(th2) );
-      return e*sinh(F)-F;
+      real_type H = 2*atanh( sqrt( (e-1)/(e+1) ) * tan(th2) );
+      //real_type H = 2*atan( sqrt( (e-1)/(e+1) ) * tanh(th2) );
+      return e*sinh(H)-H;
     }
   }
 

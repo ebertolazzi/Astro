@@ -27,87 +27,86 @@ A = Astro();
 A.setup_Equinoctial( data );
 %A.print();
 
-ttt = 54100;
-
+ttt = 54000;
 A1 = Astro();
-G  = A.position_EQ_jacobian(ttt);
-P = A.position(ttt);
+G  = A.velocity0_EQ_jacobian();
+P = A.velocity(ttt);
 
-disp('analytics')
+disp('Jacobian')
 G
 
-disp('finite difference')
+disp('Finite Difference')
 for delta=[1e-3,1e-6,1e-9,1e-12]
 
   data1   = data;
   data1.p = data.p+delta;
   A1.setup_Equinoctial( data1 );
-  pp = A1.position(ttt);
+  pp = A1.velocity(ttt);
 
   data1   = data;
   data1.p = data.p-delta;
   A1.setup_Equinoctial( data1 );
-  pm = A1.position(ttt);
+  pm = A1.velocity(ttt);
 
   Dp = (pp-pm)./(2*delta);
 
   data1   = data;
   data1.f = data.f+delta;
   A1.setup_Equinoctial( data1 );
-  fp = A1.position(ttt);
+  fp = A1.velocity(ttt);
 
   data1   = data;
   data1.f = data.f-delta;
   A1.setup_Equinoctial( data1 );
-  fm = A1.position(ttt);
+  fm = A1.velocity(ttt);
 
   Df = (fp-fm)./(2*delta);
 
   data1   = data;
   data1.g = data.g+delta;
   A1.setup_Equinoctial( data1 );
-  gp = A1.position(ttt);
+  gp = A1.velocity(ttt);
 
   data1   = data;
   data1.g = data.g-delta;
   A1.setup_Equinoctial( data1 );
-  gm = A1.position(ttt);
+  gm = A1.velocity(ttt);
 
   Dg = (gp-gm)./(2*delta);
 
   data1   = data;
   data1.h = data.h+delta;
   A1.setup_Equinoctial( data1 );
-  hp = A1.position(ttt);
+  hp = A1.velocity(ttt);
 
   data1   = data;
   data1.h = data.h-delta;
   A1.setup_Equinoctial( data1 );
-  hm = A1.position(ttt);
+  hm = A1.velocity(ttt);
  
   Dh = (hp-hm)./(2*delta);
 
   data1   = data;
   data1.k = data.k+delta;
   A1.setup_Equinoctial( data1 );
-  kp = A1.position(ttt);
+  kp = A1.velocity(ttt);
  
   data1   = data;
   data1.k = data.k-delta;
   A1.setup_Equinoctial( data1 );
-  km = A1.position(ttt);
+  km = A1.velocity(ttt);
 
   Dk = (kp-km)./(2*delta);
 
   data1    = data;
   data1.L0 = data.L0+delta;
   A1.setup_Equinoctial( data1 );
-  Lp = A1.position(ttt);
+  Lp = A1.velocity(ttt);
 
   data1    = data;
   data1.L0 = data.L0-delta;
   A1.setup_Equinoctial( data1 );
-  Lm = A1.position(ttt);
+  Lm = A1.velocity(ttt);
 
   DL = (Lp-Lm)./(2*delta);
 

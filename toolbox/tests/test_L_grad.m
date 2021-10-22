@@ -1,5 +1,3 @@
-format shortG
-
 AU_to_km = 1.49597870691E8;
 Y_to_s   = 86400*365.25;
 mu_SUN   = 1.32712440018E11; %km^3/s^2
@@ -27,89 +25,87 @@ A = Astro();
 A.setup_Equinoctial( data );
 %A.print();
 
-ttt = 54100;
-
+ttt = 54000+4000;
 A1 = Astro();
-G  = A.position_EQ_jacobian(ttt);
-P = A.position(ttt);
+G  = A.L_orbital_EQ_gradient(ttt);
+M0 = A.L_orbital(ttt,0);
 
-disp('analytics')
-G
+fprintf('G = %10.4g %10.4g %10.4g %10.4g %10.4g %10.4g\n', ...
+        G(1), G(2), G(3), G(4), G(5), G(6) );
 
-disp('finite difference')
 for delta=[1e-3,1e-6,1e-9,1e-12]
 
   data1   = data;
   data1.p = data.p+delta;
   A1.setup_Equinoctial( data1 );
-  pp = A1.position(ttt);
+  pp = A1.L_orbital(ttt,0);
 
   data1   = data;
   data1.p = data.p-delta;
   A1.setup_Equinoctial( data1 );
-  pm = A1.position(ttt);
+  pm = A1.L_orbital(ttt,0);
 
-  Dp = (pp-pm)./(2*delta);
+  Dp = (pp-pm)/(2*delta);
 
   data1   = data;
   data1.f = data.f+delta;
   A1.setup_Equinoctial( data1 );
-  fp = A1.position(ttt);
+  fp = A1.L_orbital(ttt,0);
 
   data1   = data;
   data1.f = data.f-delta;
   A1.setup_Equinoctial( data1 );
-  fm = A1.position(ttt);
+  fm = A1.L_orbital(ttt,0);
 
-  Df = (fp-fm)./(2*delta);
+  Df = (fp-fm)/(2*delta);
 
   data1   = data;
   data1.g = data.g+delta;
   A1.setup_Equinoctial( data1 );
-  gp = A1.position(ttt);
+  gp = A1.L_orbital(ttt,0);
 
   data1   = data;
   data1.g = data.g-delta;
   A1.setup_Equinoctial( data1 );
-  gm = A1.position(ttt);
+  gm = A1.L_orbital(ttt,0);
 
-  Dg = (gp-gm)./(2*delta);
+  Dg = (gp-gm)/(2*delta);
 
   data1   = data;
   data1.h = data.h+delta;
   A1.setup_Equinoctial( data1 );
-  hp = A1.position(ttt);
+  hp = A1.L_orbital(ttt,0);
 
   data1   = data;
   data1.h = data.h-delta;
   A1.setup_Equinoctial( data1 );
-  hm = A1.position(ttt);
+  hm = A1.L_orbital(ttt,0);
  
-  Dh = (hp-hm)./(2*delta);
+  Dh = (hp-hm)/(2*delta);
 
   data1   = data;
   data1.k = data.k+delta;
   A1.setup_Equinoctial( data1 );
-  kp = A1.position(ttt);
+  kp = A1.L_orbital(ttt,0);
  
   data1   = data;
   data1.k = data.k-delta;
   A1.setup_Equinoctial( data1 );
-  km = A1.position(ttt);
+  km = A1.L_orbital(ttt,0);
 
-  Dk = (kp-km)./(2*delta);
+  Dk = (kp-km)/(2*delta);
 
   data1    = data;
   data1.L0 = data.L0+delta;
   A1.setup_Equinoctial( data1 );
-  Lp = A1.position(ttt);
+  Lp = A1.L_orbital(ttt,0);
 
   data1    = data;
   data1.L0 = data.L0-delta;
   A1.setup_Equinoctial( data1 );
-  Lm = A1.position(ttt);
+  Lm = A1.L_orbital(ttt,0);
 
-  DL = (Lp-Lm)./(2*delta);
+  DL = (Lp-Lm)/(2*delta);
 
-  [ Dp, Df, Dg, Dh, Dk, DL]
+  fprintf('G = %10.4g %10.4g %10.4g %10.4g %10.4g %10.4g\n', Dp, Df, Dg, Dh, Dk, DL );
 end

@@ -227,7 +227,6 @@ namespace AstroLib {
   ) {
     #define CMD "AstroMexWrapper('velocity',obj,t): "
     CHECK_IN(3);
-    CHECK_OUT(3);
     Astro * ptr = DATA_GET( arg_in_1 );
     mwSize sz;
     double const * t = getVectorPointer( arg_in_2, sz, CMD " param t" );
@@ -258,7 +257,6 @@ namespace AstroLib {
   ) {
     #define CMD "AstroMexWrapper('acceleration',obj,t): "
     CHECK_IN(3);
-    CHECK_OUT(3);
     Astro * ptr = DATA_GET( arg_in_1 );
     mwSize sz;
     double const * t = getVectorPointer( arg_in_2, sz, CMD " param t" );
@@ -289,7 +287,6 @@ namespace AstroLib {
   ) {
     #define CMD "AstroMexWrapper('jerk',obj,t): "
     CHECK_IN(3);
-    CHECK_OUT(3);
     Astro * ptr = DATA_GET( arg_in_1 );
     mwSize sz;
     double const * t = getVectorPointer( arg_in_2, sz, CMD " param t" );
@@ -931,6 +928,32 @@ namespace AstroLib {
 
   static
   void
+  do_L_orbital_EQ_gradient(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('L_orbital_EQ_gradient',obj,t): "
+    CHECK_IN(3);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    mwSize sz;
+    double const * t = getVectorPointer( arg_in_2, sz, CMD " param t" );
+    GC_namespace::mat_real_type G;
+    G.resize(sz,6);
+    for ( mwSize i = 0 ; i < sz ; ++i ) {
+      real_type grad[6];
+      ptr->L_orbital_EQ_gradient( t[i], grad );
+      G(i,0) = grad[0]; G(i,1) = grad[1]; G(i,2) = grad[2];
+      G(i,3) = grad[3]; G(i,4) = grad[4]; G(i,5) = grad[5];
+    }
+    GC_namespace::to_mxArray(G,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
   do_M0(
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
@@ -1238,7 +1261,7 @@ namespace AstroLib {
     GC_namespace::mat_real_type G;
     G.resize(3,6);
     real_type JP[3][6];
-    ptr->position0_EQ_jacobian( JP );
+    ptr->position0_EQ_jacobian( JP, ptr->L0_orbital() );
     for ( integer i = 0; i < 3; ++i )
       for ( integer j = 0; j < 6; ++j )
         G(i,j) = JP[i][j];
@@ -1304,7 +1327,7 @@ namespace AstroLib {
     GC_namespace::mat_real_type G;
     G.resize(3,6);
     real_type JP[3][6];
-    ptr->velocity0_EQ_jacobian( JP );
+    ptr->velocity0_EQ_jacobian( JP, ptr->L0_orbital() );
     for ( integer i = 0; i < 3; ++i )
       for ( integer j = 0; j < 6; ++j )
         G(i,j) = JP[i][j];
@@ -1625,6 +1648,7 @@ namespace AstroLib {
     {"radius_by_L",do_radius_by_L},
     {"radius_by_L_D",do_radius_by_L_D},
     {"radius_by_L_DD",do_radius_by_L_DD},
+    {"L_orbital_EQ_gradient",do_L_orbital_EQ_gradient},
     {"M0",do_M0},
     {"M0_EQ_gradient",do_M0_EQ_gradient},
     {"theta0",do_theta0},

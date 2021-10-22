@@ -298,9 +298,9 @@ namespace AstroLib {
   // solve E''-e*cos(E)E''=-e*sin(E)(E')^2
   //
   // Hyperbolic
-  // solve e*sinh(F)-F=M
-  // solve e*cosh(F)F'-F'=Mdot
-  // solve e*cosh(F)F''-F''=-e*sinh(F)(F')^2
+  // solve e*sinh(H)-H=M
+  // solve e*cosh(H)H'-H'=Mdot
+  // solve e*cosh(H)H''-H''=-e*sinh(H)(H')^2
   */
   void
   Astro::eval_E(
@@ -1314,9 +1314,10 @@ namespace AstroLib {
     real_type theta   = 0;
     real_type theta_e = 0;
     real_type te1     = sqrt(1+e);
-    real_type te2     = sqrt(1-e);
 
     if ( e <= 1 ) { // caso ellittico
+
+      real_type te2 = sqrt(1-e);
 
       // M = E-e*sin(E) = E - (h^2+k^2) * E
 
@@ -1340,13 +1341,14 @@ namespace AstroLib {
 
     } else {
 
+      real_type te2 = sqrt(e-1);
+
       // |M| = e*sinh(H)-H = sqrt(f^2+g^2)*sinh(H)-H
 
       real_type H_grad[6];
       real_type H = H_EQ_gradient( t, H_grad );
 
-      // da F calcolo theta = 2 * atan( sqrt(1+e)/sqrt(1-e)*tanh(F/2))
-      theta = 2*atan2(te2*sin(H/2),te1*cos(H/2));
+      theta = 2*atan((te1/te2)*tanh(H/2));
 
       real_type t3      = cosh(H)-e;
                 theta_e = sinh(H)/(te1*te2*t3);
@@ -1365,16 +1367,20 @@ namespace AstroLib {
 
     // grad atan2(g,f) + atan2(k,h)
 
-    grad[1] -= g/e2;
-    grad[2] += f/e2;
-    grad[3] -= k/hk;
-    grad[4] += h/hk;
+    if ( e > 0 ) {
+      grad[1] -= g/e2;
+      grad[2] += f/e2;
 
-    // grad e
-    grad[1] += theta_e*f/e;
-    grad[2] += theta_e*g/e;
+      // grad e
+      grad[1] += theta_e*f/e;
+      grad[2] += theta_e*g/e;
+    }
+    if ( hk > 0 ) {
+      grad[3] -= k/hk;
+      grad[4] += h/hk;
+    }
 
-    return theta + atan2(g,f) + atan2(k,h);
+    return theta + atan2(g,f);
   }
 
   void
@@ -1405,7 +1411,6 @@ namespace AstroLib {
     grad[3] += tmp * L_grad[3];
     grad[4] += tmp * L_grad[4];
     grad[5]  = tmp * L_grad[5];
-
   }
 
   void
@@ -1442,7 +1447,7 @@ namespace AstroLib {
 
 
   void
-  Astro::position0_EQ_jacobian( real_type JP[3][6] ) const {
+  Astro::position0_EQ_jacobian( real_type JP[3][6], real_type L0 ) const {
     real_type p = m_EQ.p;
     real_type f = m_EQ.f;
     real_type g = m_EQ.g;
@@ -1453,8 +1458,8 @@ namespace AstroLib {
     real_type t1  = h * h;
     real_type t2  = k * k;
     real_type t3  = 1 + t1 - t2;
-    real_type t4  = cos(m_L0);
-    real_type t5  = sin(m_L0);
+    real_type t4  = cos(L0);
+    real_type t5  = sin(L0);
     real_type t6  = t5 * h;
     real_type t7  = 2 * t6;
     real_type t8  = t7 * I;
@@ -1511,10 +1516,10 @@ namespace AstroLib {
   void
   Astro::position_EQ_jacobian( real_type t, real_type JP[3][6] ) const {
 
-    position0_EQ_jacobian( JP );
-
     real_type L_grad[6];
-    /* real_type L = */ L_orbital_EQ_gradient( t, L_grad );
+    real_type L = L_orbital_EQ_gradient( t, L_grad );
+
+    position0_EQ_jacobian( JP, L );
 
     /*
        P(t,p,f,g,h,k,L(t,p,f,g,h,k,L0,t0))
@@ -1537,7 +1542,7 @@ namespace AstroLib {
   }
 
   void
-  Astro::velocity0_EQ_jacobian( real_type JV[3][6] ) const {
+  Astro::velocity0_EQ_jacobian( real_type JV[3][6], real_type L0 ) const {
     real_type p = m_EQ.p;
     real_type f = m_EQ.f;
     real_type g = m_EQ.g;
@@ -1550,8 +1555,8 @@ namespace AstroLib {
     real_type t3  = h * h;
     real_type t4  = k * k;
     real_type t5  = 1 + t3 - t4;
-    real_type t6  = sin(m_L0);
-    real_type t7  = cos(m_L0);
+    real_type t6  = sin(L0);
+    real_type t7  = cos(L0);
     real_type t8  = f + t7;
     real_type t9  = t8 * h;
     real_type t10 = t9 * k;
@@ -1581,12 +1586,14 @@ namespace AstroLib {
     JV[0][3] = -4 * t8 * t14 * t2 * t23 * k;
     JV[0][4] = 4 * t24 * (k * ((t3 + 1) * g + t6 * (t3 + 1)) + t21 * (((1 - k) * (k + 1) + t3) * f + t20) / 2) * t23;
     JV[0][5] = -t24 * (t22 * t6 + t20) * t13;
+
     JV[1][0] = t8 * t1 * t2 * t13;
     JV[1][1] = t24 * t16 * t13;
     JV[1][2] = -t24 * t18 * t13;
     JV[1][3] = t25 * (-t11 * t21 * ((t4 + 1) * f + t7 * (t4 + 1)) - (g * t4 + t15 * t6 + g * (1 - t3)) * k) * t23;
     JV[1][4] = -t25 * t12 * t23 * h;
     JV[1][5] = t24 * (-t16 * t6 - t18 * t7) * t13;
+
     JV[2][0] = -t2 * (t26 * t17 + t9) * t1 * t13;
     JV[2][1] = t25 * h * t13;
     JV[2][2] = t26 * t25 * t13;
@@ -1598,10 +1605,10 @@ namespace AstroLib {
   void
   Astro::velocity_EQ_jacobian( real_type t, real_type JV[3][6] ) const {
 
-    velocity0_EQ_jacobian( JV );
-
     real_type L_grad[6];
-    /* real_type L = */ L_orbital_EQ_gradient( t, L_grad );
+    real_type L = L_orbital_EQ_gradient( t, L_grad );
+
+    velocity0_EQ_jacobian( JV, L );
 
     /*
        P(t,p,f,g,h,k,L(t,p,f,g,h,k,L0,t0))
