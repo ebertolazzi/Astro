@@ -25,6 +25,10 @@
 
 namespace AstroLib {
 
+  using std::abs;
+  using std::max;
+  using std::min;
+
   /*
   //   _                      _             _
   //  (_)_ ____   ____ _ _ __(_) __ _ _ __ | |_ ___
@@ -144,7 +148,7 @@ namespace AstroLib {
     real_type g2 = (A[1]+h2*A[2])/muS;
     real_type E2 = muS*(g2*g2+f2*f2-1)/EQ.p/2;
 
-    if ( std::abs(E-E1) < std::abs(E-E2) ) {
+    if ( abs(E-E1) < abs(E-E2) ) {
       EQ.k = k1; EQ.h = EQ.h1; EQ.f = f1; EQ.g = g1;
     } else {
       EQ.k = k2; EQ.h = EQ.h2; EQ.f = f2; EQ.g = g2;
@@ -309,13 +313,14 @@ namespace AstroLib {
     real_type dE=0, E = M;
     for ( integer k = 0; k < 100; ++k ) { // risolvo con Newton
       dE = (E-e*sin(E)-M) / (1-e*cos(E));
-      for ( integer kk = 0; abs(dE) > 0.1 && kk < 10; ++kk ) dE /= 2; // scalo se passi troppo grandi
+      if      ( dE >  0.1 ) dE = 0.1;
+      else if ( dE < -0.1 ) dE = -0.1; // scalo se passi troppo grandi
       E -= dE; // per la convergenza quando e ~1
-      if ( std::abs( dE ) < 1E-12 ) break;
+      if ( abs( dE ) < 1E-12 ) break;
     }
 
     UTILS_ASSERT(
-      std::abs( dE ) < 1E-10,
+      abs( dE ) < 1E-10,
       "mean_anomaly_to_E, do not converge:"
       "\nE  = {}"
       "\ndE = {}"
@@ -335,10 +340,10 @@ namespace AstroLib {
     for ( integer k = 0; k < 100; ++k ) { // risolvo con Newton
       dH = (e*sinh(H)-H-absM) / (e*cosh(H)-1);
       H -= dH;
-      if ( std::abs( dH ) < 1E-12 ) break;
+      if ( abs( dH ) < 1E-12 ) break;
     }
     UTILS_ASSERT(
-      std::abs( dH ) < 1E-10,
+      abs( dH ) < 1E-10,
       "mean_anomaly_to_H, do not converge:"
       "\nH  = {}"
       "\ndE = {}"

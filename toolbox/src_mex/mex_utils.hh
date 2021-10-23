@@ -102,14 +102,6 @@ getScalarValue( mxArray const * arg, char const msg[] ) {
 
 static
 inline
-bool
-getBool( mxArray const * arg, char const msg[] ) {
-  MEX_ASSERT( mxIsLogicalScalar(arg), msg );
-  return mxIsLogicalScalarTrue(arg);
-}
-
-static
-inline
 int64_t
 getInt( mxArray const * arg, char const msg[] ) {
   mwSize number_of_dimensions = mxGetNumberOfDimensions(arg);
@@ -155,6 +147,14 @@ getInt( mxArray const * arg, char const msg[] ) {
     break;
   }
   return res;
+}
+
+static
+inline
+bool
+getBool( mxArray const * arg, char const msg[] ) {
+  if ( mxIsLogicalScalar(arg) ) return mxIsLogicalScalarTrue(arg);
+  return getInt(arg,msg) != 0;
 }
 
 static

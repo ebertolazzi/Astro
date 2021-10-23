@@ -126,7 +126,7 @@ namespace AstroLib {
 
     string const & name() const { return m_name; }
 
-    void check_for_consistency() const;
+    bool check_for_consistency() const;
 
     string info() const;
 
@@ -208,6 +208,14 @@ namespace AstroLib {
       real_type       muS,
       real_type       t0
     );
+
+    bool
+    check_parameters( Equinoctial const & EQ ) const {
+      real_type p = EQ.p;
+      real_type h = EQ.h;
+      real_type k = EQ.k;
+      return p > 0 && h*h+k*k <= 1;
+    }
 
     Astro const &
     setup( GenericContainer & vars ) {

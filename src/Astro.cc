@@ -64,21 +64,29 @@ namespace AstroLib {
     return *this;
   }
 
-  void
+  bool
   Astro::check_for_consistency() const {
     //ASSERT( p>0,         "Astro::check p = " << p << " must be positive!");
     //ASSERT( f*f+g*g < 1, "Astro::check f*f+g*g = " << f*f+g*g << " must be less than 1!");
+    real_type p  = m_EQ.p;
     real_type h  = m_EQ.h;
     real_type k  = m_EQ.k;
-    real_type e2 = h*h+k*k;
+    real_type hk = h*h+k*k;
+    return p > 0 && hk < 1 && m_muS > 0;
+    /*
     UTILS_ASSERT(
-      e2 < 1,
-      "Astro::check_for_consistency h*h+k*k = {} must be less than 1!\n", e2
+      p > 0,
+      "Astro::check_for_consistency p = {} must be positive!\n", p
+    );
+    UTILS_ASSERT(
+      hk < 1,
+      "Astro::check_for_consistency h*h+k*k = {} must be less than 1!\n", hk
     );
     UTILS_ASSERT(
       m_muS > 0,
       "Astro::check_for_consistency muS = {} must be positive!\n", m_muS
     );
+    */
   }
 
   real_type
@@ -233,7 +241,6 @@ namespace AstroLib {
 
     M0_Mdot_grad_eval();
 
-    check_for_consistency();
     return *this;
   }
 
@@ -251,11 +258,23 @@ namespace AstroLib {
     real_type      muS
   ) {
 
-    m_EQ.p          = p;
-    m_EQ.f          = f;
-    m_EQ.g          = g;
-    m_EQ.h          = h;
-    m_EQ.k          = k;
+    UTILS_ASSERT(
+      p > 0,
+      "Astro::setup_Equinoctial, agument p = {} must be positive!\n", p
+    );
+
+    m_EQ.p = p;
+    m_EQ.f = f;
+    m_EQ.g = g;
+    m_EQ.h = h;
+    m_EQ.k = k;
+
+    UTILS_WARNING(
+      h*h+k*k <= 1,
+      "Astro::setup_Equinoctial, agument h = {} k = {} should be h^2+k^2 < 1\n",
+      h, k
+    );
+
     m_EQ.retrograde = retrograde;
 
     from_equinoctial_to_Keplerian( m_EQ, m_K );
@@ -269,8 +288,6 @@ namespace AstroLib {
     m_M0     = true_anomaly_to_mean_anomaly( m_theta0, m_K.e );
 
     M0_Mdot_grad_eval();
-
-    check_for_consistency();
 
     return *this;
   }
@@ -292,17 +309,25 @@ namespace AstroLib {
 
   Astro const &
   Astro::setup_Equinoctial( string const & n, GenericContainer & vars ) {
+    GenericContainer const & R = vars("retrograde");
+    bool retrograde = false;
+    if ( R.get_type() == GC_namespace::GC_BOOL ) {
+      retrograde = R.get_bool();
+    } else {
+      retrograde = R.get_as_int() != 0;
+    }
+
     return setup_Equinoctial(
       n,
-      vars("t0")         . get_number(),
-      vars("p")          . get_number(),
-      vars("f")          . get_number(),
-      vars("g")          . get_number(),
-      vars("h")          . get_number(),
-      vars("k")          . get_number(),
-      vars("retrograde") . get_bool(),
-      vars("L")          . get_number(),
-      vars("muS")        . get_number()
+      vars("t0").get_number(),
+      vars("p").get_number(),
+      vars("f").get_number(),
+      vars("g").get_number(),
+      vars("h").get_number(),
+      vars("k").get_number(),
+      retrograde,
+      vars("L").get_number(),
+      vars("muS").get_number()
     );
   }
 
@@ -467,7 +492,7 @@ namespace AstroLib {
       }
       return L0 + dL;
     } else {
-      return this->L_orbital( _t0 + dt );
+      return L_orbital( _t0 + dt );
     }
   }
 

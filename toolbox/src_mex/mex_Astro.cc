@@ -191,6 +191,22 @@ namespace AstroLib {
 
   static
   void
+  do_check_for_consistency(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('check_for_consistency',obj): "
+    CHECK_IN(2);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    GC_namespace::to_mxArray(ptr->check_for_consistency(),arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
   do_position(
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
@@ -392,16 +408,22 @@ namespace AstroLib {
       } catch (...) {
         mexErrMsgTxt( "mxArray_to_GenericContainer failed" );
       }
-      name       = gc("name").get_string(CMD " param struct field 'name'" );
-      t0         = gc("t0").get_number();
-      p          = gc("p").get_number();
-      f          = gc("f").get_number();
-      g          = gc("g").get_number();
-      h          = gc("h").get_number();
-      k          = gc("k").get_number();
-      retrograde = gc("retrograde").get_bool();
-      L0         = gc("L0").get_number();
-      muS        = gc("muS").get_number();
+      GenericContainer const & R = gc("retrograde");
+      retrograde = false;
+      if ( R.get_type() == GC_namespace::GC_BOOL ) {
+        retrograde = R.get_bool();
+      } else {
+        retrograde = R.get_as_int() != 0;
+      }
+      name = gc("name").get_string(CMD " param struct field 'name'" );
+      t0   = gc("t0").get_number();
+      p    = gc("p").get_number();
+      f    = gc("f").get_number();
+      g    = gc("g").get_number();
+      h    = gc("h").get_number();
+      k    = gc("k").get_number();
+      L0   = gc("L0").get_number();
+      muS  = gc("muS").get_number();
     }
     ptr->setup_Equinoctial( name, t0, p, f, g, h, k, retrograde, L0, muS );
     #undef CMD
@@ -1663,6 +1685,7 @@ namespace AstroLib {
     {"delete",do_delete},
     {"copy",do_copy},
     {"name",do_name},
+    {"check_for_consistency",do_check_for_consistency},
     {"position",do_position},
     {"velocity",do_velocity},
     {"acceleration",do_acceleration},

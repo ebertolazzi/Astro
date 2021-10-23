@@ -49,11 +49,11 @@ main() {
   real_type t0   = 54000;
   real_type muS  = mu_SUN;
   real_type p    = 0.999723;
-  real_type f    = -0.0037415;
-  real_type g    = 0.016287000000000;
-  real_type h    = 0;
+  real_type f    = 0;
+  real_type g    = 0.016287;
+  real_type h    = 0.3;
   real_type k    = 0;
-  real_type L0   = 1.3;
+  real_type L0   = 1.1;
   bool retrograde = false;
 
   A.setup_Equinoctial( name, t0, p, f, g, h, k, retrograde, L0, muS );

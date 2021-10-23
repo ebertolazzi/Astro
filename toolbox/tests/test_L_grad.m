@@ -12,22 +12,23 @@ mu_SUN   = mu_SUN/(AU_to_km^3/Y_to_s^2);
 data.name = 'Earth';
 data.t0   = 54000; %MJD
 data.muS  = mu_SUN;
-data.p    = 0.999723;
-data.f    = -0.0037415;
+data.p    = 1;
+data.f    = 0;
 data.g    = 0.016287;
-data.h    = 0,3;
-data.k    = -0;
+data.h    = 0.3;
+data.k    = 0;
 data.L0   = 1.1;
 data.retrograde = false;
 
 fprintf('\n\n');
 A = Astro();
 A.setup_Equinoctial( data );
-%A.print();
 
 ttt = 54000;
 dt  = 0;
 A1 = Astro();
+
+A.print();
 G  = A.L_orbital_EQ_gradient(ttt);
 M0 = A.L_orbital(ttt,dt);
 

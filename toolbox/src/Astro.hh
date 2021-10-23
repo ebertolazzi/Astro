@@ -126,7 +126,7 @@ namespace AstroLib {
 
     string const & name() const { return m_name; }
 
-    void check_for_consistency() const;
+    bool check_for_consistency() const;
 
     string info() const;
 
@@ -208,6 +208,14 @@ namespace AstroLib {
       real_type       muS,
       real_type       t0
     );
+
+    bool
+    check_parameters( Equinoctial const & EQ ) const {
+      real_type p = EQ.p;
+      real_type h = EQ.h;
+      real_type k = EQ.k;
+      return p > 0 && h*h+k*k <= 1;
+    }
 
     Astro const &
     setup( GenericContainer & vars ) {
@@ -402,11 +410,13 @@ namespace AstroLib {
      * Compute the Jacobian of P(p,f,g,h,k,L(t0)) as a function of
      * equinoctial coordinates.
      */
-    void position_EQ_jacobian( real_type t, real_type JP[3][6] ) const;
-    void velocity_EQ_jacobian( real_type t, real_type JV[3][6] ) const;
 
     void position0_EQ_jacobian( real_type JP[3][6], real_type L0 ) const;
     void velocity0_EQ_jacobian( real_type JV[3][6], real_type L0 ) const;
+
+    // must be checked
+    void position_EQ_jacobian( real_type t, real_type JP[3][6] ) const;
+    void velocity_EQ_jacobian( real_type t, real_type JV[3][6] ) const;
 
     void position_EQ_jacobian_FD( real_type t, real_type JP[3][6] ) const;
     void velocity_EQ_jacobian_FD( real_type t, real_type JV[3][6] ) const;

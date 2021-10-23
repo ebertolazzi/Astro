@@ -57,6 +57,10 @@ classdef Astro < handle
       res = AstroMexWrapper( 'name', self.objectHandle );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = check_for_consistency( self )
+      res = AstroMexWrapper( 'check_for_consistency', self.objectHandle );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function varargout = position( self, t )
       if nargout == 1
         varargout{1} = AstroMexWrapper( 'position', self.objectHandle, t );
