@@ -49,16 +49,16 @@ main() {
   real_type t0   = 54000;
   real_type muS  = mu_SUN;
   real_type p    = 0.999723;
-  real_type f    = 0;
-  real_type g    = 0.0001;
-  real_type h    = -1.33605e-07;
-  real_type k    = -0;
+  real_type f    = -0.0037415;
+  real_type g    = 0.016287000000000;
+  real_type h    = 0;
+  real_type k    = 0;
   real_type L0   = 1.3;
   bool retrograde = false;
 
   A.setup_Equinoctial( name, t0, p, f, g, h, k, retrograde, L0, muS );
 
-  g -= 0.001;
+  f += 0.001;
   B.setup_Equinoctial( name, t0, p, f, g, h, k, retrograde, L0, muS );
 
   A.info( std::cout );
@@ -69,6 +69,20 @@ main() {
     "B.L_orbital(...) = {}\n",
     A.L_orbital(t0,0),
     B.L_orbital(t0,0)
+  );
+
+  real_type grad[6];
+  real_type L = A.L_orbital_EQ_gradient( t0, grad );
+
+  fmt::print(
+    "g_p  = {}\n"
+    "g_f  = {}\n"
+    "g_g  = {}\n"
+    "g_h  = {}\n"
+    "g_k  = {}\n"
+    "g_L0 = {}\n",
+    grad[0], grad[1], grad[2],
+    grad[3], grad[4], grad[5]
   );
 
   std::cout << "All done folks!!\n";

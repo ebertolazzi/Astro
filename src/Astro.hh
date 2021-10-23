@@ -100,17 +100,19 @@ namespace AstroLib {
     Equinoctial m_EQ;
     Keplerian   m_K;
 
-    real_type   m_t0;      //!< days
-    real_type   m_M0;      //!< Angle corresponding to time t0
-    real_type   m_theta0;  //!< Angle corresponding to time t0
-    real_type   m_L0;      //!< Angle corresponding to time t0
+    real_type   m_t0; //!< days
+    real_type   m_M0; //!< Angle corresponding to time t0
+    real_type   m_M0_theta0;
+    real_type   m_M0_e;
+    real_type   m_theta0;
+    real_type   m_L0;
     real_type   m_Mdot;
     real_type   m_Mdot_p;
     real_type   m_Mdot_f;
     real_type   m_Mdot_g;
     real_type   m_muS; // attorno a quale astro gira!.
 
-    void Mdot_eval();
+    void M0_Mdot_grad_eval();
 
   public:
 
