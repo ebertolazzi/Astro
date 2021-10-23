@@ -1273,6 +1273,30 @@ namespace AstroLib {
 
   static
   void
+  do_position_EQ_jacobian_FD(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('position_EQ_jacobian_FD',obj,t): "
+    CHECK_IN(3);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    double t = getScalarValue( arg_in_2, CMD " param t" );
+    GC_namespace::mat_real_type G;
+    G.resize(3,6);
+    real_type JP[3][6];
+    ptr->position_EQ_jacobian_FD( t, JP );
+    for ( integer i = 0; i < 3; ++i )
+      for ( integer j = 0; j < 6; ++j )
+        G(i,j) = JP[i][j];
+    GC_namespace::to_mxArray(G,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
   do_absolute_velocity_by_angle(
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
@@ -1352,6 +1376,30 @@ namespace AstroLib {
     G.resize(3,6);
     real_type JP[3][6];
     ptr->velocity_EQ_jacobian( t, JP );
+    for ( integer i = 0; i < 3; ++i )
+      for ( integer j = 0; j < 6; ++j )
+        G(i,j) = JP[i][j];
+    GC_namespace::to_mxArray(G,arg_out_0);
+    #undef CMD
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static
+  void
+  do_velocity_EQ_jacobian_FD(
+    int nlhs, mxArray       *plhs[],
+    int nrhs, mxArray const *prhs[]
+  ) {
+    #define CMD "AstroMexWrapper('velocity_EQ_jacobian_FD',obj,t): "
+    CHECK_IN(3);
+    CHECK_OUT(1);
+    Astro * ptr = DATA_GET( arg_in_1 );
+    double t = getScalarValue( arg_in_2, CMD " param t" );
+    GC_namespace::mat_real_type G;
+    G.resize(3,6);
+    real_type JP[3][6];
+    ptr->velocity_EQ_jacobian_FD( t, JP );
     for ( integer i = 0; i < 3; ++i )
       for ( integer j = 0; j < 6; ++j )
         G(i,j) = JP[i][j];
@@ -1663,8 +1711,10 @@ namespace AstroLib {
     {"H_EQ_gradient",do_H_EQ_gradient},
     {"radius_EQ_gradient",do_radius_EQ_gradient},
     {"position_EQ_jacobian",do_position_EQ_jacobian},
+    {"position_EQ_jacobian_FD",do_position_EQ_jacobian_FD},
     {"position0_EQ_jacobian",do_position0_EQ_jacobian},
     {"velocity_EQ_jacobian",do_velocity_EQ_jacobian},
+    {"velocity_EQ_jacobian_FD",do_velocity_EQ_jacobian_FD},
     {"velocity0_EQ_jacobian",do_velocity0_EQ_jacobian},
     {"absolute_velocity_by_angle",do_absolute_velocity_by_angle},
     {"absolute_velocity_EQ_gradient",do_absolute_velocity_EQ_gradient},

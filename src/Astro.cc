@@ -1608,6 +1608,77 @@ namespace AstroLib {
   }
 
   void
+  Astro::position_EQ_jacobian_FD( real_type t, real_type JP[3][6] ) const {
+
+    //real_type p = m_EQ.p;
+    real_type p  = m_EQ.p;
+    real_type f  = m_EQ.f;
+    real_type g  = m_EQ.g;
+    real_type h  = m_EQ.h;
+    real_type k  = m_EQ.k;
+    real_type L0 = m_L0;
+    bool retrograde = m_EQ.retrograde;
+
+    Astro P,M;
+
+    real_type xp, yp, zp, xm, ym, zm;
+
+    real_type dp = 1e-6*p;
+    P.setup_Equinoctial("plus",m_t0,p+dp,f,g,h,k,retrograde,L0,m_muS);
+    M.setup_Equinoctial("minus",m_t0,p-dp,f,g,h,k,retrograde,L0,m_muS);
+    P.position(t,xp,yp,zp);
+    M.position(t,xm,ym,zm);
+    JP[0][0] = (xp-xm)/(2*dp);
+    JP[1][0] = (yp-ym)/(2*dp);
+    JP[2][0] = (zp-zm)/(2*dp);
+
+    real_type df = 1e-7;
+    P.setup_Equinoctial("plus",m_t0,p,f+df,g,h,k,retrograde,L0,m_muS);
+    M.setup_Equinoctial("minus",m_t0,p,f-df,g,h,k,retrograde,L0,m_muS);
+    P.position(t,xp,yp,zp);
+    M.position(t,xm,ym,zm);
+    JP[0][1] = (xp-xm)/(2*df);
+    JP[1][1] = (yp-ym)/(2*df);
+    JP[2][1] = (zp-zm)/(2*df);
+
+    real_type dg = 1e-7;
+    P.setup_Equinoctial("plus",m_t0,p,f,g+dg,h,k,retrograde,L0,m_muS);
+    M.setup_Equinoctial("minus",m_t0,p,f,g-dg,h,k,retrograde,L0,m_muS);
+    P.position(t,xp,yp,zp);
+    M.position(t,xm,ym,zm);
+    JP[0][2] = (xp-xm)/(2*dg);
+    JP[1][2] = (yp-ym)/(2*dg);
+    JP[2][2] = (zp-zm)/(2*dg);
+
+    real_type dh = 1e-7;
+    P.setup_Equinoctial("plus",m_t0,p,f,g,h+dh,k,retrograde,L0,m_muS);
+    M.setup_Equinoctial("minus",m_t0,p,f,g,h-dh,k,retrograde,L0,m_muS);
+    P.position(t,xp,yp,zp);
+    M.position(t,xm,ym,zm);
+    JP[0][3] = (xp-xm)/(2*dh);
+    JP[1][3] = (yp-ym)/(2*dh);
+    JP[2][3] = (zp-zm)/(2*dh);
+
+    real_type dk = 1e-7;
+    P.setup_Equinoctial("plus",m_t0,p,f,g,h,k+dk,retrograde,L0,m_muS);
+    M.setup_Equinoctial("minus",m_t0,p,f,g,h,k-dk,retrograde,L0,m_muS);
+    P.position(t,xp,yp,zp);
+    M.position(t,xm,ym,zm);
+    JP[0][4] = (xp-xm)/(2*dk);
+    JP[1][4] = (yp-ym)/(2*dk);
+    JP[2][4] = (zp-zm)/(2*dk);
+
+    real_type dL = 1e-5;
+    P.setup_Equinoctial("plus",m_t0,p,f,g,h,k,retrograde,L0+dL,m_muS);
+    M.setup_Equinoctial("minus",m_t0,p,f,g,h,k,retrograde,L0-dL,m_muS);
+    P.position(t,xp,yp,zp);
+    M.position(t,xm,ym,zm);
+    JP[0][5] = (xp-xm)/(2*dL);
+    JP[1][5] = (yp-ym)/(2*dL);
+    JP[2][5] = (zp-zm)/(2*dL);
+  }
+
+  void
   Astro::velocity0_EQ_jacobian( real_type JV[3][6], real_type L0 ) const {
     real_type p = m_EQ.p;
     real_type f = m_EQ.f;
@@ -1696,4 +1767,76 @@ namespace AstroLib {
     }
 
   }
+
+  void
+  Astro::velocity_EQ_jacobian_FD( real_type t, real_type JP[3][6] ) const {
+
+    //real_type p = m_EQ.p;
+    real_type p  = m_EQ.p;
+    real_type f  = m_EQ.f;
+    real_type g  = m_EQ.g;
+    real_type h  = m_EQ.h;
+    real_type k  = m_EQ.k;
+    real_type L0 = m_L0;
+    bool retrograde = m_EQ.retrograde;
+
+    Astro P,M;
+
+    real_type xp, yp, zp, xm, ym, zm;
+
+    real_type dp = 1e-6*p;
+    P.setup_Equinoctial("plus",m_t0,p+dp,f,g,h,k,retrograde,L0,m_muS);
+    M.setup_Equinoctial("minus",m_t0,p-dp,f,g,h,k,retrograde,L0,m_muS);
+    P.velocity(t,xp,yp,zp);
+    M.velocity(t,xm,ym,zm);
+    JP[0][0] = (xp-xm)/(2*dp);
+    JP[1][0] = (yp-ym)/(2*dp);
+    JP[2][0] = (zp-zm)/(2*dp);
+
+    real_type df = 1e-7;
+    P.setup_Equinoctial("plus",m_t0,p,f+df,g,h,k,retrograde,L0,m_muS);
+    M.setup_Equinoctial("minus",m_t0,p,f-df,g,h,k,retrograde,L0,m_muS);
+    P.velocity(t,xp,yp,zp);
+    M.velocity(t,xm,ym,zm);
+    JP[0][1] = (xp-xm)/(2*df);
+    JP[1][1] = (yp-ym)/(2*df);
+    JP[2][1] = (zp-zm)/(2*df);
+
+    real_type dg = 1e-7;
+    P.setup_Equinoctial("plus",m_t0,p,f,g+dg,h,k,retrograde,L0,m_muS);
+    M.setup_Equinoctial("minus",m_t0,p,f,g-dg,h,k,retrograde,L0,m_muS);
+    P.velocity(t,xp,yp,zp);
+    M.velocity(t,xm,ym,zm);
+    JP[0][2] = (xp-xm)/(2*dg);
+    JP[1][2] = (yp-ym)/(2*dg);
+    JP[2][2] = (zp-zm)/(2*dg);
+
+    real_type dh = 1e-7;
+    P.setup_Equinoctial("plus",m_t0,p,f,g,h+dh,k,retrograde,L0,m_muS);
+    M.setup_Equinoctial("minus",m_t0,p,f,g,h-dh,k,retrograde,L0,m_muS);
+    P.velocity(t,xp,yp,zp);
+    M.velocity(t,xm,ym,zm);
+    JP[0][3] = (xp-xm)/(2*dh);
+    JP[1][3] = (yp-ym)/(2*dh);
+    JP[2][3] = (zp-zm)/(2*dh);
+
+    real_type dk = 1e-7;
+    P.setup_Equinoctial("plus",m_t0,p,f,g,h,k+dk,retrograde,L0,m_muS);
+    M.setup_Equinoctial("minus",m_t0,p,f,g,h,k-dk,retrograde,L0,m_muS);
+    P.velocity(t,xp,yp,zp);
+    M.velocity(t,xm,ym,zm);
+    JP[0][4] = (xp-xm)/(2*dk);
+    JP[1][4] = (yp-ym)/(2*dk);
+    JP[2][4] = (zp-zm)/(2*dk);
+
+    real_type dL = 1e-5;
+    P.setup_Equinoctial("plus",m_t0,p,f,g,h,k,retrograde,L0+dL,m_muS);
+    M.setup_Equinoctial("minus",m_t0,p,f,g,h,k,retrograde,L0-dL,m_muS);
+    P.velocity(t,xp,yp,zp);
+    M.velocity(t,xm,ym,zm);
+    JP[0][5] = (xp-xm)/(2*dL);
+    JP[1][5] = (yp-ym)/(2*dL);
+    JP[2][5] = (zp-zm)/(2*dL);
+  }
+
 }

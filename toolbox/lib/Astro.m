@@ -277,6 +277,10 @@ classdef Astro < handle
       res = AstroMexWrapper( 'position_EQ_jacobian', self.objectHandle, t );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = position_EQ_jacobian_FD( self, t )
+      res = AstroMexWrapper( 'position_EQ_jacobian_FD', self.objectHandle, t );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function res = absolute_velocity_by_angle( self, L )
       res = AstroMexWrapper( 'absolute_velocity_by_angle', self.objectHandle, L );
     end
@@ -291,6 +295,10 @@ classdef Astro < handle
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function res = velocity_EQ_jacobian( self, t )
       res = AstroMexWrapper( 'velocity_EQ_jacobian', self.objectHandle, t );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function res = velocity_EQ_jacobian_FD( self, t )
+      res = AstroMexWrapper( 'velocity_EQ_jacobian_FD', self.objectHandle, t );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function res = L_from_true_anomaly( self, nu )
