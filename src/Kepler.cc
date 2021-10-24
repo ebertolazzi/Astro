@@ -26,8 +26,15 @@
 namespace AstroLib {
 
   using std::abs;
-  using std::max;
-  using std::min;
+  using std::sqrt;
+  using std::tan;
+  using std::sin;
+  using std::cos;
+  using std::tanh;
+  using std::sinh;
+  using std::cosh;
+  using std::atan;
+  using std::atan2;
 
   /*
   //   _                      _             _
@@ -42,10 +49,14 @@ namespace AstroLib {
     return EQ.p/(1-EQ.f*EQ.f-EQ.g*EQ.g);
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   real_type
   equinoctial_to_invariant_E( Equinoctial const & EQ ) {
     return hypot(EQ.f,EQ.g);
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   real_type
   equinoctial_to_invariant_I( Equinoctial const & EQ ) {
@@ -54,6 +65,8 @@ namespace AstroLib {
     angle_in_range_symm(ang);
     return ang;
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   real_type
   equinoctial_to_invariant_lowercase_omega( Equinoctial const & EQ ) {
@@ -65,12 +78,16 @@ namespace AstroLib {
     return ang;
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   real_type
   equinoctial_to_invariant_uppercase_Omega( Equinoctial const & EQ ) {
     real_type ang = atan2(EQ.k,EQ.h);
     angle_in_range_symm(ang);
     return ang;
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   equinoctial_to_invariant_Lvec(
@@ -91,6 +108,8 @@ namespace AstroLib {
     if ( EQ.retrograde ) L[2] = -L[2];
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   equinoctial_to_invariant_Avec(
     Equinoctial const & EQ,
@@ -110,6 +129,8 @@ namespace AstroLib {
     A[1] = bf*( (1-h2+k2)*g+2*hk*f );
     A[2] = bf*( 2*(h*g-k*f) );
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   real_type
   equinoctial_to_orbit_energy(
@@ -156,7 +177,7 @@ namespace AstroLib {
   }
 #endif
 
-  //////////////////////////////////////////////////////////
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   real_type
   equinoctial_to_x( Equinoctial const & EQ, real_type L ) {
@@ -179,6 +200,8 @@ namespace AstroLib {
     return (1+h2-k2)*X+2*I*hk*Y;
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   real_type
   equinoctial_to_y( Equinoctial const & EQ, real_type L ) {
     real_type p    = EQ.p;
@@ -200,6 +223,8 @@ namespace AstroLib {
     return I*(1-h2+k2)*Y+2*hk*X;
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   real_type
   equinoctial_to_z( Equinoctial const & EQ, real_type L ) {
     real_type p    = EQ.p;
@@ -220,6 +245,8 @@ namespace AstroLib {
     return 2*(h*Y-I*k*X);
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   real_type
   equinoctial_to_vx( Equinoctial const & EQ, real_type L, real_type muS ) {
     real_type p     = EQ.p;
@@ -238,6 +265,8 @@ namespace AstroLib {
 
     return I*2*hk*cosLf - (1+h2-k2)*sinLg;
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   real_type
   equinoctial_to_vy( Equinoctial const & EQ, real_type L, real_type muS ) {
@@ -258,6 +287,8 @@ namespace AstroLib {
     return I*(1-h2+k2)*cosLf - 2*hk*sinLg;
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   real_type
   equinoctial_to_vz( Equinoctial const & EQ, real_type L, real_type muS ) {
     real_type p     = EQ.p;
@@ -276,11 +307,14 @@ namespace AstroLib {
     return 2 * ( h*cosLf + I*k*sinLg );
   }
 
-  ///////////////////////////////////////////////////////////////
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   real_type
   equinoctial_to_ray( Equinoctial const & EQ, real_type L ) {
     return EQ.p/(1+EQ.f*cos(L)+EQ.g*sin(L));
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   real_type
   equinoctial_to_velocity( Equinoctial const & EQ, real_type L, real_type muS ) {
@@ -291,7 +325,8 @@ namespace AstroLib {
     return sqrt(tmp);
   }
 
-  //////////////////////////////////////////////////////////
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   /*
   void
   angle_in_range( real_type & angle ) {
@@ -331,6 +366,8 @@ namespace AstroLib {
     return E;
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   real_type
   mean_anomaly_to_H( real_type M, real_type e ) {
     // M non va messo "in range"!!!
@@ -355,77 +392,7 @@ namespace AstroLib {
     return H;
   }
 
-  //////////////////////////////////////////////////////////
-  // E = Eccentric Anomaly
-  // M = Mean Anomaly
-  //
-  // solve E-e*sin(E)=M
-  // solve E'-e*cos(E)E'=Mdot
-  // solve E''-e*cos(E)E''=-e*sin(E)(E')^2
-  //
-  // http://en.wikipedia.org/wiki/Eccentric_anomaly
-  //
-  void
-  mean_anomaly_to_eccentric_anomaly_elliptic(
-    real_type M,
-    real_type Mdot, // derivata anomalia media
-    real_type e,    // eccentricità orbita
-    real_type Evalues[],
-    integer   nderiv
-  ) {
-
-    real_type E = mean_anomaly_to_E( M, e );
-    Evalues[0] = E;
-    if ( nderiv < 1 ) return;
-
-    real_type cos_E = cos(E);
-    real_type bf = 1 - e*cos_E;
-    Evalues[1] = Mdot/bf;
-    if ( nderiv < 2 ) return;
-
-    real_type sin_E = sin(E);
-    Evalues[2] = -e*sin_E*power2(Evalues[1])/bf;
-    if ( nderiv < 3 ) return;
-
-    Evalues[3] = e*Evalues[1]*(cos_E*power2(Evalues[1])+3*sin_E*Evalues[2])/bf;
-  }
-
-  //////////////////////////////////////////////////////////
-  // F = Hyperbolic Eccentric Anomaly
-  // M = Mean Anomaly
-  //
-  // solve e*sinh(H)-H=M
-  // solve e*cosh(H)H'-H'=Mdot
-  // solve e*cosh(H)H''-H''=-e*sinh(H)(H')^2
-  // solve e*cosh(H)H'''-H'''=-3*e*sinh(H) H' H'' -e*cosh(H)(H')^3
-  //
-  void
-  mean_anomaly_to_eccentric_anomaly_hyperbolic(
-    real_type M,    // non costante
-    real_type Mdot, // derivata anomalia media
-    real_type e,    // eccentricità orbita
-    real_type Fvalues[],
-    integer   nderiv
-  ) {
-    // M non va messo "in range"!!!
-    real_type H = mean_anomaly_to_H( M, e );
-
-    Fvalues[0] = H;
-    if ( nderiv < 1 ) return;
-
-    real_type cosh_H = cosh(H);
-    real_type bf = e*cosh_H-1;
-    Fvalues[1] = Mdot/bf;
-    if ( nderiv < 2 ) return;
-
-    real_type sinh_H = sinh(H);
-    Fvalues[2] = -e*sinh_H*power2(Fvalues[1])/bf;
-    if ( nderiv < 3 ) return;
-
-    Fvalues[3] = -e*Fvalues[1]*(cosh_H*power2(Fvalues[1])+3*sinh_H*Fvalues[2])/bf;
-  }
-
-  //////////////////////////////////////////////////////////
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   real_type
   eccentric_anomaly_to_true_anomaly( real_type E, real_type e ) {
@@ -437,14 +404,14 @@ namespace AstroLib {
     }
   }
 
-  //////////////////////////////////////////////////////////
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   real_type
   E_to_true_anomaly( real_type E, real_type e ) {
     return 2*atan2(sqrt(1+e)*sin(E/2),sqrt(1-e)*cos(E/2)); // theta
   }
 
-  //////////////////////////////////////////////////////////
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   real_type
   H_to_true_anomaly( real_type H, real_type e ) {
@@ -453,7 +420,7 @@ namespace AstroLib {
     return 2*atan(sqrt( (e+1)/(e-1) )*tanh(H/2) ); // theta
   }
 
-  //////////////////////////////////////////////////////////
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   real_type
   true_anomaly_to_mean_anomaly( real_type theta, real_type e ) {
@@ -464,14 +431,23 @@ namespace AstroLib {
       real_type E = 2*atan2( y, x );
       return E-e*sin(E);
     } else {
+      // 2*arctan( sqrt( (e+1)/(e-1) ) ) = theta ;
+      real_type tmp = sqrt( (e-1)/(e+1) ) * tan(th2);
+      UTILS_ASSERT(
+        tmp > -1 && tmp < 1,
+        "true_anomaly_to_mean_anomaly( theta = {}, e = {} )\n"
+        "sqrt( (e-1)/(e+1) ) * tan(theta/2) = {}\n"
+        "bad angle range!\n",
+        theta, e, tmp
+      );
       // sinh( 2* atanh( X ) ) = 2*x/(1-x^2)
-      real_type H = 2*atanh( sqrt( (e-1)/(e+1) ) * tan(th2) );
+      real_type H = 2*atanh( tmp );
       //real_type H = 2*atan( sqrt( (e-1)/(e+1) ) * tanh(th2) );
       return e*sinh(H)-H;
     }
   }
 
-  //////////////////////////////////////////////////////////
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   from_Keplerian_to_Equinoctial(
@@ -504,6 +480,8 @@ namespace AstroLib {
     }
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   from_Keplerian_to_Equinoctial(
     Keplerian const & K,
@@ -516,6 +494,8 @@ namespace AstroLib {
     if ( EQ.retrograde ) L -= K.Omega;
     else                 L += K.Omega;
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   from_equinoctial_to_Keplerian(
@@ -533,6 +513,8 @@ namespace AstroLib {
     else                 K.omega -= K.Omega;
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   from_equinoctial_to_Keplerian(
     Equinoctial const & EQ, real_type   L,
@@ -543,6 +525,8 @@ namespace AstroLib {
     if ( EQ.retrograde ) theta += K.Omega;
     else                 theta -= K.Omega;
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   equinoctial_to_reference(
@@ -582,6 +566,8 @@ namespace AstroLib {
     w[0] /= bf; w[1] /= bf; w[2] /= bf;
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   Keplerian_to_reference(
     Keplerian const & K,
@@ -608,6 +594,8 @@ namespace AstroLib {
     Z[1] = -CO * Si;
     Z[2] = Ci;
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   point_and_velocity_to_Equinoctial_and_Keplerian(
@@ -711,6 +699,8 @@ namespace AstroLib {
     M0 = true_anomaly_to_mean_anomaly( theta, K.e );
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   equinoctial_to_point(
     Equinoctial const & EQ,
@@ -738,6 +728,8 @@ namespace AstroLib {
     P[2] = 2*(h*Y-I*k*X);
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   equinoctial_to_velocity(
     Equinoctial const & EQ,
@@ -764,6 +756,8 @@ namespace AstroLib {
     V[1] = I*(1-h2+k2)*cosLf - 2*hk*sinLg;
     V[2] = 2 * ( h*cosLf + I*k*sinLg );
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   equinoctial_to_point_and_velocity(
@@ -802,6 +796,8 @@ namespace AstroLib {
     V[2] = 2 * ( h*cosLf + I*k*sinLg );
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   point_and_velocity_to_Frenet_RTN(
     real_type const P[3],
@@ -821,6 +817,8 @@ namespace AstroLib {
     Dn[2] /= len;
     cross( Dn, Dr, Dt );
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   equinoctial_to_Frenet_RTN(
@@ -875,6 +873,8 @@ namespace AstroLib {
     Txyz[2] = Trtn[0]*Dr[2] + Trtn[1]*Dt[2] + Trtn[2]*Dn[2];
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   point_and_velocity_Trtn_to_Txyz(
     real_type const P[3],
@@ -888,6 +888,8 @@ namespace AstroLib {
     Txyz[1] = Trtn[0]*Dr[1] + Trtn[1]*Dt[1] + Trtn[2]*Dn[1];
     Txyz[2] = Trtn[0]*Dr[2] + Trtn[1]*Dt[2] + Trtn[2]*Dn[2];
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   equinoctial_Txyz_to_Trtn(
@@ -903,6 +905,8 @@ namespace AstroLib {
     Trtn[2] = Txyz[0]*Dn[0] + Txyz[1]*Dn[1] + Txyz[2]*Dn[2];
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   point_and_velocity_Txyz_to_Trtn(
     real_type const P[3],
@@ -916,6 +920,8 @@ namespace AstroLib {
     Trtn[1] = Txyz[0]*Dt[0] + Txyz[1]*Dt[1] + Txyz[2]*Dt[2];
     Trtn[2] = Txyz[0]*Dn[0] + Txyz[1]*Dn[1] + Txyz[2]*Dn[2];
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   // matrice
   real_type // value of b^T
@@ -948,5 +954,7 @@ namespace AstroLib {
 
     return sqrt(p*muS)*power2(w/p);
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }

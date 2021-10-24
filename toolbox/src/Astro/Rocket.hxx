@@ -28,6 +28,8 @@
 
 namespace AstroLib {
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   odeXYZ(
     real_type       Thrust_r,
@@ -38,6 +40,8 @@ namespace AstroLib {
     real_type const Z[],
     real_type       res[]
   );
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   odeEQ(

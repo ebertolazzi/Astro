@@ -28,10 +28,14 @@
 
 namespace AstroLib {
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   inline
   real_type
   power2( real_type a )
   { return a*a; }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   inline
   real_type
@@ -81,30 +85,42 @@ namespace AstroLib {
     while ( ang >  m_pi ) ang -= m_2pi;
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   inline
   void
   zero3( real_type a[3] )
   { a[0] = a[1] = a[2] = 0;  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   inline
   void
   copy3( real_type const a[3], real_type b[3] )
   { b[0] = a[0]; b[1] = a[1]; b[2] = a[2]; }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   inline
   real_type
   norm3( real_type const v[3] )
   { return hypot(hypot(v[0],v[1]),v[2]); }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   inline
   real_type
   dot3( real_type const a[3], real_type const b[3] )
   { return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]; }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   inline
   real_type
   dist3( real_type const a[3], real_type const b[3] )
   { return hypot(hypot(a[0]-b[0],a[1]-b[1]),a[2]-b[2]); }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   inline
   void

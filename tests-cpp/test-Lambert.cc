@@ -85,6 +85,29 @@ main() {
     grad[3], grad[4], grad[5]
   );
 
+  t0  = 0;
+  muS = mu_SUN;
+  p   = 2.97152;
+  f   = 0.12134639999;
+  g   = -0.9926102;
+  h   = 0.0402935;
+  k   = -0.149672;
+  L0  = 11.4597;
+  retrograde = false;
+
+  A.setup_Equinoctial( name, t0, p, f, g, h, k, retrograde, L0, muS );
+  A.info( std::cout );
+  real_type x, y, z;
+  A.position( t0, x, y, z );
+  real_type res[4];
+  real_type M = AstroLib::E_to_true_anomaly( Utils::m_2pi, hypot(f,g) );
+  A.mean_anomaly_to_E( 2.5299780298288088e-06, res, 0 );
+
+  fmt::print(
+    "x = {}, y = {}, z = {}\n",
+    x, y, z
+  );
+
   std::cout << "All done folks!!\n";
   return 0;
 }

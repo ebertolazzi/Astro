@@ -90,6 +90,22 @@ namespace AstroLib {
     real_type &     maximum_distance
   );
 
+  bool
+  check_EQ_for_consistency(
+    real_type p,
+    real_type f,
+    real_type g,
+    real_type h,
+    real_type k,
+    real_type L
+  );
+
+  inline
+  bool
+  check_EQ_for_consistency( Equinoctial const & EQ, real_type L0 ) {
+    return check_EQ_for_consistency( EQ.p, EQ.f, EQ.g, EQ.h, EQ.k, L0 );
+  }
+
   class Astro {
 
     string m_name;
@@ -239,6 +255,9 @@ namespace AstroLib {
     real_type L_orbital_DD ( real_type t ) const;
     real_type L_orbital    ( real_type t0, real_type dt ) const;
 
+    void mean_anomaly_to_E( real_type M, real_type Evalues[], integer nderiv ) const;
+    void mean_anomaly_to_H( real_type M, real_type Evalues[], integer nderiv ) const;
+
     real_type latitude_of_periapsis() const;
     real_type latitude_of_apoapsis() const;
 
@@ -369,6 +388,7 @@ namespace AstroLib {
 
     real_type orbit_energy() const;
 
+
     // trasformazioni varie
     void normal( real_type N[3] ) const; // normale al piano dell'ellisse
     void local_frame_by_L( real_type L, real_type M[3][3] ) const; // terna solidare al satellite
@@ -382,16 +402,36 @@ namespace AstroLib {
     void theta0_EQ_gradient( real_type grad[6] ) const;
     void M0_EQ_gradient( real_type grad[6] ) const;
 
-    real_type E0_angle() const { return mean_anomaly_to_E( m_M0, m_K.e ); }
+    real_type
+    E0_angle() const {
+      real_type E_values[4];;
+      mean_anomaly_to_E( m_M0, E_values, 0 );
+      return E_values[0];
+    }
     real_type E0_EQ_gradient( real_type grad[6] ) const;
 
-    real_type H0_angle() const { return mean_anomaly_to_H( m_M0, m_K.e ); }
+    real_type
+    H0_angle() const {
+      real_type H_values[4];
+      mean_anomaly_to_H( m_M0, H_values, 0 );
+      return H_values[0];
+    }
     real_type H0_EQ_gradient( real_type grad[6] ) const;
 
-    real_type E_angle( real_type t ) const { return mean_anomaly_to_E( mean_anomaly( t ), m_K.e ); }
+    real_type
+    E_angle( real_type t ) const {
+      real_type E_values[4];
+      mean_anomaly_to_E( mean_anomaly( t ), E_values, 0 );
+      return E_values[0];
+    }
     real_type E_EQ_gradient( real_type t, real_type grad[6] ) const;
 
-    real_type H_angle( real_type t ) const { return mean_anomaly_to_H( mean_anomaly( t ), m_K.e ); }
+    real_type
+    H_angle( real_type t ) const {
+      real_type H_values[4];
+      mean_anomaly_to_H( mean_anomaly( t ), H_values, 0 );
+      return H_values[0];
+    }
     real_type H_EQ_gradient( real_type t, real_type grad[6] ) const;
 
     /*!

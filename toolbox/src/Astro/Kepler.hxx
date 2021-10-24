@@ -26,6 +26,8 @@
 
 namespace AstroLib {
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   struct Equinoctial {
     real_type p;
     real_type f;
@@ -47,7 +49,11 @@ namespace AstroLib {
     }
   };
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   typedef struct Equinoctial Equinoctial;
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   struct Keplerian {
     real_type a;
@@ -71,7 +77,11 @@ namespace AstroLib {
     }
   };
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   typedef struct Keplerian Keplerian;
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   /*
   //   _                      _             _
@@ -87,7 +97,7 @@ namespace AstroLib {
   real_type equinoctial_to_invariant_lowercase_omega( Equinoctial const & EQ );
   real_type equinoctial_to_invariant_uppercase_Omega( Equinoctial const & EQ );
 
-  //////////////////////////////////////////////////////////////
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   equinoctial_to_invariant_Lvec(
@@ -96,12 +106,16 @@ namespace AstroLib {
     real_type           L[3]
   );
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   equinoctial_to_invariant_Avec(
     Equinoctial const & EQ,
     real_type           muS,
     real_type           A[3]
   );
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   real_type
   equinoctial_to_orbit_energy(
@@ -121,7 +135,7 @@ namespace AstroLib {
   );
 #endif
 
-  //////////////////////////////////////////////////////////
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   static
   inline
@@ -131,6 +145,8 @@ namespace AstroLib {
     return EQ.p/(1-e);
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   static
   inline
   real_type
@@ -139,7 +155,7 @@ namespace AstroLib {
     return EQ.p/(1+e);
   }
 
-  //////////////////////////////////////////////////////////
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   real_type equinoctial_to_x( Equinoctial const & EQ, real_type L );
   real_type equinoctial_to_y( Equinoctial const & EQ, real_type L );
@@ -148,41 +164,24 @@ namespace AstroLib {
   real_type equinoctial_to_vy( Equinoctial const & EQ, real_type L, real_type muS );
   real_type equinoctial_to_vz( Equinoctial const & EQ, real_type L, real_type muS );
 
-  ///////////////////////////////////////////////////////////////
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   real_type equinoctial_to_ray( Equinoctial const & EQ, real_type L );
   real_type equinoctial_to_velocity( Equinoctial const & EQ, real_type L, real_type muS );
 
-  ///////////////////////////////////////////////////////////////
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   real_type mean_anomaly_to_E( real_type M, real_type e );
   real_type mean_anomaly_to_H( real_type M, real_type e );
 
-  void
-  mean_anomaly_to_eccentric_anomaly_elliptic(
-    real_type M,    // non costante
-    real_type Mdot, // derivata anomalia media
-    real_type e,    // eccentricità orbita
-    real_type Evalues[],
-    integer   nderiv
-  );
-
-  void
-  mean_anomaly_to_eccentric_anomaly_hyperbolic(
-    real_type M,    // non costante
-    real_type Mdot, // derivata anomalia media
-    real_type e,    // eccentricità orbita
-    real_type Fvalues[],
-    integer   nderiv
-  );
-
-  ///////////////////////////////////////////////////////////////
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   real_type eccentric_anomaly_to_true_anomaly( real_type E, real_type e );
   real_type E_to_true_anomaly( real_type E, real_type e );
   real_type H_to_true_anomaly( real_type H, real_type e );
   real_type true_anomaly_to_mean_anomaly( real_type theta, real_type e );
 
-  //////////////////////////////////////////////////////////
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   from_Keplerian_to_Equinoctial(
@@ -190,11 +189,15 @@ namespace AstroLib {
     Equinoctial &     EQ
   );
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   from_Keplerian_to_Equinoctial(
     Keplerian const & K,  real_type   theta,
     Equinoctial &     EQ, real_type & L
   );
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   from_equinoctial_to_Keplerian(
@@ -202,11 +205,15 @@ namespace AstroLib {
     Keplerian &         K
   );
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   from_equinoctial_to_Keplerian(
     Equinoctial const & EQ, real_type   L,
     Keplerian & K,          real_type & theta
   );
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   equinoctial_to_reference(
@@ -216,6 +223,8 @@ namespace AstroLib {
     real_type           w[3]
   );
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   Keplerian_to_reference(
     Keplerian const & K,
@@ -223,6 +232,8 @@ namespace AstroLib {
     real_type         Y[3],
     real_type         Z[3]
   );
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   point_and_velocity_to_Equinoctial_and_Keplerian(
@@ -236,12 +247,16 @@ namespace AstroLib {
     real_type &     M0
   );
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   equinoctial_to_point(
     Equinoctial const & EQ,
     real_type           L,
     real_type           P[3]
   );
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   equinoctial_to_velocity(
@@ -250,6 +265,8 @@ namespace AstroLib {
     real_type           muS,
     real_type           V[3]
   );
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   equinoctial_to_point_and_velocity(
@@ -260,6 +277,8 @@ namespace AstroLib {
     real_type           V[3]
   );
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   point_and_velocity_to_Frenet_RTN(
     real_type const P[3],
@@ -268,6 +287,8 @@ namespace AstroLib {
     real_type       Dt[3],
     real_type       Dn[3]
   );
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   equinoctial_to_Frenet_RTN(
@@ -294,6 +315,8 @@ namespace AstroLib {
     real_type           Txyz[3]
   );
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   point_and_velocity_Trtn_to_Txyz(
     real_type const P[3],
@@ -301,6 +324,8 @@ namespace AstroLib {
     real_type const Trtn[3],
     real_type       Txyz[3]
   );
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   equinoctial_Txyz_to_Trtn(
@@ -310,6 +335,8 @@ namespace AstroLib {
     real_type           Trtn[3]
   );
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   void
   point_and_velocity_Txyz_to_Trtn(
     real_type const P[3],
@@ -317,6 +344,8 @@ namespace AstroLib {
     real_type const Txyz[3],
     real_type       Trtn[3]
   );
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   // matrice
   real_type // value of b^T

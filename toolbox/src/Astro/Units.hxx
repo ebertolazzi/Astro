@@ -53,20 +53,28 @@ namespace AstroLib {
   extern real_type const muSun_km3s2;   // Km^3/s^2
   extern real_type const muSun_UA3DAY2; // Km^3/s^2
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   inline
   real_type
   UA_to_km( real_type pos )
   { return pos * one_UA_to_km; }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   inline
   real_type
   UA_by_DAY_to_km_by_s( real_type vel )
   { return vel * (one_UA_to_km/one_DAY_to_second); }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   inline
   real_type
   UA_by_DAY2_to_km_by_s2( real_type vel )
   { return vel * (one_UA_to_km/(one_DAY_to_second*one_DAY_to_second)); }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   inline
   real_type
