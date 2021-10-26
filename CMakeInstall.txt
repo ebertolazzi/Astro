@@ -32,44 +32,47 @@ install(DIRECTORY "${Astro_DIR}/Astro" DESTINATION "${PROJECT_PUBLIC_HEADER_DEST
 
 #----------------------------------------
 
-install(
-  EXPORT AstroTargets
-  FILE AstroTargets.cmake 
-  DESTINATION lib/cmake/Astro
-)
+if ( APPLE OR LINUX OR UNIX )
 
-# CPACK INSTALL TARGETS (Leaving almost as it is...)
-
-set(INCLUDE_INSTALL_DIR include/ CACHE STRING "Include install directory")
-set(LIBRARIES_INSTALL_DIR lib/ CACHE STRING "Libraries install directory")
-get_target_property(ASTRO_LIB_OUTPUT_NAME ${STATIC_PROJECT} OUTPUT_NAME)
-if(UNIX)
-  set(ASTRO_LIB_PREFIX lib)
-  set(ASTRO_LIB_SUFFIX .a)
-else()
-  set(ASTRO_LIB_PREFIX "")
-  set(ASTRO_LIB_SUFFIX .lib)
+  install(
+    EXPORT AstroTargets
+    FILE AstroTargets.cmake 
+    DESTINATION lib/cmake/Astro
+  )
+  
+  # CPACK INSTALL TARGETS (Leaving almost as it is...)
+  
+  set(INCLUDE_INSTALL_DIR include/ CACHE STRING "Include install directory")
+  set(LIBRARIES_INSTALL_DIR lib/ CACHE STRING "Libraries install directory")
+  get_target_property(ASTRO_LIB_OUTPUT_NAME ${STATIC_PROJECT} OUTPUT_NAME)
+  if(UNIX)
+    set(ASTRO_LIB_PREFIX lib)
+    set(ASTRO_LIB_SUFFIX .a)
+  else()
+    set(ASTRO_LIB_PREFIX "")
+    set(ASTRO_LIB_SUFFIX .lib)
+  endif()
+  set(ASTRO_LIB_NAME "${ASTRO_LIB_PREFIX}${ASTRO_LIB_OUTPUT_NAME}${ASTRO_LIB_SUFFIX}")
+  set(LIBRARIES lib/${ASTRO_LIB_NAME} CACHE STRING "Libraries directory")
+  
+  include(CMakePackageConfigHelpers)
+  configure_package_config_file(
+    AstroConfig.cmake.in 
+    "${CMAKE_CURRENT_BINARY_DIR}/AstroConfig.cmake"
+    INSTALL_DESTINATION "lib/Astro/cmake"
+    PATH_VARS INCLUDE_INSTALL_DIR LIBRARIES_INSTALL_DIR LIBRARIES
+  )
+  write_basic_package_version_file(
+    "AstroConfigVersion.cmake"
+    COMPATIBILITY SameMajorVersion
+  )
+  install(
+    FILES 
+    ${CMAKE_CURRENT_BINARY_DIR}/AstroConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/AstroConfigVersion.cmake
+    DESTINATION lib/cmake/Astro
+  )
 endif()
-set(ASTRO_LIB_NAME "${ASTRO_LIB_PREFIX}${ASTRO_LIB_OUTPUT_NAME}${ASTRO_LIB_SUFFIX}")
-set(LIBRARIES lib/${ASTRO_LIB_NAME} CACHE STRING "Libraries directory")
-
-include(CMakePackageConfigHelpers)
-configure_package_config_file(
-  AstroConfig.cmake.in 
-  "${CMAKE_CURRENT_BINARY_DIR}/AstroConfig.cmake"
-  INSTALL_DESTINATION "lib/Astro/cmake"
-  PATH_VARS INCLUDE_INSTALL_DIR LIBRARIES_INSTALL_DIR LIBRARIES
-)
-write_basic_package_version_file(
-  "AstroConfigVersion.cmake"
-  COMPATIBILITY SameMajorVersion
-)
-install(
-  FILES 
-  ${CMAKE_CURRENT_BINARY_DIR}/AstroConfig.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/AstroConfigVersion.cmake
-  DESTINATION lib/cmake/Astro
-)
 
 if(INSTALL_HERE)
   add_custom_command(
