@@ -140,21 +140,23 @@ namespace AstroLib {
     real_type absa = m_K.a > 0 ? m_K.a : -m_K.a;
     real_type e    = m_K.e;
 
-    real_type t1 = sqrt(m_muS);
-    real_type t2 = pow(absa, -1.5);
-    real_type t3 = 1/(1-e*e);
+    {
+      real_type t1 = sqrt(m_muS);
+      real_type t2 = pow(absa, -1.5);
+      real_type t3 = 1/(1-e*e);
 
-    m_Mdot = t1 * t2;
+      m_Mdot = t1 * t2;
 
-    real_type t5 = -3 * m_Mdot * t3;
+      real_type t5 = -3 * m_Mdot * t3;
 
-    m_Mdot_p = -1.5 * t1 * t2 * t3 / absa;
-    m_Mdot_f = t5 * f;
-    m_Mdot_g = t5 * g;
-    if ( m_K.a < 0 ) {
-      m_Mdot_p = -m_Mdot_p;
-      m_Mdot_f = -m_Mdot_f;
-      m_Mdot_g = -m_Mdot_g;
+      m_Mdot_p = -1.5 * t1 * t2 * t3 / absa;
+      m_Mdot_f = t5 * f;
+      m_Mdot_g = t5 * g;
+      if ( m_K.a < 0 ) {
+        m_Mdot_p = -m_Mdot_p;
+        m_Mdot_f = -m_Mdot_f;
+        m_Mdot_g = -m_Mdot_g;
+      }
     }
 
     real_type C0 = cos(m_theta0);
