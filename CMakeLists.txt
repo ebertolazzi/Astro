@@ -44,26 +44,30 @@ endif()
 
 # DEPENDENCIES (TRY TO USE ALREADY COMPILED SUBMODULE IN LARGE PROJECT)
 set(UPDIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
-set(DIRGC    "${CMAKE_CURRENT_SOURCE_DIR}/extern/GC")
-set(DIRUTILS "${CMAKE_CURRENT_SOURCE_DIR}/extern/Utils")
-set(DIRROOTS "${CMAKE_CURRENT_SOURCE_DIR}/extern/Flocke")
-if(FALSE AND EXISTS "${UPDIR}/GC")
-  add_subdirectory("${UPDIR}/GC" "${DIRGC}")
+set(DEPEND_TARGETS)
+if( EXISTS "${UPDIR}/GC/lib" )
+  include_directories(${UPDIR}/GC/lib/include)
+  find_library( GC GenericContainer${ARTIFACTS_STATIC_SUFFIX} HINTS ${UPDIR}/GC/lib/lib )
 else()
-  #add_subdirectory(./submodules/GenericContainer "${DIRGC}") # NON FUNZIONA
   add_subdirectory(./submodules/GenericContainer)
+  set( GC GenericContainerStatic )
+  set(DEPEND_TARGETS ${DEPEND_TARGETS} GenericContainerStatic)
 endif()
-if(FALSE AND EXISTS "${UPDIR}/Utils")
-  add_subdirectory("${UPDIR}/Utils" "${DIRUTILS}")
+if( EXISTS "${UPDIR}/Utils/lib" )
+  include_directories(${UPDIR}/Utils/lib/include)
+  find_library( UTILS Utils${ARTIFACTS_STATIC_SUFFIX} HINTS ${UPDIR}/Utils/lib/lib )
 else()
-  #add_subdirectory(./submodules/Utils "${DIRUTILS}") # NON FUNZIONA
   add_subdirectory(./submodules/Utils)
+  set( UTILS UtilsStatic )
+  set(DEPEND_TARGETS ${DEPEND_TARGETS} UtilsStatic)
 endif()
-if(FALSE AND EXISTS "${UPDIR}/quarticRootsFlocke")
-  add_subdirectory("${UPDIR}/quarticRootsFlocke" "${DIRROOTS}")
+if( EXISTS "${UPDIR}/quarticRootsFlocke/lib" )
+  include_directories(${UPDIR}/quarticRootsFlocke/lib/include)
+  find_library( QUARTIC quartic${ARTIFACTS_STATIC_SUFFIX} HINTS ${UPDIR}/quarticRootsFlocke/lib/lib )
 else()
-  #add_subdirectory(./submodules/quarticRootsFlocke "${DIRROOTS}") # NON FUNZIONA
   add_subdirectory(./submodules/quarticRootsFlocke)
+  set( QUARTIC QuarticStatic )
+  set(DEPEND_TARGETS ${DEPEND_TARGETS} QuarticStatic)
 endif()
 
 include_directories(lib3rd/include)
@@ -133,13 +137,17 @@ if(BUILD_SHARED)
     "$<BUILD_INTERFACE:${Astro_DIR}>"
     "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
   )
-  target_link_libraries( ${DYNAMIC_PROJECT} PUBLIC GenericContainerStatic UtilsStatic QuarticStatic )
+  target_link_libraries( ${DYNAMIC_PROJECT} PUBLIC ${UTILS} ${QUARTIC} ${GC} )
   if(WIN32)
     set_target_properties(
       ${DYNAMIC_PROJECT} PROPERTIES 
       WINDOWS_EXPORT_ALL_SYMBOLS TRUE
     )
   endif()
+endif()
+
+if ( NOT ( "${DEPEND_TARGETS}" STREQUAL "" ) )
+  add_dependencies( ${STATIC_PROJECT} ${DEPEND_TARGETS} )
 endif()
 
 if(BUILD_EXECUTABLE OR ENABLE_CTEST)
@@ -150,7 +158,7 @@ if(BUILD_EXECUTABLE OR ENABLE_CTEST)
     add_executable( ${EXE} tests-cpp/${EXE}.cc )
     target_link_libraries(
       ${EXE} PRIVATE ${STATIC_PROJECT} 
-      GenericContainerStatic UtilsStatic QuarticStatic ${CMAKE_DL_LIBS}
+      ${UTILS} ${QUARTIC} ${GC} ${CMAKE_DL_LIBS}
     )
     set_target_properties(
       ${EXE} PROPERTIES
@@ -163,9 +171,7 @@ endif()
 # INSTALL TARGETS
 
 set(INSTALL_TARGETS ${STATIC_PROJECT})
-add_dependencies( ${STATIC_PROJECT} GenericContainerStatic UtilsStatic QuarticStatic )
 if(BUILD_SHARED)
-  add_dependencies( ${STATIC_PROJECT} GenericContainerStatic UtilsStatic QuarticStatic )
   set(INSTALL_TARGETS ${INSTALL_TARGETS} ${DYNAMIC_PROJECT})
 endif()
 
