@@ -32,7 +32,7 @@ install(DIRECTORY "${Astro_DIR}/Astro" DESTINATION "${PROJECT_PUBLIC_HEADER_DEST
 
 #----------------------------------------
 
-if ( APPLE OR LINUX OR UNIX )
+if ( (APPLE OR LINUX OR UNIX) AND NOT ${INSTALL_LOCAL} )
 
   install(
     EXPORT AstroTargets
