@@ -808,8 +808,8 @@ namespace AstroLib {
   ) {
     real_type r = norm3(P);
     Dr[0] = P[0]/r;
-    Dr[1] = P[0]/r;
-    Dr[2] = P[0]/r;
+    Dr[1] = P[1]/r;
+    Dr[2] = P[2]/r;
     cross( Dr, V, Dn );
     real_type len = norm3(Dn);
     Dn[0] /= len;
