@@ -27,13 +27,11 @@ if COMPILE_DEBUG then
 else
   cmd_cmake_build += ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING '
 end
-cmd_cmake_build += " -DINSTALL_HERE:VAR=true "
+cmd_cmake_build += " -DEB_INSTALL_LOCAL=ON "
 
-FileUtils.cp 'CMakeLists-cflags.txt', 'submodules/Utils/CMakeLists-cflags.txt'
-FileUtils.cp 'CMakeLists-cflags.txt', 'submodules/quarticRootsFlocke/CMakeLists-cflags.txt'
-FileUtils.cp 'CMakeLists-cflags.txt', 'submodules/GenericContainer/CMakeLists-cflags.txt'
-
-
+FileUtils.cp './cmake/CMakeLists-cflags.txt', './submodules/Utils/cmake/CMakeLists-cflags.txt'
+FileUtils.cp './cmake/CMakeLists-cflags.txt', './submodules/quarticRootsFlocke/cmake/CMakeLists-cflags.txt'
+FileUtils.cp './cmake/CMakeLists-cflags.txt', './submodules/GenericContainer/CMakeLists-cflags.txt'
 
 task :default => [:build]
 
