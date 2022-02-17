@@ -149,18 +149,23 @@ ebertolazzi_setup_target(
   TRUE # build static
   "${SOURCE_DIR}"
   "${SOURCES}"
+  "${SOURCE_DIR}"
   "${PUBLIC_HEADERS}"
-  "${PRIVATE_HEADERS}"
 )
-if ( BUILD_SHARED )
+if ( EB_BUILD_SHARED )
   ebertolazzi_setup_target(
     ${PROJECT_NAME}
     FALSE # build dynamic
     "${SOURCE_DIR}"
     "${SOURCES}"
+    "${SOURCE_DIR}"
     "${PUBLIC_HEADERS}"
-    "${PRIVATE_HEADERS}"
   )
+  target_link_libraries( ${EB_NAMESPACE}_${PROJECT_NAME} ${ROOTS} ${GC} ${UTILS} )
+endif()
+
+if ( DEPEND_TARGETS )
+  add_dependencies( ${EB_NAMESPACE}_${PROJECT_NAME}_Static ${DEPEND_TARGETS} )
 endif()
 
 #   _____       _
