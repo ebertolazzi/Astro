@@ -11,26 +11,20 @@
 
 cmake_minimum_required(VERSION 3.14)
 
+project( Astro )
 include(./cmake/CMakeLists-common.txt)
 
 project(
-  Astro
+  ${PROJECT_NAME}
   VERSION ${EB_PROJECT_VERSION}
-  #HOMEPAGE_URL "https://ebertolazzi.github.io/Utils/"
 )
-
-if ( EB_INSTALL_LOCAL )
-  set( CMAKE_INSTALL_PREFIX ${CMAKE_HOME_DIRECTORY} )
-endif()
-
-message("ASTRO current version = v${EB_PROJECT_VERSION}")
 
 include(./cmake/CMakeLists-cflags.txt)
 include(./cmake/CMakeLists-utilities.txt)
 
 # Evaluating the suffix to append to target built by this CMake file
 ebertolazzi_artifacts_suffix(ARTIFACTS_STATIC_SUFFIX TRUE)
-if(BUILD_SHARED)
+if( EB_BUILD_SHARED )
   ebertolazzi_artifacts_suffix(ARTIFACTS_DYNAMIC_SUFFIX FALSE)
 endif()
 
@@ -96,11 +90,15 @@ find_library(
   NO_DEFAULT_PATH
 )
 if( UTILS )
-  message("Found Utils${ARTIFACTS_STATIC_SUFFIX}")
-  include_directories(${UPDIR}/Utils/lib/include)
+  message(STATUS "Found Utils${ARTIFACTS_STATIC_SUFFIX}")
+  ebertolazzi_copy_directory(
+    "${UPDIR}/Utils/lib"
+    "${CMAKE_CURRENT_SOURCE_DIR}/lib3rd"
+  )
 else()
-  message("NOT Found Utils${ARTIFACTS_STATIC_SUFFIX}")
+  message(STATUS "NOT Found Utils${ARTIFACTS_STATIC_SUFFIX} use submodule")
   add_subdirectory(./submodules/Utils)
+  include_directories(./submodules/Utils/src)
   set( UTILS ebertolazzi_Utils_Static )
   set( DEPEND_TARGETS ${DEPEND_TARGETS} ${UTILS} )
 endif()
@@ -112,11 +110,12 @@ find_library(
   NO_DEFAULT_PATH
 )
 if( ROOTS )
-  message("Found quarticRootsFlocke${ARTIFACTS_STATIC_SUFFIX}")
+  message(STATUS "Found quarticRootsFlocke${ARTIFACTS_STATIC_SUFFIX}")
   include_directories(${UPDIR}/quarticRootsFlocke/lib/include)
 else()
-  message("NOT Found quarticRootsFlocke${ARTIFACTS_STATIC_SUFFIX}")
+  message(STATUS "NOT Found quarticRootsFlocke${ARTIFACTS_STATIC_SUFFIX}")
   add_subdirectory(./submodules/quarticRootsFlocke)
+  include_directories(./submodules/quarticRootsFlocke/src)
   set( ROOTS ebertolazzi_quarticRootsFlocke_Static )
   set( DEPEND_TARGETS ${DEPEND_TARGETS} ${ROOTS} )
 endif()
@@ -128,11 +127,12 @@ find_library(
   NO_DEFAULT_PATH
 )
 if( GC )
-  message("Found GenericContainer${ARTIFACTS_STATIC_SUFFIX}")
+  message(STATUS "Found GenericContainer${ARTIFACTS_STATIC_SUFFIX}")
   include_directories(${UPDIR}/GC/lib/include)
 else()
-  message("NOT Found GenericContainer${ARTIFACTS_STATIC_SUFFIX}")
+  message(STATUS "NOT Found GenericContainer${ARTIFACTS_STATIC_SUFFIX}")
   add_subdirectory(./submodules/GenericContainer)
+  include_directories(./submodules/GenericContainer/include)
   set( GC ebertolazzi_GenericContainer_Static )
   set( DEPEND_TARGETS ${DEPEND_TARGETS} ${GC} )
 endif()
