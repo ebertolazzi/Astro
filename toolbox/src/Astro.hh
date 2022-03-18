@@ -136,7 +136,7 @@ namespace AstroLib {
     Astro( string const & );
     Astro( Astro const & );
 
-    Astro const & operator = ( Astro const & ast );
+    Astro & operator = ( Astro const & ast );
 
     ~Astro();
 
@@ -240,8 +240,8 @@ namespace AstroLib {
       return *this;
     }
 
-    Astro const & setup_Keplerian   ( string const & n, GenericContainer & vars );
-    Astro const & setup_Equinoctial ( string const & n, GenericContainer & vars );
+    Astro const & setup_Keplerian   ( string const & n, GenericContainer const & vars );
+    Astro const & setup_Equinoctial ( string const & n, GenericContainer const & vars );
 
     Equinoctial const & get_EQ() const { return m_EQ; }
     Keplerian   const & get_K()  const { return m_K;  }

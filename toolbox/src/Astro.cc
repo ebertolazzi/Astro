@@ -87,7 +87,7 @@ namespace AstroLib {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  Astro const &
+  Astro &
   Astro::operator = ( Astro const & ast ) {
     this->m_name = ast.m_name;
     m_EQ        = ast.m_EQ;
@@ -333,7 +333,7 @@ namespace AstroLib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   Astro const &
-  Astro::setup_Keplerian( string const & n, GenericContainer & vars ) {
+  Astro::setup_Keplerian( string const & n, GenericContainer const & vars ) {
     return setup_Keplerian(
       n,
       vars("t0")    . get_number(),
@@ -350,7 +350,7 @@ namespace AstroLib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   Astro const &
-  Astro::setup_Equinoctial( string const & n, GenericContainer & vars ) {
+  Astro::setup_Equinoctial( string const & n, GenericContainer const & vars ) {
     GenericContainer const & R = vars("retrograde");
     bool retrograde = false;
     if ( R.get_type() == GC_namespace::GC_BOOL ) {
