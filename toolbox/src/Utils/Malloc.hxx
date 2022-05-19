@@ -21,11 +21,6 @@
 /// file: Malloc.hxx
 ///
 
-#pragma once
-
-#ifndef MALLOC_dot_HXX
-#define MALLOC_dot_HXX
-
 /*\
 :|:    ____            _       _             __
 :|:   / ___| _     _  (_)_ __ | |_ ___ _ __ / _| __ _  ___ ___
@@ -42,8 +37,7 @@ namespace Utils {
   using std::mutex;
   #endif
 
-
-  extern mutex MallocMutex;
+  extern std::mutex MallocMutex;
 
   extern int64_t CountAlloc;
   extern int64_t CountFreed;
@@ -51,7 +45,7 @@ namespace Utils {
   extern int64_t MaximumAllocatedBytes;
   extern bool    MallocDebug;
 
-  string outBytes( size_t nb );
+  std::string outBytes( size_t nb );
 
   /*\
   :|:   __  __       _ _
@@ -62,7 +56,7 @@ namespace Utils {
   \*/
 
   //!
-  //! Class manafin memory allocation.
+  //! Class for memory allocation.
   //!
   template <typename T>
   class Malloc {
@@ -71,25 +65,31 @@ namespace Utils {
 
   private:
 
-    string      m_name;
-    size_t      m_numTotValues;
-    size_t      m_numTotReserved;
-    size_t      m_numAllocated;
+    std::string m_name;
+    std::size_t m_numTotValues;
+    std::size_t m_numTotReserved;
+    std::size_t m_numAllocated;
     valueType * m_pMalloc;
+
+    void allocate_internal( std::size_t n );
+    void memory_exausted( std::size_t sz );
+
+  public:
 
     Malloc(Malloc<T> const &) = delete; // blocco costruttore di copia
     Malloc<T> const & operator = (Malloc<T> &) const = delete; // blocco copia
-
-    void allocate_internal( size_t n );
-    void memory_exausted( size_t sz );
-
-  public:
 
     //!
     //! Malloc object constructor
     //!
     explicit
-    Malloc( string const & name );
+    Malloc( string name )
+    : m_name(std::move(name))
+    , m_numTotValues(0)
+    , m_numTotReserved(0)
+    , m_numAllocated(0)
+    , m_pMalloc(nullptr)
+    { }
 
     //!
     //! Malloc object destructor.
@@ -100,41 +100,41 @@ namespace Utils {
     //! Allocate memory for `n` objects,
     //! raise an error if memory already allocated.
     //!
-    void allocate( size_t n );
+    void allocate( std::size_t n );
 
     //!
     //! Allocate memory for `n` objects,
     //! no matter if already allocated.
     //!
-    void reallocate( size_t n );
+    void reallocate( std::size_t n );
 
     //!
     //! Free memory without deallocating pointer.
     //!
-    void free(void) { m_numTotValues = m_numAllocated = 0; }
+    void free() { m_numTotValues = m_numAllocated = 0; }
 
     //!
     //! Free memory deallocating pointer.
     //!
-    void hard_free(void);
+    void hard_free();
 
     //!
     //! Number of objects allocated.
     //!
-    size_t size(void) const { return m_numTotValues; }
+    size_t size() const { return m_numTotValues; }
 
     //!
     //! Get pointer of allocated memory for `sz` objets.
     //!
-    T * operator () ( size_t sz ) {
+    T * operator () ( std::size_t sz ) {
       size_t offs = m_numAllocated;
       m_numAllocated += sz;
       if ( m_numAllocated > m_numTotValues ) memory_exausted( sz );
       return m_pMalloc + offs;
     }
 
-    T * malloc( size_t n );
-    T * realloc( size_t n );
+    T * malloc( std::size_t n );
+    T * realloc( std::size_t n );
 
     //!
     //! `true` if you cannot get more memory pointers.
@@ -144,7 +144,13 @@ namespace Utils {
     //!
     //! return an error if memory is not completely used.
     //!
-    void must_be_empty( char const * const where ) const;
+    void must_be_empty( char const * where ) const;
+
+    //!
+    //! return information of memory allocations.
+    //!
+    std::string info( char const * where ) const;
+
   };
 
   extern template class Malloc<char>;
@@ -168,9 +174,78 @@ namespace Utils {
   extern template class Malloc<float*>;
   extern template class Malloc<double*>;
 
-}
+  /*\
+  :|:   __  __       _ _            _____ _              _
+  :|:  |  \/  | __ _| | | ___   ___|  ___(_)_  _____  __| |
+  :|:  | |\/| |/ _` | | |/ _ \ / __| |_  | \ \/ / _ \/ _` |
+  :|:  | |  | | (_| | | | (_) | (__|  _| | |>  <  __/ (_| |
+  :|:  |_|  |_|\__,_|_|_|\___/ \___|_|   |_/_/\_\___|\__,_|
+  \*/
 
-#endif
+  //!
+  //! Class for memory allocation.
+  //!
+  template <typename T, std::size_t mem_size>
+  class MallocFixed {
+  public:
+    typedef T valueType;
+
+  private:
+
+    std::string m_name;
+    std::size_t m_numAllocated;
+    valueType   m_data[mem_size];
+
+  public:
+
+    MallocFixed(MallocFixed<T,mem_size> const &) = delete; // blocco costruttore di copia
+    MallocFixed<T,mem_size> const & operator = (MallocFixed<T,mem_size> &) const = delete; // blocco copia
+
+    //!
+    //! Malloc object constructor
+    //!
+    explicit
+    MallocFixed( std::string name )
+    : m_name(std::move(name))
+    , m_numAllocated(0)
+    {}
+
+    //!
+    //! Malloc object destructor.
+    //!
+    ~MallocFixed() = default;
+
+    //!
+    //! Free memory without deallocating pointer.
+    //!
+    void free() { m_numAllocated = 0; }
+
+    //!
+    //! Number of objects allocated.
+    //!
+    size_t size() const { return mem_size; }
+
+    //!
+    //! Get pointer of allocated memory for `sz` objets.
+    //!
+    T * operator () ( std::size_t sz ) {
+      std::size_t offs = m_numAllocated;
+      m_numAllocated += sz;
+      UTILS_ASSERT(
+        m_numAllocated <= mem_size,
+        "MallocFixed<{}>::operator () ({}) -- Memory EXAUSTED\n", m_name, sz
+      );
+      return m_data + offs;
+    }
+
+    //!
+    //! `true` if you cannot get more memory pointers.
+    //!
+    bool is_empty() const { return m_numAllocated >= mem_size; }
+
+  };
+
+}
 
 ///
 /// eof: Malloc.hxx

@@ -1,24 +1,46 @@
-classdef Astro < handle
+classdef Astro < matlab.mixin.Copyable
   %% MATLAB class wrapper for the underlying C++ class
   properties (SetAccess = protected, Hidden = true)
     objectHandle; % Handle to the underlying C++ class instance
+    call_delete;
+  end
+
+  methods(Access = protected)
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    %> Make a deep copy of a curve object
+    %>
+    %> **Usage**
+    %>
+    %> \rst
+    %> .. code-block:: matlab
+    %>
+    %>   B = A.copy();
+    %>
+    %> \endrst
+    %>
+    %> where `A` is the astro object to be copied.
+    %>
+    function obj = copyElement( self )
+      obj              = copyElement@matlab.mixin.Copyable(self);
+      obj.objectHandle = feval( self.mexName, 'copy', self.objectHandle );
+      obj.call_delete  = true;
+    end
   end
 
   methods
     function self = Astro( varargin )
       self.objectHandle = AstroMexWrapper( 'new', varargin{:} );
+      self.call_delete  = true;
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function delete( self )
       %% Destroy the C++ class instance
       if self.objectHandle ~= 0
-        AstroMexWrapper( 'delete', self.objectHandle );
+        if self.call_delete
+          AstroMexWrapper( 'delete', self.objectHandle );
+        end
       end
       self.objectHandle = 0; % avoid double destruction of object
-    end
-    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    function change_handle( self, new_objectHandle )
-      AstroMexWrapper( 'new_handle', self.objectHandle , new_objectHandle );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     %> Return the `pointer` of the interbal stored c++ object
@@ -29,28 +51,11 @@ classdef Astro < handle
     %> .. code-block:: matlab
     %>
     %>   obj = ref.obj_handle();
-    %> 
+    %>
     %> \endrst
     %>
     function obj = obj_handle( self )
       obj = self.objectHandle;
-    end
-    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    %> Make of copy of a curve object
-    %>
-    %> **Usage**
-    %>
-    %> \rst
-    %> .. code-block:: matlab
-    %>
-    %>   ref.copy( C );
-    %> 
-    %> \endrst
-    %>
-    %> where `C` id the curve object to be copied.
-    %>
-    function copy( self, C )
-      AstroMexWrapper( 'copy', self.objectHandle, C.obj_handle() );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function res = name( self )

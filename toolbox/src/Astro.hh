@@ -404,7 +404,7 @@ namespace AstroLib {
 
     real_type
     E0_angle() const {
-      real_type E_values[4];;
+      real_type E_values[4];
       mean_anomaly_to_E( m_M0, E_values, 0 );
       return E_values[0];
     }

@@ -20,15 +20,16 @@
 ///
 /// file: Trace.hxx
 ///
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#pragma once
-
-#ifndef TRACE_dot_HH
-#define TRACE_dot_HH
+#include <string.h>
+#ifndef __FILENAME__
+  #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr("/" __FILE__, '/') + 1 : __FILE__)
+#endif
 
 #ifndef UTILS_ERROR0
   #define UTILS_ERROR0(MSG) \
-  throw Utils::Runtime_Error( MSG, __FILE__, __LINE__ )
+  throw Utils::Runtime_Error( MSG, __FILENAME__, __LINE__ )
 #endif
 
 #ifndef UTILS_ASSERT0
@@ -41,7 +42,7 @@
 
 #ifndef UTILS_ERROR
   #define UTILS_ERROR(...) \
-  throw Utils::Runtime_Error( fmt::format(__VA_ARGS__), __FILE__, __LINE__ )
+  throw Utils::Runtime_Error( fmt::format(__VA_ARGS__), __FILENAME__, __LINE__ )
 #endif
 
 #ifndef UTILS_ASSERT
@@ -54,7 +55,7 @@
 
 #ifndef UTILS_ERROR_TRACE0
   #define UTILS_ERROR_TRACE0(MSG) \
-  throw Utils::Runtime_TraceError( MSG, __FILE__, __LINE__ )
+  throw Utils::Runtime_TraceError( MSG, __FILENAME__, __LINE__ )
 #endif
 
 #ifndef UTILS_ASSERT_TRACE0
@@ -63,7 +64,7 @@
 
 #ifndef UTILS_ERROR_TRACE
   #define UTILS_ERROR_TRACE(...) \
-  throw Utils::Runtime_TraceError( fmt::format(__VA_ARGS__), __FILE__, __LINE__ )
+  throw Utils::Runtime_TraceError( fmt::format(__VA_ARGS__), __FILENAME__, __LINE__ )
 #endif
 
 #ifndef UTILS_ASSERT_TRACE
@@ -86,6 +87,8 @@
   #endif
 #endif
 
+#endif
+
 #ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpadded"
@@ -97,58 +100,77 @@
 
 namespace Utils {
 
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
   using std::basic_ostream;
   using std::string;
   using std::runtime_error;
-  #endif
 
-  typedef basic_ostream<char> ostream_type;
+  typedef std::basic_ostream<char> ostream_type;
 
   void
-  printTrace(
-    int                line,
-    char const * const file,
-    string const     & msg,
-    ostream_type     & stream
+  print_trace(
+    int                 line,
+    char const *        file,
+    std::string const & msg,
+    ostream_type      & stream
   );
+
+  inline
+  void
+  printTrace(
+    int                 line,
+    char const *        file,
+    std::string const & msg,
+    ostream_type      & stream
+  ) {
+    print_trace( line, file, msg, stream );
+  }
 
   class Runtime_TraceError : public runtime_error {
   private:
-    string
+    std::string
     grab_backtrace(
-      string const &     reason,
-      char const * const file,
-      int                line
+      std::string const & reason,
+      char const *        file,
+      int                 line
     ) const;
 
   public:
     explicit
-    Runtime_TraceError( string const & reason, char const * const file, int line )
-    : runtime_error( grab_backtrace( reason, file, line ) )
+    Runtime_TraceError(
+      std::string const & reason,
+      char const *        file,
+      int                 line
+    )
+    : std::runtime_error( grab_backtrace( reason, file, line ) )
     { }
 
-    virtual const char* what() const noexcept override;
+    char const * what() const noexcept override;
   };
 
   class Runtime_Error : public runtime_error {
   public:
     explicit
-    Runtime_Error( string const & reason, char const * const file, int line )
-    : runtime_error( fmt::format( "\n{}\nOn File:{}:{}\n", reason, file, line ) )
+    Runtime_Error(
+      std::string const & reason,
+      char const *        file,
+      int                 line
+    )
+    : std::runtime_error( fmt::format( "\n{}\nOn File:{}:{}\n", reason, file, line ) )
     { }
 
     explicit
-    Runtime_Error( char const * const reason, char const * const file, int line )
-    : runtime_error( fmt::format( "\n{}\nOn File:{}:{}\n", reason, file, line ) )
+    Runtime_Error(
+      char const * reason,
+      char const * file,
+      int          line
+    )
+    : std::runtime_error( fmt::format( "\n{}\nOn File:{}:{}\n", reason, file, line ) )
     { }
 
-    virtual const char* what() const noexcept override;
+    char const * what() const noexcept override;
   };
 
 }
-
-#endif
 
 ///
 /// eof: Trace.hxx

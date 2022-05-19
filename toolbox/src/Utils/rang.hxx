@@ -100,25 +100,23 @@ namespace rang {
 
   namespace rang_implementation {
 
-    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     using std::atomic;
     using std::enable_if;
     using std::is_same;
     using std::ostream;
     using std::streambuf;
-    #endif
 
     inline
-    atomic<control> &
+    std::atomic<control> &
     controlMode() noexcept {
-      static atomic<control> value(control::Auto);
+      static std::atomic<control> value(control::Auto);
       return value;
     }
 
     inline
-    atomic<winTerm> &
+    std::atomic<winTerm> &
     winTermMode() noexcept {
-      static atomic<winTerm> termMode(winTerm::Auto);
+      static std::atomic<winTerm> termMode(winTerm::Auto);
       return termMode;
     }
 

@@ -21,11 +21,6 @@
 /// file: Quaternion.hxx
 ///
 
-#pragma once
-
-#ifndef UTILS_QUATERNION_DOT_HH
-#define UTILS_QUATERNION_DOT_HH
-
 namespace Utils {
 
   #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -102,7 +97,7 @@ namespace Utils {
     //! Print a quaternion to stream.
     //!
     void
-    print( ostream & os) const {
+    print( ostream_type & os) const {
       os << "[ "
          << m_Q[0] << ", "
          << m_Q[1] << "i, "
@@ -199,7 +194,7 @@ namespace Utils {
     //! and inversion.
     //!
     real_type
-    toAxis( real_type axis[3] ) const {
+    to_axis( real_type axis[3] ) const {
       real_type sin_phi = sqrt( m_Q[1]*m_Q[1] + m_Q[2]*m_Q[2] + m_Q[3]*m_Q[3] );
       real_type cos_phi = m_Q[0];
       real_type angle   = 2 * atan2( sin_phi, cos_phi );
@@ -217,9 +212,9 @@ namespace Utils {
     //! Converts a rotation from quaternion to rotation matrix.
     //!
     void
-    toMatrix( real_type mat[3][3] ) const {
+    to_matrix( real_type mat[3][3] ) const {
       real_type axis[3];
-      real_type angle = toAxis( axis );
+      real_type angle = to_axis( axis );
       real_type ca    = cos( angle );
       real_type sa    = sin( angle );
 
@@ -260,13 +255,11 @@ namespace Utils {
 
   template <typename T>
   inline
-  ostream& operator << ( ostream & os,  Quaternion<T> const & Q ) {
+  ostream_type& operator << ( ostream_type & os,  Quaternion<T> const & Q ) {
     Q.print(os);
     return os;
   }
 }
-
-#endif
 
 ///
 /// eof: Quaternion.hxx

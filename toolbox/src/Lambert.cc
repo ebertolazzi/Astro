@@ -93,6 +93,8 @@
 
 namespace AstroLib {
 
+  using std::isnan;
+  using std::isinf;
   using Utils::m_pi;
 
   /*\

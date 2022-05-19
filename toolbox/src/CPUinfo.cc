@@ -31,7 +31,7 @@ http://www.codeproject.com/info/cpol10.aspx
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include "Utils.hh"
-#include "CPUinfo.hh"
+#include "Utils_CPU_info.hh"
 #include <map>
 
 
@@ -39,10 +39,8 @@ http://www.codeproject.com/info/cpol10.aspx
 
 namespace Utils {
 
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
   using std::string;
   using std::map;
-  #endif
 
   void
   info( bool & m_bMMX,
@@ -111,10 +109,8 @@ namespace Utils {
 
 namespace Utils {
 
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
   using std::string;
   using std::map;
-  #endif
 
   #if defined(UTILS_OS_WINDOWS)
     #include <intrin.h>
