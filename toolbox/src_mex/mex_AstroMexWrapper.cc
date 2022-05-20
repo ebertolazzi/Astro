@@ -12,17 +12,6 @@
 #include "Astro.hh"
 #include "GenericContainerMatlabInterface.hh"
 
-#define MEX_ERROR_MESSAGE \
-"=====================================================================================\n" \
-"mex_Astro: error\n" \
-"\n" \
-"USAGE:\n" \
-"  - Constructors:\n" \
-"    OBJ = AstroMexWrapper( 'new' );\n" \
-"\n" \
-"  On output:\n" \
-"    OBJ = pointer to the internal object\n" \
-"\n"
 
 /*
 // redirect stdout, found at
@@ -64,22 +53,6 @@ static scoped_redirect_cout mycout_redirect;
 namespace AstroLib {
 
   /*\
-   |  ____    _  _____  _
-   | |  _ \  / \|_   _|/ \
-   | | | | |/ _ \ | | / _ \
-   | | |_| / ___ \| |/ ___ \
-   | |____/_/   \_\_/_/   \_\
-   |
-  \*/
-
-  static
-  inline
-  Astro *
-  DATA_GET( mxArray const * & mx_id ) {
-    return Utils::mex_convert_mx_to_ptr<Astro>(mx_id);
-  }
-
-  /*\
    *                      _____                 _   _
    *  _ __ ___   _____  _|  ___|   _ _ __   ___| |_(_) ___  _ __
    * | '_ ` _ \ / _ \ \/ / |_ | | | | '_ \ / __| __| |/ _ \| '_ \
@@ -100,16 +73,16 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define MEX_ERROR_MESSAGE_1 "AstroMexWrapper('new'[,'name']): "
+    #define MEX_ERROR_MESSAGE_1 "AstroMexWrapper('new'[,'name'])"
     #define CMD MEX_ERROR_MESSAGE_1
 
     UTILS_ASSERT( nlhs == 1, CMD "expected 1 output, nlhs = {}\n", nlhs );
-    UTILS_ASSERT( nrhs == 1 || nrhs == 2, CMD "expected 1 or 2 input, nrhs = {}\n", nrhs );
+    UTILS_ASSERT( nrhs == 1 || nrhs == 2, CMD ": expected 1 or 2 input, nrhs = {}\n", nrhs );
     Astro * ptr = nullptr;
     if ( nrhs == 1 ) {
       ptr = new Astro();
     } else {
-      UTILS_ASSERT0( mxIsChar(arg_in_1), CMD "second argument must be a string" );
+      UTILS_ASSERT0( mxIsChar(arg_in_1), CMD ": second argument must be a string" );
       string name = mxArrayToString(arg_in_1);
       ptr = new Astro(name);
     }
@@ -166,12 +139,12 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define MEX_ERROR_MESSAGE_4 "res = AstroMexWrapper('do_name',obj): "
+    #define MEX_ERROR_MESSAGE_4 "res = AstroMexWrapper('do_name',obj)"
     #define CMD MEX_ERROR_MESSAGE_4
 
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::to_mxArray(ptr->name(),arg_out_0);
     #undef CMD
   }
@@ -189,7 +162,7 @@ namespace AstroLib {
 
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::to_mxArray(ptr->check_for_consistency(),arg_out_0);
     #undef CMD
   }
@@ -206,7 +179,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_6
 
     CHECK_IN(3);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param t" );
     if ( nlhs == 1 ) {
@@ -238,7 +211,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_7
 
     CHECK_IN(3);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param t" );
     if ( nlhs == 1 ) {
@@ -270,7 +243,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_8
 
     CHECK_IN(3);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param t" );
     if ( nlhs == 1 ) {
@@ -302,7 +275,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_9
 
     CHECK_IN(3);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD ":  param t" );
     if ( nlhs == 1 ) {
@@ -335,7 +308,7 @@ namespace AstroLib {
 
     UTILS_ASSERT( nrhs == 3 || nrhs == 11, CMD ": expected 3 or 11 input, nrhs = {}\n", nrhs );
     CHECK_OUT(0);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     string name = "no-name";
     GC_namespace::real_type t0(0), a(0), e(0), Omega(0), omega(0), i(0), M0(0), muS(0);
     if ( nrhs == 11 ) {
@@ -353,7 +326,7 @@ namespace AstroLib {
       GC_namespace::GenericContainer gc;
       try {
         GC_namespace::mxArray_to_GenericContainer(arg_in_2,gc);
-        name = gc("name").get_string(CMD ": param struct field 'name': " );
+        name = gc("name").get_string(CMD ": param struct field 'name'" );
       } catch ( std::exception const & e ) {
         mexErrMsgTxt( fmt::format( "Astro Error: {}", e.what() ).c_str() );
       } catch (...) {
@@ -385,7 +358,7 @@ namespace AstroLib {
 
     UTILS_ASSERT( nrhs == 3 || nrhs == 12, CMD ": expected 3 or 12 input, nrhs = {}\n", nrhs );
     CHECK_OUT(0);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::real_type t0(0), p(0), f(0), g(0), h(0), k(0), L0(0), muS(0);
     bool retrograde = false;
     string name = "";
@@ -405,7 +378,7 @@ namespace AstroLib {
       GC_namespace::GenericContainer gc;
       try {
         GC_namespace::mxArray_to_GenericContainer(arg_in_2,gc);
-        name = gc("name").get_string(CMD ": param struct field 'name': " );
+        name = gc("name").get_string(CMD ": param struct field 'name'" );
       } catch ( std::exception const & e ) {
         mexErrMsgTxt( fmt::format( "Astro Error: {}", e.what() ).c_str() );
       } catch (...) {
@@ -445,7 +418,7 @@ namespace AstroLib {
 
     CHECK_IN(7);
     CHECK_OUT(0);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     UTILS_ASSERT0( mxIsChar(arg_in_2), CMD ": param name must be a string" );
     string n = mxArrayToString(arg_in_2);
     mwSize szP, szV;
@@ -472,7 +445,7 @@ namespace AstroLib {
 
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param t" );
     GC_namespace::vec_real_type ma;
@@ -495,7 +468,7 @@ namespace AstroLib {
 
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param t" );
     GC_namespace::vec_real_type ta;
@@ -518,7 +491,7 @@ namespace AstroLib {
 
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     Utils::mex_set_scalar_value( arg_out_0, ptr->p_orbital() );
     #undef CMD
   }
@@ -536,7 +509,7 @@ namespace AstroLib {
 
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     Utils::mex_set_scalar_value( arg_out_0, ptr->f_orbital() );
     #undef CMD
   }
@@ -554,7 +527,7 @@ namespace AstroLib {
 
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     Utils::mex_set_scalar_value( arg_out_0, ptr->g_orbital() );
     #undef CMD
   }
@@ -572,7 +545,7 @@ namespace AstroLib {
 
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     Utils::mex_set_scalar_value( arg_out_0, ptr->h_orbital() );
     #undef CMD
   }
@@ -590,7 +563,7 @@ namespace AstroLib {
 
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     Utils::mex_set_scalar_value( arg_out_0, ptr->k_orbital() );
     #undef CMD
   }
@@ -610,7 +583,7 @@ namespace AstroLib {
       nrhs == 3 || nrhs == 4, CMD "Expected 3 or 4 argument(s), nrhs = {}\n", nrhs
     );
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     if ( nrhs == 3 ) {
       mwSize sz;
       double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param t" );
@@ -643,7 +616,7 @@ namespace AstroLib {
 
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param t" );
     GC_namespace::vec_real_type L;
@@ -666,7 +639,7 @@ namespace AstroLib {
 
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param t" );
     GC_namespace::vec_real_type L;
@@ -689,7 +662,7 @@ namespace AstroLib {
 
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::to_mxArray(ptr->latitude_of_periapsis(),arg_out_0);
     #undef CMD
   }
@@ -707,7 +680,7 @@ namespace AstroLib {
 
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::to_mxArray(ptr->latitude_of_apoapsis(),arg_out_0);
     #undef CMD
   }
@@ -725,7 +698,7 @@ namespace AstroLib {
 
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     
     GC_namespace::GenericContainer gc;
     GC_namespace::GenericContainer & EQ = gc["Equinoctial"];
@@ -762,7 +735,7 @@ namespace AstroLib {
 
     CHECK_IN(2);
     CHECK_OUT(0);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mexPrintf("%s\n",ptr->info().c_str());
     #undef CMD
   }
@@ -780,7 +753,7 @@ namespace AstroLib {
 
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::real_type t = Utils::mex_get_scalar_value( arg_in_2, CMD ": param t" );
     GC_namespace::to_mxArray(ptr->number_of_revolution(t),arg_out_0);
     #undef CMD
@@ -799,7 +772,7 @@ namespace AstroLib {
 
     CHECK_IN(4);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::real_type t = Utils::mex_get_scalar_value( arg_in_2, CMD ": param t" );
     GC_namespace::real_type L = Utils::mex_get_scalar_value( arg_in_3, CMD ": param L" );
     GC_namespace::to_mxArray(ptr->time_from_L_angle(t,L),arg_out_0);
@@ -819,7 +792,7 @@ namespace AstroLib {
 
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::real_type t = Utils::mex_get_scalar_value( arg_in_2, CMD " param t" );
     GC_namespace::to_mxArray(ptr->absolute_position(t),arg_out_0);
     #undef CMD
@@ -838,7 +811,7 @@ namespace AstroLib {
 
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::real_type t = Utils::mex_get_scalar_value( arg_in_2, CMD ": param t" );
     GC_namespace::to_mxArray(ptr->absolute_velocity(t),arg_out_0);
     #undef CMD
@@ -856,7 +829,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_31
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::to_mxArray(ptr->period(),arg_out_0);
     #undef CMD
   }
@@ -873,7 +846,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_32
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::to_mxArray(ptr->apoapsis(),arg_out_0);
     #undef CMD
   }
@@ -890,7 +863,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_33
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::to_mxArray(ptr->periapsis(),arg_out_0);
     #undef CMD
   }
@@ -907,7 +880,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_34
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::to_mxArray(ptr->get_muS(),arg_out_0);
     #undef CMD
   }
@@ -924,7 +897,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_35
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::to_mxArray(ptr->orbit_energy(),arg_out_0);
     #undef CMD
   }
@@ -941,7 +914,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_36
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * L = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param L" );
     GC_namespace::vec_real_type ray;
@@ -959,11 +932,11 @@ namespace AstroLib {
     int nlhs, mxArray       *plhs[],
     int nrhs, mxArray const *prhs[]
   ) {
-    #define MEX_ERROR_MESSAGE_37 "DRDL = AstroMexWrapper('radius_by_L_D',obj,L): "
+    #define MEX_ERROR_MESSAGE_37 "DRDL = AstroMexWrapper('radius_by_L_D',obj,L)"
     #define CMD MEX_ERROR_MESSAGE_37
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * L = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param L" );
     GC_namespace::vec_real_type ray;
@@ -985,7 +958,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_38
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * L = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param L" );
     GC_namespace::vec_real_type ray;
@@ -1007,7 +980,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_39
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param t" );
     GC_namespace::mat_real_type G;
@@ -1034,7 +1007,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_40
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     Utils::mex_set_scalar_value( arg_out_0, ptr->M0_orbital() );
     #undef CMD
   }
@@ -1051,7 +1024,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_41
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::vec_real_type G;
     G.resize(6);
     real_type grad[6];
@@ -1074,7 +1047,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_42
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     Utils::mex_set_scalar_value( arg_out_0, ptr->theta0_orbital() );
     #undef CMD
   }
@@ -1091,7 +1064,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_43
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::vec_real_type G;
     G.resize(6);
     real_type grad[6];
@@ -1114,7 +1087,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_44
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     Utils::mex_set_scalar_value( arg_out_0, ptr->E0_angle() );
     #undef CMD
   }
@@ -1131,7 +1104,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_45
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::vec_real_type G;
     G.resize(6);
     real_type grad[6];
@@ -1154,7 +1127,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_46
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     Utils::mex_set_scalar_value( arg_out_0, ptr->H0_angle() );
     #undef CMD
   }
@@ -1171,7 +1144,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_47
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::vec_real_type G;
     G.resize(6);
     real_type grad[6];
@@ -1194,7 +1167,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_48
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD " param t" );
     GC_namespace::vec_real_type E;
@@ -1216,7 +1189,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_49
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param t" );
     GC_namespace::mat_real_type G;
@@ -1243,7 +1216,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_50
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param t" );
     GC_namespace::vec_real_type H;
@@ -1265,7 +1238,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_51
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param t" );
     GC_namespace::mat_real_type G;
@@ -1292,7 +1265,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_52
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param t" );
     GC_namespace::mat_real_type G;
@@ -1319,7 +1292,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_53
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     double t = Utils::mex_get_scalar_value( arg_in_2, CMD ": param t" );
     GC_namespace::mat_real_type G;
     G.resize(3,6);
@@ -1344,7 +1317,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_54
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::mat_real_type G;
     G.resize(3,6);
     real_type JP[3][6];
@@ -1368,7 +1341,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_55
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     double t = Utils::mex_get_scalar_value( arg_in_2, CMD ": param t" );
     GC_namespace::mat_real_type G;
     G.resize(3,6);
@@ -1393,7 +1366,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_56
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::real_type L = Utils::mex_get_scalar_value( arg_in_2, CMD ": param L" );
     GC_namespace::to_mxArray(ptr->absolute_velocity_by_angle(L),arg_out_0);
     #undef CMD
@@ -1411,7 +1384,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_57
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * t = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param t" );
     GC_namespace::mat_real_type G;
@@ -1438,7 +1411,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_58
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::mat_real_type G;
     G.resize(3,6);
     real_type JP[3][6];
@@ -1462,7 +1435,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_59
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     double t = Utils::mex_get_scalar_value( arg_in_2, CMD ": param t" );
     GC_namespace::mat_real_type G;
     G.resize(3,6);
@@ -1487,7 +1460,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_60
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     double t = Utils::mex_get_scalar_value( arg_in_2, CMD ": param t" );
     GC_namespace::mat_real_type G;
     G.resize(3,6);
@@ -1512,7 +1485,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_61
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     mwSize sz;
     double const * nu = Utils::mex_vector_pointer( arg_in_2, sz, CMD ": param nu" );
     GC_namespace::vec_real_type L;
@@ -1534,7 +1507,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_62
     CHECK_IN(2);
     CHECK_OUT(0);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     ptr->make_retrograde();
     #undef CMD
   }
@@ -1551,7 +1524,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_63
     CHECK_IN(2);
     CHECK_OUT(0);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     ptr->make_not_retrograde();
     #undef CMD
   }
@@ -1568,7 +1541,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_64
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     Utils::mex_set_scalar_value( arg_out_0, ptr->retrograde() ? 1 : 0 );
     #undef CMD
   }
@@ -1585,7 +1558,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_65
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::real_type * n = Utils::mex_create_matrix_value( arg_out_0, 3, 1 );
     ptr->normal(n);
     #undef CMD
@@ -1603,7 +1576,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_66
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::real_type t = Utils::mex_get_scalar_value( arg_in_2, CMD ": param t" );
     GC_namespace::real_type * frame = Utils::mex_create_matrix_value( arg_out_0, 3, 3 );
     GC_namespace::real_type M[3][3];
@@ -1626,7 +1599,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_67
     CHECK_IN(3);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::real_type L = Utils::mex_get_scalar_value( arg_in_2, CMD ": param L" );
     GC_namespace::real_type * frame = Utils::mex_create_matrix_value( arg_out_0, 3, 3 );
     GC_namespace::real_type M[3][3];
@@ -1649,7 +1622,7 @@ namespace AstroLib {
     #define CMD MEX_ERROR_MESSAGE_68
     CHECK_IN(2);
     CHECK_OUT(1);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::real_type * frame = Utils::mex_create_matrix_value( arg_out_0, 3, 3 );
     GC_namespace::real_type M[3][3];
     ptr->ellipse_frame(M);
@@ -1670,7 +1643,7 @@ namespace AstroLib {
     #define MEX_ERROR_MESSAGE_69 "E = AstroMexWrapper('eval_E',obj,t)"
     #define CMD MEX_ERROR_MESSAGE_69
     CHECK_IN(3);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::real_type t = Utils::mex_get_scalar_value( arg_in_2, CMD ": param t" );
     UTILS_ASSERT(
       nrhs > 0 && nrhs < 4,
@@ -1697,7 +1670,7 @@ namespace AstroLib {
     #define MEX_ERROR_MESSAGE_70 "L = AstroMexWrapper('eval_L',obj,t)"
     #define CMD MEX_ERROR_MESSAGE_70
     CHECK_IN(3);
-    Astro * ptr = DATA_GET( arg_in_1 );
+    Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::real_type t = Utils::mex_get_scalar_value( arg_in_2, CMD ": param t" );
     UTILS_ASSERT(
       nrhs > 0 && nrhs < 4,
@@ -1712,47 +1685,6 @@ namespace AstroLib {
     if ( nlhs > 3 ) Utils::mex_set_scalar_value( arg_out_3, L[3] );
     #undef CMD
   }
-
-  #if 0
-  integer
-  Lambert(
-    real_type const R1[3],
-    real_type const R2[3],
-    real_type       tf_in, // tempo di volo
-    integer         m_in,  // numero di rivoluzioni
-    real_type       muC,
-    real_type       V1[3],
-    real_type       V2[3]
-  );
-
-  integer
-  Lambert_Lancaster_Blanchard(
-    real_type const r1vec[3],
-    real_type const r2vec[3],
-    real_type       tf_in,
-    integer         m_in,
-    real_type       muC,
-    real_type       V1[3],
-    real_type       V2[3]
-  );
-
-  void
-  Lambert_minmax_distances(
-    real_type const r1vec[3],
-    real_type       r1,
-    real_type const r2vec[3],
-    real_type       r2,
-    real_type       dth,
-    real_type       a,
-    real_type const V1[3],
-    real_type const V2[3],
-    integer         m,
-    real_type       muC,
-    real_type &     minimum_distance,
-    real_type &     maximum_distance
-  );
-
-  #endif
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -1832,6 +1764,96 @@ namespace AstroLib {
     {"eval_E",do_eval_E},
     {"eval_L",do_eval_L}
   };
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  #define MEX_ERROR_MESSAGE \
+"%======================================================================%\n" \
+"AstroMexWrapper\n" \
+"\n" \
+"USAGE:\n" \
+"\n" \
+MEX_ERROR_MESSAGE_1 "\n" \
+MEX_ERROR_MESSAGE_2 "\n" \
+MEX_ERROR_MESSAGE_3 "\n" \
+MEX_ERROR_MESSAGE_4 "\n" \
+MEX_ERROR_MESSAGE_5 "\n" \
+MEX_ERROR_MESSAGE_6 "\n" \
+MEX_ERROR_MESSAGE_7 "\n" \
+MEX_ERROR_MESSAGE_8 "\n" \
+MEX_ERROR_MESSAGE_9 "\n" \
+MEX_ERROR_MESSAGE_10 "\n" \
+MEX_ERROR_MESSAGE_11 "\n" \
+MEX_ERROR_MESSAGE_12 "\n" \
+MEX_ERROR_MESSAGE_13 "\n" \
+MEX_ERROR_MESSAGE_14 "\n" \
+MEX_ERROR_MESSAGE_15 "\n" \
+MEX_ERROR_MESSAGE_16 "\n" \
+MEX_ERROR_MESSAGE_17 "\n" \
+MEX_ERROR_MESSAGE_18 "\n" \
+MEX_ERROR_MESSAGE_19 "\n" \
+MEX_ERROR_MESSAGE_20 "\n" \
+MEX_ERROR_MESSAGE_21 "\n" \
+MEX_ERROR_MESSAGE_22 "\n" \
+MEX_ERROR_MESSAGE_23 "\n" \
+MEX_ERROR_MESSAGE_24 "\n" \
+MEX_ERROR_MESSAGE_25 "\n" \
+MEX_ERROR_MESSAGE_26 "\n" \
+MEX_ERROR_MESSAGE_27 "\n" \
+MEX_ERROR_MESSAGE_28 "\n" \
+MEX_ERROR_MESSAGE_29 "\n" \
+MEX_ERROR_MESSAGE_30 "\n" \
+MEX_ERROR_MESSAGE_31 "\n" \
+MEX_ERROR_MESSAGE_32 "\n" \
+MEX_ERROR_MESSAGE_33 "\n" \
+MEX_ERROR_MESSAGE_34 "\n" \
+MEX_ERROR_MESSAGE_35 "\n" \
+MEX_ERROR_MESSAGE_36 "\n" \
+MEX_ERROR_MESSAGE_37 "\n" \
+MEX_ERROR_MESSAGE_38 "\n" \
+MEX_ERROR_MESSAGE_39 "\n" \
+MEX_ERROR_MESSAGE_40 "\n" \
+MEX_ERROR_MESSAGE_41 "\n" \
+MEX_ERROR_MESSAGE_42 "\n" \
+MEX_ERROR_MESSAGE_43 "\n" \
+MEX_ERROR_MESSAGE_44 "\n" \
+MEX_ERROR_MESSAGE_45 "\n" \
+MEX_ERROR_MESSAGE_46 "\n" \
+MEX_ERROR_MESSAGE_47 "\n" \
+MEX_ERROR_MESSAGE_48 "\n" \
+MEX_ERROR_MESSAGE_49 "\n" \
+MEX_ERROR_MESSAGE_50 "\n" \
+MEX_ERROR_MESSAGE_51 "\n" \
+MEX_ERROR_MESSAGE_52 "\n" \
+MEX_ERROR_MESSAGE_53 "\n" \
+MEX_ERROR_MESSAGE_54 "\n" \
+MEX_ERROR_MESSAGE_55 "\n" \
+MEX_ERROR_MESSAGE_56 "\n" \
+MEX_ERROR_MESSAGE_57 "\n" \
+MEX_ERROR_MESSAGE_58 "\n" \
+MEX_ERROR_MESSAGE_59 "\n" \
+MEX_ERROR_MESSAGE_60 "\n" \
+MEX_ERROR_MESSAGE_61 "\n" \
+MEX_ERROR_MESSAGE_62 "\n" \
+MEX_ERROR_MESSAGE_63 "\n" \
+MEX_ERROR_MESSAGE_64 "\n" \
+MEX_ERROR_MESSAGE_65 "\n" \
+MEX_ERROR_MESSAGE_66 "\n" \
+MEX_ERROR_MESSAGE_67 "\n" \
+MEX_ERROR_MESSAGE_68 "\n" \
+MEX_ERROR_MESSAGE_69 "\n" \
+MEX_ERROR_MESSAGE_70 "\n" \
+"\n" \
+"%======================================================================%\n" \
+"%                                                                      %\n" \
+"%  Autor: Enrico Bertolazzi                                            %\n" \
+"%         Department of Industrial Engineering                         %\n" \
+"%         University of Trento                                         %\n" \
+"%         enrico.bertolazzi@unitn.it                                   %\n" \
+"%                                                                      %\n" \
+"%======================================================================%\n"
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   extern "C"
   void
