@@ -49,18 +49,17 @@ task :build_linux do
   Rake::Task[:copy_submodules].invoke("linux")
 end
 
-desc "build for Visual Studio [default year=2017, bits=x64]"
-task :build_win, [:year, :bits, :lapack] do |t, args|
-  args.with_defaults( :year => "2017", :bits => "x64" )
+desc "build for Visual Studio"
+task :build_win do
   FileUtils.cd "Utils"
   sh "rake clean_win"
-  sh "rake build_win[#{args.year},#{args.bits}]"
+  sh "rake build_win"
   #FileUtils.cd "../quarticRootsFlocke"
   #sh "rake clean_win"
   #sh "rake build_win[#{args.year},#{args.bits}]"
   FileUtils.cd "../GenericContainer"
   sh "rake clean_win"
-  sh "rake build_win[#{args.year},#{args.bits}]"
+  sh "rake build_win"
   FileUtils.cd ".."
   Rake::Task[:copy_submodules].invoke("win")
 end

@@ -18,8 +18,7 @@ COMPILE AND TEST
 
 .. code-block:: bash
 
-    rake build_win[2017,x64]
-    rake build_win[2017,x86]
+    rake build_win
 
 **On OSX use**
 

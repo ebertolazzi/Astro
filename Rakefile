@@ -2,6 +2,7 @@ require_relative "./cmake_utils/Rakefile_common.rb"
 
 desc "compile for Visual Studio [default year=2017, bits=x64]"
 task :build_win do
+
   # check architecture
   case `where cl.exe`.chop
   when /x64\\cl\.exe/
