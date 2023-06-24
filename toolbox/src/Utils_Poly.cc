@@ -44,7 +44,7 @@ namespace Utils { \
   template Poly<REAL> operator * ( REAL a, Poly<REAL> const & b ); \
   template Poly<REAL> operator * ( Poly<REAL> const & a, REAL b ); \
   template void divide( Poly<REAL> const & p, Poly<REAL> const & q, Poly<REAL> & M, Poly<REAL> & R ); \
-  template void GCD( Poly<REAL> const & p, Poly<REAL> const & q, Poly<REAL> & g ); \
+  template void GCD( Poly<REAL> const & p, Poly<REAL> const & q, Poly<REAL> & g, REAL epsi ); \
 }
 #endif
 
@@ -160,12 +160,14 @@ namespace Utils {
   template <typename Real>
   void
   Poly<Real>::purge( Real epsi ) {
-    Real MX = this->cwiseAbs().maxCoeff();
-    if ( MX < 1 ) MX = 1;
-    Real EPS = epsi*MX;
-    for ( Integer i = 0; i < m_order; ++i ) {
-      Real & ai = this->coeffRef(i);
-      if ( std::abs( ai ) <= EPS ) ai = 0;
+    if ( m_order > 0 ) {
+      Real MX = this->cwiseAbs().maxCoeff();
+      if ( MX < 1 ) MX = 1;
+      Real EPS = epsi*MX;
+      for ( Integer i = 0; i < m_order; ++i ) {
+        Real & ai = this->coeffRef(i);
+        if ( std::abs( ai ) <= EPS ) ai = 0;
+      }
     }
     adjust_degree();
   }
@@ -316,7 +318,7 @@ namespace Utils {
   template <typename Real>
   Poly<Real>
   operator + ( Poly<Real> const & a, Poly<Real> const & b ) {
-    typedef typename Poly<Real>::Integer Integer;
+    using Integer = typename Poly<Real>::Integer;
     Integer max_order = std::max( a.order(), b.order() );
     Integer min_order = std::min( a.order(), b.order() );
     Poly<Real> sum( max_order ); // nuovo polinomio contenente la somma
@@ -337,7 +339,7 @@ namespace Utils {
   template <typename Real>
   Poly<Real>
   operator + ( Poly<Real> const & a, Real b ) {
-    typedef typename Poly<Real>::Integer Integer;
+    using Integer = typename Poly<Real>::Integer;
     Integer max_order = std::max( a.order(), 1 );
     Poly<Real> sum( max_order ); // nuovo polinomio contenente la somma
 
@@ -357,7 +359,7 @@ namespace Utils {
   template <typename Real>
   Poly<Real>
   operator + ( Real a, Poly<Real> const & b ) {
-    typedef typename Poly<Real>::Integer Integer;
+    using Integer = typename Poly<Real>::Integer;
     Integer max_order = std::max( b.order(), 1 );
     Poly<Real> sum( max_order ); // nuovo polinomio contenente la somma
 
@@ -377,7 +379,7 @@ namespace Utils {
   template <typename Real>
   Poly<Real>
   operator - ( Poly<Real> const & a, Poly<Real> const & b ) {
-    typedef typename Poly<Real>::Integer Integer;
+    using Integer = typename Poly<Real>::Integer;
     Integer max_order = std::max( a.order(), b.order() );
     Integer min_order = std::min( a.order(), b.order() );
     Poly<Real> sum( max_order ); // nuovo polinomio contenente la somma
@@ -398,7 +400,7 @@ namespace Utils {
   template <typename Real>
   Poly<Real>
   operator - ( Poly<Real> const & a, Real b ) {
-    typedef typename Poly<Real>::Integer Integer;
+    using Integer = typename Poly<Real>::Integer;
     Integer max_order = std::max( a.order(), 1 );
     Poly<Real> sum( max_order ); // nuovo polinomio contenente la somma
 
@@ -418,7 +420,7 @@ namespace Utils {
   template <typename Real>
   Poly<Real>
   operator - ( Real a, Poly<Real> const & b ) {
-    typedef typename Poly<Real>::Integer Integer;
+    using Integer = typename Poly<Real>::Integer;
     Integer max_order = std::max( b.order(), 1 );
     Poly<Real> sum( max_order ); // nuovo polinomio contenente la somma
 
@@ -438,7 +440,7 @@ namespace Utils {
   template <typename Real>
   Poly<Real>
   operator * ( Poly<Real> const & a, Poly<Real> const & b ) {
-    typedef typename Poly<Real>::Integer Integer;
+    using Integer = typename Poly<Real>::Integer;
     Poly<Real> prd( a.order() + b.order() - 1 ); // nuovo polinomio contenente il risultato
     for( Integer i = 0; i < a.order(); ++i )
       for( Integer j = 0; j < b.order(); ++j )
@@ -485,9 +487,9 @@ namespace Utils {
     Poly<Real>       & R
   ) {
 
-    static Real epsi = pow(std::numeric_limits<Real>::epsilon(),Real(0.75));
+    // static Real epsi = pow(std::numeric_limits<Real>::epsilon(),Real(0.75));
 
-    typedef typename Poly<Real>::Integer Integer;
+    using Integer = typename Poly<Real>::Integer;
 
     Poly<Real> P(p), Q(q);
     //
@@ -503,28 +505,35 @@ namespace Utils {
     //
     R = P;
     Real lcQ = Q.leading_coeff();
-    Integer dd       = R.order() - Q.order();
-    Integer R_degree = R.degree();
-    M.set_order(dd+1);
+    Integer dd = R.order() - Q.order();
+    if ( dd < 0 ) {
+      // P = Q +R
+      M.set_scalar(1);
+      R = P-Q;
+    } else {
+      Integer R_degree = R.degree();
+      M.set_order(dd+1);
 
-    UTILS_ASSERT0(
-      !is_zero(lcQ),
-      "Poly::divide(p,q,M,R), leading coefficient of q(x) is 0!"
-    );
+      UTILS_ASSERT0(
+        !is_zero(lcQ),
+        "Poly::divide(p,q,M,R), leading coefficient of q(x) is 0!"
+      );
 
-    while ( dd >= 0 && R_degree >= 0 ) {
-      Real lcR = R(R_degree);
-      Real bf  = lcR/lcQ;
-      M.coeffRef(dd) = bf;
-      R.segment(dd,Q.degree()).noalias() -= bf*Q.head(Q.degree());
-      R.coeffRef(R_degree) = 0;
-      --R_degree;
-      --dd;
+      while ( dd >= 0 && R_degree >= 0 ) {
+        Real lcR = R(R_degree);
+        Real bf  = lcR/lcQ;
+        M.coeffRef(dd) = bf;
+        R.segment(dd,Q.degree()).noalias() -= bf*Q.head(Q.degree());
+        R.coeffRef(R_degree) = 0;
+        --R_degree;
+        --dd;
+      }
+
+      // don not purge remainder
+      // this can be done externally
+      // R.purge(epsi);
+      R.adjust_degree();
     }
-
-    // adjust degree or remainder
-    R.purge(epsi);
-    // R.adjust_degree();
 
     // scale back polinomials
     //
@@ -551,12 +560,14 @@ namespace Utils {
   GCD(
     Poly<Real> const & p,
     Poly<Real> const & q,
-    Poly<Real>       & g
+    Poly<Real>       & g,
+    Real               epsi
   ) {
     if ( q.order() > 0 ) {
       Poly<Real> M, R;
       divide( p, q, M, R );
-      GCD( q, R, g );
+      R.purge( epsi );
+      GCD( q, R, g, epsi );
     } else {
       g = p;
     }
@@ -580,16 +591,16 @@ namespace Utils {
     while ( true ) {
       divide( m_sturm[ns-1], m_sturm[ns], M, R );
       if ( R.order() <= 0 ) break;
-      m_sturm.push_back(-R);
+      m_sturm.emplace_back(-R);
       ++ns;
     }
     // divide by GCD
     for ( Integer i = 0; i < ns; ++i ) {
-      divide( m_sturm[i], m_sturm[ns], M, R );
+      divide( m_sturm[i], m_sturm.back(), M, R );
       M.normalize();
       m_sturm[i] = M;
     }
-    m_sturm[ns].set_scalar(1);
+    m_sturm.back().set_scalar(1);
   }
 
   /*
@@ -627,7 +638,8 @@ namespace Utils {
   */
   template <typename Real>
   typename Sturm<Real>::Integer
-  Sturm<Real>::separate_roots( Real a, Real b ) {
+  Sturm<Real>::separate_roots( Real a_in, Real b_in ) {
+    Real a{a_in}, b{b_in};
     m_a = a;
     m_b = b;
     bool on_root_a, on_root_b;
@@ -719,13 +731,25 @@ namespace Utils {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   */
   template <typename Real>
+  typename Sturm<Real>::Integer
+  Sturm<Real>::separate_roots() {
+    // Cauchy's bounds for roots
+    Real an  = m_sturm[0].leading_coeff();
+    Real bnd = 1+m_sturm[0].cwiseAbs().maxCoeff()/abs(an);
+    return separate_roots( -bnd, bnd );
+  }
+
+  /*
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  */
+  template <typename Real>
   void
   Sturm<Real>::refine_roots() {
     m_fun.setup( &m_sturm[0] );
     m_roots.resize( m_intervals.size() );
     Integer n = 0;
     for ( auto & I : m_intervals ) {
-      m_roots.coeffRef(n++) = m_solver.eval( I.a, I.b, m_fun );
+      m_roots.coeffRef(n++) = m_solver.eval( I.a, I.b, &m_fun );
       if ( !m_solver.converged() )
         fmt::print( "Warning: Sturm<Real>::refine_roots failed at interval N.{}\n", n );
     }

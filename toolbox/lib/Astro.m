@@ -1,36 +1,24 @@
-classdef Astro < matlab.mixin.Copyable
+classdef Astro < handle
   %% MATLAB class wrapper for the underlying C++ class
   properties (SetAccess = protected, Hidden = true)
     objectHandle; % Handle to the underlying C++ class instance
     call_delete;
   end
 
-  methods(Access = protected)
-    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    %> Make a deep copy of a curve object
-    %>
-    %> **Usage**
-    %>
-    %> \rst
-    %> .. code-block:: matlab
-    %>
-    %>   B = A.copy();
-    %>
-    %> \endrst
-    %>
-    %> where `A` is the astro object to be copied.
-    %>
-    function obj = copyElement( self )
-      obj              = copyElement@matlab.mixin.Copyable(self);
-      obj.objectHandle = feval( self.mexName, 'copy', self.objectHandle );
-      obj.call_delete  = true;
-    end
-  end
-
   methods
     function self = Astro( varargin )
-      self.objectHandle = AstroMexWrapper( 'new', varargin{:} );
-      self.call_delete  = true;
+      if nargin == 1
+        self.objectHandle = varargin{1};
+        self.call_delete  = false;
+      else
+        self.objectHandle = AstroMexWrapper( 'new', varargin{:} );
+        self.call_delete  = true;
+      end
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function obj = copy( self )
+      obj = Astro( AstroMexWrapper( 'copy', self.objectHandle ) );
+      obj.call_delete = true;
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function delete( self )
@@ -113,9 +101,11 @@ classdef Astro < matlab.mixin.Copyable
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function setup_PV( self, name, P, V, t0, muS )
-      AstroMexWrapper( 'setup_PV', self.objectHandle, ...
-        name, P, V, t0, muS ...
-      );
+      AstroMexWrapper( 'setup_PV', self.objectHandle, name, P, V, t0, muS );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function [P,V] = get_PV( self, t0 )
+      [P,V] = AstroMexWrapper( 'get_PV', self.objectHandle, t0 );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function ma = mean_anomaly( self, t )
@@ -182,8 +172,8 @@ classdef Astro < matlab.mixin.Copyable
       tm = AstroMexWrapper( 'time_from_L_angle', self.objectHandle, t, L );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    function P = absolute_position( self, t )
-      P = AstroMexWrapper( 'absolute_position', self.objectHandle, t );
+    function P = radius( self, t )
+      P = AstroMexWrapper( 'radius', self.objectHandle, t );
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function V = absolute_velocity( self, t )

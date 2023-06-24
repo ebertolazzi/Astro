@@ -266,34 +266,28 @@ namespace AstroLib {
 
   integer
   Lambert_Lancaster_Blanchard(
-    real_type const r1vec[3],
-    real_type const r2vec[3],
+    dvec3_t const & r1vec,
+    dvec3_t const & r2vec,
     real_type       tf_in,
     integer         m_in,
     real_type       muC,
-    real_type       V1[3],
-    real_type       V2[3]
+    dvec3_t       & V1,
+    dvec3_t       & V2
   ) {
 
     // manipulate input
-    real_type tol       = 1e-12;               // optimum for numerical noise v.s. actual precision
-    real_type r1        = norm3(r1vec);        // magnitude of r1vec
-    real_type r2        = norm3(r2vec);        // magnitude of r2vec
-    real_type r1unit[3] = { r1vec[0]/r1, r1vec[1]/r1, r1vec[2]/r1 }; // unit vector of r1vec
-    real_type r2unit[3] = { r2vec[0]/r2, r2vec[1]/r2, r2vec[2]/r2 }; // unit vector of r2vec
-    real_type crsprod[3];
-    cross( r1vec, r2vec, crsprod );          // cross product of r1vec and r2vec
-    real_type mcrsprd = norm3(crsprod);      // magnitude of that cross product
-    real_type tmp[3] = {
-      crsprod[0]/mcrsprd,
-      crsprod[1]/mcrsprd,
-      crsprod[2]/mcrsprd
-    };
-    real_type th1unit[3], th2unit[3];
-    cross(tmp, r1unit, th1unit); // unit vectors in the tangential-directions
-    cross(tmp, r2unit, th2unit);
+    real_type tol = 1e-12;               // optimum for numerical noise v.s. actual precision
+    real_type r1  = r1vec.norm();        // magnitude of r1vec
+    real_type r2  = r2vec.norm();        // magnitude of r2vec
+    dvec3_t r1unit = r1vec/r1; // unit vector of r1vec
+    dvec3_t r2unit = r2vec/r2; // unit vector of r2vec
+    dvec3_t crsprod = r1vec.cross(r2vec);    // cross product of r1vec and r2vec
+    real_type mcrsprd = crsprod.norm();      // magnitude of that cross product
+    dvec3_t tmp = crsprod/mcrsprd;
+    dvec3_t th1unit = tmp.cross(r1unit); // unit vectors in the tangential-directions
+    dvec3_t th2unit = tmp.cross(r2unit);
     // make 100.4% sure it's in (-1 <= x <= +1)
-    real_type dth = dot3(r1vec,r2vec)/r1/r2; // turn angle
+    real_type dth = r1vec.dot(r2vec)/r1/r2; // turn angle
     if      ( dth <= -1 ) dth = m_pi;
     else if ( dth >=  1 ) dth = 0;
     else                  dth = acos( dth );
@@ -501,14 +495,14 @@ namespace AstroLib {
   // compute minimum and maximum distances to the central body
   void
   Lambert_minmax_distances(
-    real_type const r1vec[3],
+    dvec3_t const & r1vec,
     real_type       r1,
-    real_type const r2vec[3],
+    dvec3_t const & r2vec,
     real_type       r2,
     real_type       dth,
     real_type       a,
-    real_type const V1[3],
-    real_type const V2[3],
+    dvec3_t const & V1,
+    dvec3_t const & V2,
     integer         m,
     real_type       muC,
     real_type &     minimum_distance,
@@ -523,16 +517,12 @@ namespace AstroLib {
     bool longway = std::abs(dth) > m_pi;
 
     // eccentricity vector (use triple product identity)
-    real_type V1_dot_V1 = dot3(V1,V1);
-    real_type V1_dot_R1 = dot3(V1,r1vec);
-    real_type evec[3] = {
-      (V1_dot_V1*r1vec[0] - V1_dot_R1*V1[0])/muC - r1vec[0]/r1,
-      (V1_dot_V1*r1vec[1] - V1_dot_R1*V1[1])/muC - r1vec[1]/r1,
-      (V1_dot_V1*r1vec[2] - V1_dot_R1*V1[2])/muC - r1vec[2]/r1
-    };
+    real_type V1_dot_V1 = V1.dot(V1);
+    real_type V1_dot_R1 = V1.dot(r1vec);
+    dvec3_t evec = (V1_dot_V1*r1vec - V1_dot_R1*V1)/muC - r1vec/r1;
 
     // eccentricity
-    real_type e = norm3(evec);
+    real_type e = evec.norm();
 
     // apses
     real_type pericenter = a*(1-e);
@@ -547,16 +537,16 @@ namespace AstroLib {
       maximum_distance = apocenter;
     } else { // less obvious case
       // compute theta1&2 ( use (AxB)-(CxD) = (C·B)(D·A) - (C·A)(B·D) ))
-      real_type pm1 = sign( r1*r1*dot3(evec,V1) - dot3(r1vec,evec)*dot3(r1vec,V1) );
-      real_type pm2 = sign( r2*r2*dot3(evec,V2) - dot3(r2vec,evec)*dot3(r2vec,V2) );
+      real_type pm1 = sign( r1*r1*evec.dot(V1) - evec.dot(r1vec)*V1.dot(r1vec) );
+      real_type pm2 = sign( r2*r2*evec.dot(V2) - evec.dot(r2vec)*V2.dot(r2vec) );
       // make 100.4% sure it's in (-1 <= theta12 <= +1)
-      real_type theta1 = dot3(r1vec,evec)/(r1*e);
+      real_type theta1 = r1vec.dot(r1vec)/(r1*e);
       if      ( theta1 <= -1 ) theta1 = m_pi;
       else if ( theta1 >=  1 ) theta1 = 0;
       else                     theta1 = acos(theta1);
       theta1 *= pm1;
 
-      real_type theta2 = dot3(r2vec,evec)/(r2*e);
+      real_type theta2 = r2vec.dot(evec)/(r2*e);
       if      ( theta2 <= -1 ) theta2 = m_pi;
       else if ( theta2 >=  1 ) theta2 = 0;
       else                     theta2 = acos(theta2);
@@ -652,13 +642,13 @@ namespace AstroLib {
 
   integer
   Lambert(
-    real_type const R1[3],
-    real_type const R2[3],
+    dvec3_t const & R1,
+    dvec3_t const & R2,
     real_type       tf_in, // tempo di volo
     integer         m_in,
     real_type       muC,
-    real_type       V1[3],
-    real_type       V2[3]
+    dvec3_t       & V1,
+    dvec3_t       & V2
   ) {
 
     // initial values
@@ -666,17 +656,17 @@ namespace AstroLib {
     bool      bad = false;
 
     // work with non-dimensional units
-    real_type r1       = norm3(R1);
-    real_type V        = sqrt(muC/r1);
-    real_type r1vec[3] = { R1[0]/r1, R1[1]/r1, R1[2]/r1 };
-    real_type r2vec[3] = { R2[0]/r1, R2[1]/r1, R2[2]/r1 };
-    real_type T        = r1/V;
-    real_type tf       = tf_in/T; // also transform to seconds
+    real_type r1  = R1.norm();
+    real_type V   = sqrt(muC/r1);
+    dvec3_t r1vec = R1/r1;
+    dvec3_t r2vec = R2/r1;
+    real_type T   = r1/V;
+    real_type tf  = tf_in/T; // also transform to seconds
 
     // relevant geometry parameters (non dimensional)
-    real_type mr2vec = norm3(r2vec);
+    real_type mr2vec = r2vec.norm();
     // make 100% sure it's in (-1 <= dth <= +1)
-    real_type dth = dot3(r1vec,r2vec)/mr2vec;
+    real_type dth = r1vec.dot(r2vec)/mr2vec;
     if      ( dth <= -1 ) dth = m_pi;
     else if ( dth >=  1 ) dth = 0;
     else                  dth = acos( dth );
@@ -692,17 +682,14 @@ namespace AstroLib {
 
     // derived quantities
     //real_type c      = sqrt(1 + mr2vec^2 - 2*mr2vec*cos(dth)); % non-dimensional chord
-    real_type tmp[3]   = { r2vec[0]-2*r1vec[0], r2vec[1]-2*r1vec[1], r2vec[2]-2*r1vec[2] };
-    real_type c        = sqrt(1 + dot3(tmp,r2vec));          // non-dimensional chord
-    real_type s        = (1 + mr2vec + c)/2;                 // non-dimensional semi-perimeter
-    real_type a_min    = s/2;                                // minimum energy ellipse semi major axis
-    real_type Lambda   = sqrt(mr2vec)*cos(dth/2)/s;          // lambda parameter (from BATTIN's book)
-    real_type crossprd[3], nrmunit[3];
-    cross(r1vec,r2vec,crossprd);                             // non-dimensional normal vectors
-    real_type mcr      = norm3(crossprd);                    // magnitues thereof
-    nrmunit[0] = crossprd[0]/mcr;                            // unit vector thereof
-    nrmunit[1] = crossprd[1]/mcr;
-    nrmunit[2] = crossprd[2]/mcr;
+    dvec3_t   tmp      = r2vec-2*r1vec;
+    real_type c        = sqrt(1 + tmp.dot(r2vec));  // non-dimensional chord
+    real_type s        = (1 + mr2vec + c)/2;        // non-dimensional semi-perimeter
+    real_type a_min    = s/2;                       // minimum energy ellipse semi major axis
+    real_type Lambda   = sqrt(mr2vec)*cos(dth/2)/s; // lambda parameter (from BATTIN's book)
+    dvec3_t   crossprd = r1vec.cross(r2vec);        // non-dimensional normal vectors
+    real_type mcr      = crossprd.norm();           // magnitues thereof
+    dvec3_t   nrmunit  = crossprd/mcr;              // unit vector thereof
 
     // Initial values
     // ---------------------------------------------------------
@@ -864,25 +851,16 @@ namespace AstroLib {
     }
 
     // unit of the normalized normal vector
-    real_type ih[3] = {
-      longway * nrmunit[0],
-      longway * nrmunit[1],
-      longway * nrmunit[2]
-    };
+    dvec3_t ih = longway * nrmunit;
 
     // unit vector for normalized [r2vec]
-    real_type r2n[3] = {
-      r2vec[0]/mr2vec,
-      r2vec[1]/mr2vec,
-      r2vec[2]/mr2vec
-    };
+    dvec3_t r2n = r2vec/mr2vec;
 
     // cross-products
     // don't use cross() (emlmex() would try to compile it, and this way it
     // also does not create any additional overhead)
-    real_type crsprd1[3], crsprd2[3];
-    cross(ih,r1vec,crsprd1);
-    cross(ih,r2n,crsprd2);;
+    dvec3_t crsprd1 = ih.cross(r1vec);
+    dvec3_t crsprd2 = ih.cross(r2n);
 
     // radial and tangential directions for departure velocity
     real_type Vr1 = 1/eta/sqrt(a_min) * (2*Lambda*a_min - Lambda - x*eta);
@@ -893,12 +871,8 @@ namespace AstroLib {
     real_type Vr2 = (Vt1 - Vt2)/tan(dth/2) - Vr1;
 
     // terminal velocities
-    V1[0] = (Vr1*r1vec[0] + Vt1*crsprd1[0])*V;
-    V1[1] = (Vr1*r1vec[1] + Vt1*crsprd1[1])*V;
-    V1[2] = (Vr1*r1vec[2] + Vt1*crsprd1[2])*V;
-    V2[0] = (Vr2*r2n[0]   + Vt2*crsprd2[0])*V;
-    V2[1] = (Vr2*r2n[1]   + Vt2*crsprd2[1])*V;
-    V2[2] = (Vr2*r2n[2]   + Vt2*crsprd2[2])*V;
+    V1 = (Vr1*r1vec + Vt1*crsprd1)*V;
+    V2 = (Vr2*r2n   + Vt2*crsprd2)*V;
 
     return 1; // (success)
   }

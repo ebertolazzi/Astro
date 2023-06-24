@@ -26,40 +26,6 @@
 "    [V1,V2,ok] = Lambert(t1,P1,t2,P2,m,mu);\n" \
 "\n"
 
-/*
-// redirect stdout, found at
-// https://it.mathworks.com/matlabcentral/answers/132527-in-mex-files-where-does-output-to-stdout-and-stderr-go
-*/
-
-#ifdef UTILS_OS_LINUX
-
-class mystream : public std::streambuf {
-protected:
-  virtual
-  std::streamsize
-  xsputn(const char *s, std::streamsize n) override
-  { mexPrintf("%.*s", n, s); mexEvalString("drawnow;"); return n; }
-
-  virtual
-  int
-  overflow(int c=EOF) override
-  { if (c != EOF) { mexPrintf("%.1s", &c); } return 1; }
-};
-
-class scoped_redirect_cout {
-public:
-  scoped_redirect_cout()
-  { old_buf = std::cout.rdbuf(); std::cout.rdbuf(&mout); }
-  ~scoped_redirect_cout()
-  { std::cout.rdbuf(old_buf); }
-private:
-  mystream mout;
-  std::streambuf *old_buf;
-};
-static scoped_redirect_cout mycout_redirect;
-
-#endif
-
 #define CHECK_IN(N) \
   UTILS_ASSERT( nrhs == N, CMD "Expected {} argument(s), nrhs = {}\n", N, nrhs )
 
@@ -76,8 +42,8 @@ namespace AstroLib {
   mexFunction( int nlhs, mxArray       *plhs[],
                int nrhs, mxArray const *prhs[] ) {
     try {
-      UTILS_ASSERT0( nrhs == 6, "lambert: Expected 6 arguments" );
-      UTILS_ASSERT0( nlhs == 3, "lambert: Expected 3 outputs" );
+      UTILS_ASSERT0( nrhs == 6, "Lambert: Expected 6 arguments" );
+      UTILS_ASSERT0( nlhs == 3, "Lambert: Expected 3 outputs" );
 
       // Get values of the scalar inputs
       // Check for the proper type of argument
@@ -85,23 +51,30 @@ namespace AstroLib {
       real_type t2 = Utils::mex_get_scalar_value( arg_in_2, "Lambert 3rd argument (t2) must be a scalar\n" );
 
       mwSize n;
-      double const * R1 = Utils::mex_vector_pointer( arg_in_1, n, "Lambert second argument must be a 3d vector\n" );
+      double const * RR1 = Utils::mex_vector_pointer( arg_in_1, n, "Lambert second argument must be a 3d vector\n" );
       if ( n != 3 ) mexErrMsgTxt("Lambert second argument must be a 3d vector\n");
-        
-      double const * R2 = Utils::mex_vector_pointer( arg_in_3, n, "Lambert 4th argument must be a 3d vector\n" );
+
+      double const * RR2 = Utils::mex_vector_pointer( arg_in_3, n, "Lambert 4th argument must be a 3d vector\n" );
       if ( n != 3 ) mexErrMsgTxt("Lambert 4th argument must be a 3d vector\n");
 
       integer m = Utils::mex_get_int64( arg_in_4, "Lambert 5th argument (m) must be an integer\n" );
       real_type mu = Utils::mex_get_scalar_value( arg_in_5, "Lambert 6th argument (mu) must be a scalar\n" );
 
-      double * V1 = Utils::mex_create_matrix_value( arg_out_0, 3, 1 );
-      double * V2 = Utils::mex_create_matrix_value( arg_out_1, 3, 1 );
-      
       real_type dt = t2-t1;
       UTILS_ASSERT( dt > 0, "lambert, bad t2-t1 = {}\n", dt );
 
+      dvec3_t R1, R2, V1, V2;
+      std::copy_n( RR1, 3, R1.data() );
+      std::copy_n( RR2, 3, R2.data() );
+
       int ok = Lambert( R1, R2, dt, m, mu, V1, V2 );
-      
+
+      double * VV1 = Utils::mex_create_matrix_value( arg_out_0, 3, 1 );
+      double * VV2 = Utils::mex_create_matrix_value( arg_out_1, 3, 1 );
+
+      std::copy_n( V1.data(), 3, VV1 );
+      std::copy_n( V2.data(), 3, VV2 );
+
       Utils::mex_set_scalar_int64(arg_out_2,ok);
 
     }

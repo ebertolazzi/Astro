@@ -39,10 +39,10 @@ namespace Utils {
 
   template <typename Real>
   class Point2D : public Eigen::Matrix<Real,2,1> {
-    typedef Eigen::Matrix<Real,2,1> P2D;
+    using P2D = Eigen::Matrix<Real,2,1>;
   public:
-    Point2D() = default;
-    //~Point2D() = default;
+    Point2D() UTILS_DEFAULT;
+    //~Point2D() UTILS_DEFAULT;
 
     //Point2D<Real> &
     //operator = ( Point2D<Real> const & RHS ) {
@@ -73,8 +73,8 @@ namespace Utils {
     Point2D<Real> m_Pb;
   public:
 
-    Segment2D() = default;
-    //~Segment2D() = default;
+    Segment2D() UTILS_DEFAULT;
+    //~Segment2D() UTILS_DEFAULT;
 
     Segment2D( Segment2D<Real> const & S )
     : m_Pa(S.m_Pa)
@@ -93,7 +93,7 @@ namespace Utils {
     }
 
     void
-    setup( Real const * A, Real const * B ) {
+    setup( Real const A[], Real const B[] ) {
       m_Pa.coeffRef(0) = A[0]; m_Pa.coeffRef(1) = A[1];
       m_Pb.coeffRef(0) = B[0]; m_Pb.coeffRef(1) = B[1];
     }

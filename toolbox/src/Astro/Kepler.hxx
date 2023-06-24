@@ -61,6 +61,7 @@ namespace AstroLib {
     real_type i;
     real_type Omega;
     real_type omega;
+
     void
     info( std::ostream & stream ) const {
       fmt::print( stream,
@@ -166,7 +167,7 @@ namespace AstroLib {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  real_type equinoctial_to_ray( Equinoctial const & EQ, real_type L );
+  real_type equinoctial_to_radius( Equinoctial const & EQ, real_type L );
   real_type equinoctial_to_velocity( Equinoctial const & EQ, real_type L, real_type muS );
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -237,8 +238,8 @@ namespace AstroLib {
 
   void
   point_and_velocity_to_Equinoctial_and_Keplerian(
-    real_type const P[3],
-    real_type const V[3],
+    dvec3_t const & P,
+    dvec3_t const & V,
     real_type       muS,
     Equinoctial &   EQ,
     real_type &     L,
@@ -281,11 +282,11 @@ namespace AstroLib {
 
   void
   point_and_velocity_to_Frenet_RTN(
-    real_type const P[3],
-    real_type const V[3],
-    real_type       Dr[3],
-    real_type       Dt[3],
-    real_type       Dn[3]
+    dvec3_t const & P,
+    dvec3_t const & V,
+    dvec3_t       & Dr,
+    dvec3_t       & Dt,
+    dvec3_t       & Dn
   );
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -294,9 +295,9 @@ namespace AstroLib {
   equinoctial_to_Frenet_RTN(
     Equinoctial const & EQ,
     real_type           L,
-    real_type           Dr[3],
-    real_type           Dt[3],
-    real_type           Dn[3]
+    dvec3_t           & Dr,
+    dvec3_t           & Dt,
+    dvec3_t           & Dn
   );
 
   /*
@@ -311,18 +312,18 @@ namespace AstroLib {
   equinoctial_Trtn_to_Txyz(
     Equinoctial const & EQ,
     real_type           L,
-    real_type   const   Trtn[3],
-    real_type           Txyz[3]
+    dvec3_t     const & Trtn,
+    dvec3_t           & Txyz
   );
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   point_and_velocity_Trtn_to_Txyz(
-    real_type const P[3],
-    real_type const V[3],
-    real_type const Trtn[3],
-    real_type       Txyz[3]
+    dvec3_t const & P,
+    dvec3_t const & V,
+    dvec3_t const & Trtn,
+    dvec3_t       & Txyz
   );
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -331,18 +332,18 @@ namespace AstroLib {
   equinoctial_Txyz_to_Trtn(
     Equinoctial const & EQ,
     real_type           L,
-    real_type   const   Txyz[3],
-    real_type           Trtn[3]
+    dvec3_t     const & Txyz,
+    dvec3_t           & Trtn
   );
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   point_and_velocity_Txyz_to_Trtn(
-    real_type const P[3],
-    real_type const V[3],
-    real_type const Txyz[3],
-    real_type       Trtn[3]
+    dvec3_t const & P,
+    dvec3_t const & V,
+    dvec3_t const & Txyz,
+    dvec3_t       & Trtn
   );
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

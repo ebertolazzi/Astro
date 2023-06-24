@@ -36,28 +36,31 @@ namespace AstroLib {
     real_type       res[]
   ) {
 
-    real_type Dr[3], Dt[3], Dn[3];
-    point_and_velocity_to_Frenet_RTN( Z, Z+3, Dr, Dt, Dn );
+    real_type x  = Z[0];
+    real_type y  = Z[1];
+    real_type z  = Z[2];
+    real_type vx = Z[3];
+    real_type vy = Z[4];
+    real_type vz = Z[5];
 
-    real_type x        = Z[0];
-    real_type y        = Z[1];
-    real_type z        = Z[2];
-    real_type vx       = Z[3];
-    real_type vy       = Z[4];
-    real_type vz       = Z[5];
-    real_type Thrust_x = Thrust_r*Dr[0]+Thrust_t*Dt[0]+Thrust_n*Dn[0];
-    real_type Thrust_y = Thrust_r*Dr[1]+Thrust_t*Dt[1]+Thrust_n*Dn[1];
-    real_type Thrust_z = Thrust_r*Dr[2]+Thrust_t*Dt[2]+Thrust_n*Dn[2];
-    real_type r2       = x*x+y*y+z*z;
-    real_type r        = sqrt(r2);
-    real_type mur3     = (mu/r2)/r;
+    dvec3_t Dr, Dt, Dn;
+    dvec3_t P, V;
+
+    P.coeffRef(0) = x;  P.coeffRef(1) = y;  P.coeffRef(2) = z;
+    V.coeffRef(0) = vx; V.coeffRef(1) = vy; V.coeffRef(2) = vz;
+    point_and_velocity_to_Frenet_RTN( P, V, Dr, Dt, Dn );
+
+    dvec3_t Thrust = Thrust_r*Dr+Thrust_t*Dt+Thrust_n*Dn;
+    real_type r2   = P.squaredNorm();
+    real_type r    = sqrt(r2);
+    real_type mur3 = (mu/r2)/r;
 
     res[0] = vx;
     res[1] = vy;
     res[2] = vz;
-    res[3] = Thrust_x/m - mur3*x;
-    res[4] = Thrust_y/m - mur3*y;
-    res[5] = Thrust_z/m - mur3*z;
+    res[3] = Thrust.coeff(0)/m - mur3*x;
+    res[4] = Thrust.coeff(1)/m - mur3*y;
+    res[5] = Thrust.coeff(2)/m - mur3*z;
   }
 
   void

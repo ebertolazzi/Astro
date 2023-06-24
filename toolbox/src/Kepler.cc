@@ -310,7 +310,7 @@ namespace AstroLib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   real_type
-  equinoctial_to_ray( Equinoctial const & EQ, real_type L ) {
+  equinoctial_to_radius( Equinoctial const & EQ, real_type L ) {
     return EQ.p/(1+EQ.f*cos(L)+EQ.g*sin(L));
   }
 
@@ -599,8 +599,8 @@ namespace AstroLib {
 
   void
   point_and_velocity_to_Equinoctial_and_Keplerian(
-    real_type const P[3],
-    real_type const V[3],
+    dvec3_t const & P,
+    dvec3_t const & V,
     real_type       muS,
     Equinoctial &   EQ,
     real_type &     L,
@@ -609,22 +609,14 @@ namespace AstroLib {
     real_type &     M0
   ) {
 
-    real_type n[3], d[3], ecc[3];
-    cross(P,V,n);
-    real_type n2 = dot3(n,n);
+    dvec3_t n = P.cross(V);
+    real_type n2 = n.squaredNorm();
     UTILS_ASSERT( n2 > 0, "n2 = {}\n", n2 );
 
-    cross(V,n,ecc);
-    ecc[0] /= muS;
-    ecc[1] /= muS;
-    ecc[2] /= muS;
+    dvec3_t ecc = V.cross(n) / muS;
 
     EQ.p = n2/muS;
-
-    real_type nlen = sqrt(n2);
-    n[0] /= nlen;
-    n[1] /= nlen;
-    n[2] /= nlen;
+    n.normalize();
 
     EQ.retrograde = n[2] < 0;
     if ( EQ.retrograde ) {
@@ -635,29 +627,27 @@ namespace AstroLib {
       EQ.k =  n[0]/(1+n[2]);
     }
 
-    real_type r = norm3(P);
-    d[0] = P[0]/r;
-    d[1] = P[1]/r;
-    d[2] = P[2]/r;
+    real_type r = P.norm();
+    dvec3_t d = P/r;
 
-    ecc[0] -= d[0];
-    ecc[1] -= d[1];
-    ecc[2] -= d[2];
+    ecc -= d;
 
     K.i = 2*atan(hypot(EQ.k,EQ.h));
     if ( EQ.retrograde ) K.i = m_pi - K.i;
     K.Omega = atan2(EQ.k,EQ.h);
+    K.e     = ecc.norm(); // NON NOTI
 
-    real_type tmp = (EQ.h * ecc[0] + EQ.k * ecc[1])/(norm3(ecc)*hypot(EQ.h,EQ.k));
+
+    real_type tmp = (EQ.h * ecc.coeff(0)+ EQ.k * ecc.coeff(1))/(K.e*hypot(EQ.h,EQ.k));
     if      ( tmp >=  1 ) K.omega = 0;
     else if ( tmp <= -1 ) K.omega = m_pi;
     else                  K.omega = acos(tmp);
-    if ( ecc[2] < 0 ) K.omega = m_2pi - K.omega;
+    if ( ecc.coeff(2) < 0 ) K.omega = m_2pi - K.omega;
 
     //if ( EQ.retrograde ) K.omega += K.Omega;
     //else                 K.omega -= K.Omega;
 
-    real_type X[3], Y[3];
+    dvec3_t X, Y;
 
     real_type SO = sin(K.Omega);
     real_type CO = cos(K.Omega);
@@ -666,17 +656,17 @@ namespace AstroLib {
     real_type Si = sin(K.i);
     real_type Ci = cos(K.i);
 
-    X[0] = CO*co - SO*so*Ci;
-    X[1] = SO*co + CO*so*Ci;
-    X[2] = Si*so;
+    X.coeffRef(0) = CO*co - SO*so*Ci;
+    X.coeffRef(1) = SO*co + CO*so*Ci;
+    X.coeffRef(2) = Si*so;
 
-    Y[0] = -CO*so - SO*co*Ci;
-    Y[1] = -SO*so + CO*co*Ci;
-    Y[2] = Si*co;
+    Y.coeffRef(0) = -CO*so - SO*co*Ci;
+    Y.coeffRef(1) = -SO*so + CO*co*Ci;
+    Y.coeffRef(2) = Si*co;
 
     // compute true anomaly
-    real_type PcosTheta = dot3(X,P);
-    real_type PsinTheta = dot3(Y,P);
+    real_type PcosTheta = P.dot(X);
+    real_type PsinTheta = P.dot(Y);
     theta = atan2(PsinTheta,PcosTheta);
 
     L = theta + K.omega;
@@ -684,12 +674,10 @@ namespace AstroLib {
     if ( EQ.retrograde ) L -= K.Omega;
     else                 L += K.Omega;
 
-    K.e = norm3(ecc); // NON NOTI
-
     K.a = EQ.p/(1-K.e*K.e);
 
-    real_type A = dot3(d,V)*sqrt(EQ.p/muS); // equal to -cos(L)*g+f*sin(L)
-    real_type B = EQ.p/r-1; // equal to f*cos(L)+g*sin(L)
+    real_type A = d.dot(V)*sqrt(EQ.p/muS); // equal to -cos(L)*g+f*sin(L)
+    real_type B = EQ.p/r-1;                // equal to f*cos(L)+g*sin(L)
     real_type cosL = cos(L);
     real_type sinL = sin(L);
 
@@ -800,22 +788,17 @@ namespace AstroLib {
 
   void
   point_and_velocity_to_Frenet_RTN(
-    real_type const P[3],
-    real_type const V[3],
-    real_type       Dr[3],
-    real_type       Dt[3],
-    real_type       Dn[3]
+    dvec3_t const & P,
+    dvec3_t const & V,
+    dvec3_t       & Dr,
+    dvec3_t       & Dt,
+    dvec3_t       & Dn
   ) {
-    real_type r = norm3(P);
-    Dr[0] = P[0]/r;
-    Dr[1] = P[1]/r;
-    Dr[2] = P[2]/r;
-    cross( Dr, V, Dn );
-    real_type len = norm3(Dn);
-    Dn[0] /= len;
-    Dn[1] /= len;
-    Dn[2] /= len;
-    cross( Dn, Dr, Dt );
+    Dr.noalias() = P;
+    Dr.normalize();
+    Dn = Dr.cross(V);
+    Dn.normalize();
+    Dt = Dn.cross( Dr );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -824,9 +807,9 @@ namespace AstroLib {
   equinoctial_to_Frenet_RTN(
     Equinoctial const & EQ,
     real_type           L,
-    real_type           Dr[3],
-    real_type           Dt[3],
-    real_type           Dn[3]
+    dvec3_t           & Dr,
+    dvec3_t           & Dt,
+    dvec3_t           & Dn
   ) {
     real_type h    = EQ.h;
     real_type k    = EQ.k;
@@ -838,17 +821,17 @@ namespace AstroLib {
     real_type bf   = 1+h2+k2;
     real_type I    = EQ.retrograde ? -1 : 1;
 
-    Dr[0] = ((h2-k2+1)*cosL+2*I*hk*sinL)/bf;
-    Dr[1] = (2*hk*cosL-I*(h2-k2-1)*sinL)/bf;
-    Dr[2] = (2*(h*sinL-cosL*k*I))/bf;
+    Dr.coeffRef(0) = ((h2-k2+1)*cosL+2*I*hk*sinL)/bf;
+    Dr.coeffRef(1) = (2*hk*cosL-I*(h2-k2-1)*sinL)/bf;
+    Dr.coeffRef(2) = (2*(h*sinL-cosL*k*I))/bf;
 
-    Dn[0] = 2*k/bf;
-    Dn[1] = -2*h/bf;
-    Dn[2] = I*(1-h2-k2)/bf;
+    Dn.coeffRef(0) = 2*k/bf;
+    Dn.coeffRef(1) = -2*h/bf;
+    Dn.coeffRef(2) = I*(1-h2-k2)/bf;
 
-    Dt[0] = ((k2-h2-1)*sinL+2*hk*I*cosL)/bf;
-    Dt[1] = (I*(1+k2-h2)*cosL-2*hk*sinL)/bf;
-    Dt[2] = (2*k*I*sinL+2*h*cosL)/bf;
+    Dt.coeffRef(0) = ((k2-h2-1)*sinL+2*hk*I*cosL)/bf;
+    Dt.coeffRef(1) = (I*(1+k2-h2)*cosL-2*hk*sinL)/bf;
+    Dt.coeffRef(2) = (2*k*I*sinL+2*h*cosL)/bf;
   }
 
   /*
@@ -863,30 +846,27 @@ namespace AstroLib {
   equinoctial_Trtn_to_Txyz(
     Equinoctial const & EQ,
     real_type           L,
-    real_type   const   Trtn[3],
-    real_type           Txyz[3]
+    dvec3_t     const & Trtn,
+    dvec3_t           & Txyz
   ) {
-    real_type Dr[3], Dt[3], Dn[3];
+    dvec3_t Dr, Dt, Dn;
     equinoctial_to_Frenet_RTN( EQ, L, Dr, Dt, Dn );
-    Txyz[0] = Trtn[0]*Dr[0] + Trtn[1]*Dt[0] + Trtn[2]*Dn[0];
-    Txyz[1] = Trtn[0]*Dr[1] + Trtn[1]*Dt[1] + Trtn[2]*Dn[1];
-    Txyz[2] = Trtn[0]*Dr[2] + Trtn[1]*Dt[2] + Trtn[2]*Dn[2];
+    Txyz.noalias() = Trtn.coeff(0)*Dr +
+                     Trtn.coeff(1)*Dt + Trtn.coeff(2)*Dn;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   point_and_velocity_Trtn_to_Txyz(
-    real_type const P[3],
-    real_type const V[3],
-    real_type const Trtn[3],
-    real_type       Txyz[3]
+    dvec3_t const & P,
+    dvec3_t const & V,
+    dvec3_t const & Trtn,
+    dvec3_t       & Txyz
   ) {
-    real_type Dr[3], Dt[3], Dn[3];
+    dvec3_t Dr, Dt, Dn;
     point_and_velocity_to_Frenet_RTN( P, V, Dr, Dt, Dn );
-    Txyz[0] = Trtn[0]*Dr[0] + Trtn[1]*Dt[0] + Trtn[2]*Dn[0];
-    Txyz[1] = Trtn[0]*Dr[1] + Trtn[1]*Dt[1] + Trtn[2]*Dn[1];
-    Txyz[2] = Trtn[0]*Dr[2] + Trtn[1]*Dt[2] + Trtn[2]*Dn[2];
+    Txyz.noalias() = Trtn.coeff(0)*Dr + Trtn[1]*Dt + Trtn[2]*Dn;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -895,30 +875,30 @@ namespace AstroLib {
   equinoctial_Txyz_to_Trtn(
     Equinoctial const & EQ,
     real_type           L,
-    real_type   const   Txyz[3],
-    real_type           Trtn[3]
+    dvec3_t     const & Txyz,
+    dvec3_t           & Trtn
   ) {
-    real_type Dr[3], Dt[3], Dn[3];
+    dvec3_t Dr, Dt, Dn;
     equinoctial_to_Frenet_RTN( EQ, L, Dr, Dt, Dn );
-    Trtn[0] = Txyz[0]*Dr[0] + Txyz[1]*Dr[1] + Txyz[2]*Dr[2];
-    Trtn[1] = Txyz[0]*Dt[0] + Txyz[1]*Dt[1] + Txyz[2]*Dt[2];
-    Trtn[2] = Txyz[0]*Dn[0] + Txyz[1]*Dn[1] + Txyz[2]*Dn[2];
+    Trtn.coeffRef(0) = Txyz.dot(Dr);
+    Trtn.coeffRef(1) = Txyz.dot(Dt);
+    Trtn.coeffRef(2) = Txyz.dot(Dn);
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void
   point_and_velocity_Txyz_to_Trtn(
-    real_type const P[3],
-    real_type const V[3],
-    real_type const Txyz[3],
-    real_type       Trtn[3]
+    dvec3_t const & P,
+    dvec3_t const & V,
+    dvec3_t const & Txyz,
+    dvec3_t       & Trtn
   ) {
-    real_type Dr[3], Dt[3], Dn[3];
+    dvec3_t Dr, Dt, Dn;
     point_and_velocity_to_Frenet_RTN( P, V, Dr, Dt, Dn );
-    Trtn[0] = Txyz[0]*Dr[0] + Txyz[1]*Dr[1] + Txyz[2]*Dr[2];
-    Trtn[1] = Txyz[0]*Dt[0] + Txyz[1]*Dt[1] + Txyz[2]*Dt[2];
-    Trtn[2] = Txyz[0]*Dn[0] + Txyz[1]*Dn[1] + Txyz[2]*Dn[2];
+    Trtn.coeffRef(0) = Txyz.dot(Dr);
+    Trtn.coeffRef(1) = Txyz.dot(Dt);
+    Trtn.coeffRef(2) = Txyz.dot(Dn);
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

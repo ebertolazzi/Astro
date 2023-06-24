@@ -76,61 +76,79 @@ namespace Utils {
   template <typename Real>
   class Algo748 {
 
-    typedef int Integer;
+    using Integer = int;
 
-    Integer m_num_iter_done = 0;
-    Integer m_num_fun_eval  = 0;
-    Real    m_mu            = Real(0.5);
-    Real    m_tolerance     = pow(machine_eps<Real>(),Real(2./3.));
+    Real m_mu{Real(0.5)};
+    Real m_tolerance{pow(machine_eps<Real>(),Real(2./3.))};
+    Real m_interval_shink{Real(0.025)};
 
-    bool m_converged     = false;
+    bool m_converged{false};
 
-    Real m_a  = 0;
-    Real m_b  = 0;
-    Real m_c  = 0;
-    Real m_d  = 0;
-    Real m_e  = 0;
-    Real m_fa = 0;
-    Real m_fb = 0;
-    Real m_fc = 0;
-    Real m_fd = 0;
-    Real m_fe = 0;
+    Real m_a{0}, m_fa{0};
+    Real m_b{0}, m_fb{0};
+    Real m_c{0}, m_fc{0};
+    Real m_d{0}, m_fd{0};
+    Real m_e{0}, m_fe{0};
 
-    Algo748_base_fun<Real> * m_function = nullptr;
+    Algo748_base_fun<Real> * m_function{nullptr};
+
+    Integer m_max_fun_evaluation{1000}; // max number of function evaluations
+    Integer m_max_iteration{200};       // max number of iterations
+
+    mutable Integer m_iteration_count{0};    // explore iteration counter
+    mutable Integer m_fun_evaluation_count{0};
 
     bool bracketing();
     void set_tolerance( Real tol );
     Real pzero();
     Real newton_quadratic( Integer niter );
-
-    Real evaluate( Real x ) { ++m_num_fun_eval; return m_function->eval(x); };
-
+    Real evaluate( Real x ) { ++m_fun_evaluation_count; return m_function->eval(x); };
     bool all_different( Real a, Real b, Real c, Real d ) const;
 
+    Real eval();
     Real eval( Real a, Real b );
+    Real eval( Real a, Real b, Real amin, Real bmax );
 
   public:
 
-    Algo748() = default;
-    ~Algo748() = default;
+    Algo748() UTILS_DEFAULT;
+    ~Algo748() UTILS_DEFAULT;
 
     Real
     eval( Real a, Real b, Algo748_base_fun<Real> * fun ) {
       m_function = fun;
-      return this->eval(a,b);
+      return this->eval( a, b );
+    }
+
+    Real
+    eval( Real a, Real b, Real amin, Real bmax, Algo748_base_fun<Real> * fun ) {
+      m_function = fun;
+      return this->eval( a, b, amin, bmax );
     }
 
     template <typename PFUN>
     Real
-    eval( Real a, Real b, PFUN pfun ) {
+    eval2( Real a, Real b, PFUN pfun ) {
       Algo748_fun<Real,PFUN> fun( pfun );
       m_function = &fun;
-      return this->eval(a,b);
+      return this->eval( a, b );
     }
 
-    Integer used_iter()    const { return m_num_iter_done; }
-    Integer num_fun_eval() const { return m_num_fun_eval; }
-    bool converged() const { return m_converged; }
+    template <typename PFUN>
+    Real
+    eval2( Real a, Real b, Real amin, Real bmax, PFUN pfun ) {
+      Algo748_fun<Real,PFUN> fun( pfun );
+      m_function = &fun;
+      return this->eval( a, b, amin, bmax );
+    }
+
+    void set_max_iterations( Integer mit );
+    void set_max_fun_evaluation( Integer mfev );
+
+    Integer used_iter()    const { return m_iteration_count; }
+    Integer num_fun_eval() const { return m_fun_evaluation_count; }
+    Real    tolerance()    const { return m_tolerance; }
+    bool    converged()    const { return m_converged; }
 
   };
 

@@ -27,20 +27,82 @@
   #include "GenericContainer/GenericContainer.hh"
 #endif
 
-#ifndef UTILS_dot_HH
-  #include "Utils.hh"
-  #include "Utils_eigen.hh"
-  #include "Utils_Poly.hh"
-#endif
+#include "Utils.hh"
+#include "Utils_eigen.hh"
+#include "Utils_Poly.hh"
 
 namespace AstroLib {
   using GC_namespace::GenericContainer;
   using GC_namespace::ostream_type;
   using GC_namespace::real_type;
-  typedef GC_namespace::int_type integer;
+
+  using integer = GC_namespace::int_type;
+
+  using std::string;
+  using Utils::m_pi;
+  using Utils::m_2pi;
+  using Utils::m_pi_2;
+  using dvec3_t = Eigen::Matrix<real_type,3,1>;
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  inline
+  real_type
+  power2( real_type a )
+  { return a*a; }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  inline
+  real_type
+  power3( real_type a )
+  { return a*a*a; }
+
+  //!
+  //! Convert angle in degrees to radiants.
+  //!
+  static
+  inline
+  real_type
+  degrees_to_radiants( real_type deg )
+  { return 0.01745329251994329576923690768488612713443*deg; } // Pi/180*deg
+
+  //!
+  //! Convert angle in radiants to degrees.
+  //!
+  static
+  inline
+  real_type
+  radiants_to_degrees( real_type rad )
+  { return 57.29577951308232087679815481410517033240*rad; } // (180/Pi)*rad
+
+  /*  _             __  _              __     _
+  // |_)  /\  |\ | /__ |_ __ /\  |\ | /__ |  |_
+  // | \ /--\ | \| \_| |_   /--\ | \| \_| |_ |_
+  */
+  //! Add or remove multiple of \f$ 2\pi \f$ to an angle in order to put it in the range \f$ [0,2\pi] \f$.
+  inline
+  void
+  angle_in_range( real_type & ang ) {
+    using Utils::m_2pi;
+    ang = fmod( ang, m_2pi );
+    while ( ang < 0     ) ang += m_2pi;
+    while ( ang > m_2pi ) ang -= m_2pi;
+  }
+
+  //! Add or remove multiple of \f$ 2\pi \f$ to an angle  in order to put it in the range \f$ [-\pi,\pi]\f$.
+  inline
+  void
+  angle_in_range_symm( real_type & ang ) {
+    using Utils::m_2pi;
+    using Utils::m_pi;
+    ang = fmod( ang, m_2pi );
+    while ( ang < -m_pi ) ang += m_2pi;
+    while ( ang >  m_pi ) ang -= m_2pi;
+  }
+
 }
 
-#include "Astro/Utils.hxx"
 #include "Astro/Units.hxx"
 #include "Astro/Kepler.hxx"
 #include "Astro/Rocket.hxx"
@@ -48,13 +110,6 @@ namespace AstroLib {
 #include <string>
 
 namespace AstroLib {
-
-  using std::string;
-  using Utils::m_pi;
-  using Utils::m_2pi;
-  using Utils::m_pi_2;
-
-  using dvec3_t = Eigen::Matrix<real_type,3,1>;
 
   integer
   Lambert(
@@ -113,23 +168,35 @@ namespace AstroLib {
   typedef struct {
     bool      long_path;   // true se il minimo è sulla "long path"
     bool      left_branch; // true se il minimo è sul "left branch"
-    real_type DeltaV0;
-    real_type DeltaV1;
     real_type optimal_travel_time;
     real_type period;
-    dvec3_t   W0;
     dvec3_t   W1;
+    dvec3_t   W2;
   } minimum_DeltaV_extra;
 
-  // return minDV
+  // return min |DV1|+|DV2|
   real_type
   minimum_DeltaV(
+    real_type       mu,
+    dvec3_t const & R1,
+    dvec3_t const & V1,
+    dvec3_t const & R2,
+    dvec3_t const & V2,
+    real_type     & DeltaV1,
+    real_type     & DeltaV2,
+    minimum_DeltaV_extra * extra = nullptr
+  );
+
+  // return  min |DV1|^2+|DV2|^2
+  real_type
+  minimum_DeltaV2(
     real_type       mu,
     dvec3_t const & R0,
     dvec3_t const & V0,
     dvec3_t const & R1,
     dvec3_t const & V1,
-    minimum_DeltaV_extra * extra = nullptr
+    real_type     & DeltaV1,
+    real_type     & DeltaV2
   );
 
   class Astro {
@@ -229,11 +296,11 @@ namespace AstroLib {
 
     bool
     setup_using_point_and_velocity(
-      string    const & n,
-      real_type const   P[3],
-      real_type const   V[3],
-      real_type         muS,
-      real_type         t0
+      string  const & n,
+      dvec3_t const & P,
+      dvec3_t const & V,
+      real_type       muS,
+      real_type       t0
     ) {
       m_name = n;
       return setup_using_point_and_velocity( P, V, muS, t0 );
@@ -241,8 +308,8 @@ namespace AstroLib {
 
     bool
     setup_using_point_and_velocity(
-      real_type const P[3],
-      real_type const V[3],
+      dvec3_t const & P,
+      dvec3_t const & V,
       real_type       muS,
       real_type       t0
     );
@@ -305,7 +372,7 @@ namespace AstroLib {
 
     real_type time_from_L_angle( real_type t, real_type L ) const;
 
-    real_type absolute_position( real_type t ) const { return equinoctial_to_ray(m_EQ,L_orbital(t)); }
+    real_type radius( real_type t ) const { return equinoctial_to_radius(m_EQ,L_orbital(t)); }
     real_type absolute_velocity( real_type t ) const { return equinoctial_to_velocity(m_EQ,L_orbital(t),m_muS); }
 
     void eval_E( real_type t, real_type E[], integer nderiv ) const;

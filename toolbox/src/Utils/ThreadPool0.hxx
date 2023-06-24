@@ -37,7 +37,7 @@ namespace Utils {
 
   //! Fake thread pool!
   class ThreadPool0 : public ThreadPoolBase {
-    typedef std::function<void()> Func;
+    using Func = std::function<void()>;
 
   public:
 
@@ -46,7 +46,7 @@ namespace Utils {
     : ThreadPoolBase()
     {}
 
-    virtual ~ThreadPool0() = default;
+    virtual ~ThreadPool0() UTILS_DEFAULT;
 
     void         exec( Func && fun )  override { fun(); }
     void         wait()               override { }

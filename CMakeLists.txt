@@ -183,6 +183,7 @@ if ( BUILD_EXECUTABLE OR UTILS_ENABLE_CTEST )
   set(
     EXELISTCPP
     test1-Lambert
+    test2-DeltaV
   )
 
   add_custom_target( all_tests ALL )

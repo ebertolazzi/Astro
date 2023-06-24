@@ -229,7 +229,7 @@ namespace AstroLib {
       fmt::format("{:.6}",m_L0),
       fmt::format("{:.6}",m_muS),
       fmt::format("{:.6}",period()),
-      fmt::format("{:.6}",m_EQ.p), fmt::format("{:.6}",m_K.e), 
+      fmt::format("{:.6}",m_EQ.p), fmt::format("{:.6}",m_K.e),
       fmt::format("{:.6}",m_EQ.f), fmt::format("{:.6}",m_K.a),
       fmt::format("{:.6}",m_EQ.g), fmt::format("{:.6}",radiants_to_degrees(m_K.i)),
       fmt::format("{:.6}",m_EQ.h), fmt::format("{:.6}",radiants_to_degrees(m_K.Omega)),
@@ -353,7 +353,7 @@ namespace AstroLib {
   Astro::setup_Equinoctial( string const & n, GenericContainer const & vars ) {
     GenericContainer const & R = vars("retrograde");
     bool retrograde = false;
-    if ( R.get_type() == GC_namespace::GC_BOOL ) {
+    if ( R.get_type() == GC_namespace::GC_type::BOOL ) {
       retrograde = R.get_bool();
     } else {
       retrograde = R.get_as_int() != 0;
@@ -375,8 +375,8 @@ namespace AstroLib {
 
   bool
   Astro::setup_using_point_and_velocity(
-    real_type const P[3],
-    real_type const V[3],
+    dvec3_t const & P,
+    dvec3_t const & V,
     real_type       muS,
     real_type       t0
   ) {

@@ -375,8 +375,8 @@ namespace AstroLib {
 
   bool
   Astro::setup_using_point_and_velocity(
-    real_type const P[3],
-    real_type const V[3],
+    dvec3_t const & P,
+    dvec3_t const & V,
     real_type       muS,
     real_type       t0
   ) {

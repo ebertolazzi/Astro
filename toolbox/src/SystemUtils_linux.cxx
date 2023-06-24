@@ -29,6 +29,26 @@ namespace Utils {
   /*
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   */
+  bool
+  get_environment( char const ename[], string & res ) {
+    char const * RES = getenv(ename);
+    if ( RES == nullptr ) return false;
+    res = string{RES};
+    return true;
+  }
+
+  /*
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  */
+  void
+  set_environment( char const ename[], char const newval[], bool overwrite ) {
+    int res = setenv( ename, newval, overwrite ? 1 : 0 );
+    UTILS_ASSERT( res == 0, "set_environment({},{},{}) faled\n", ename, newval, overwrite );
+  }
+
+  /*
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  */
   string
   get_host_name() {
     char szHostName[1024];
@@ -124,7 +144,7 @@ namespace Utils {
           if( j > 0 ) str += '.';
           str += fmt::format("{}",h[j]);
         }
-        addr.push_back( str );
+        addr.emplace_back( str );
         // str now contains one local IP address - do whatever you want to do with it (probably add it to a list)
       }
     }
@@ -168,7 +188,8 @@ namespace Utils {
   bool
   check_if_file_exists( char const * fname ) {
     struct stat buffer;
-    return (stat (fname, &buffer) == 0);
+    if (stat (fname, &buffer) == 0) return S_ISREG(buffer.st_mode);
+    return false;
   }
 
   /*
@@ -176,13 +197,9 @@ namespace Utils {
   */
   bool
   check_if_dir_exists( char const * dirname ) {
-    DIR *pDir = opendir(dirname);
-    bool bExists = false;
-    if ( pDir != nullptr ) {
-      bExists = true;
-      (void) closedir (pDir);
-    }
-    return bExists;
+    struct stat buffer;
+    if (stat (dirname, &buffer) == 0) return S_ISDIR(buffer.st_mode);
+    return false;
   }
 
   /*

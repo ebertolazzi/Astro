@@ -52,9 +52,9 @@ namespace Utils {
 
     class Table;
 
-    typedef int integer;
+    using integer = int;
 
-    enum Alignment { LEFT, RIGHT, CENTER };
+    using Alignment = enum class Table_align : integer { LEFT, RIGHT, CENTER };
 
     class Style {
     private:
@@ -89,7 +89,7 @@ namespace Utils {
 
     public:
 
-      Style() = default;
+      Style() UTILS_DEFAULT;
 
       char border_top() const { return m_border_top; }
       void border_top( char borderStyle ) { m_border_top = borderStyle; }
@@ -159,7 +159,7 @@ namespace Utils {
 
     public:
 
-      Cell() = default;
+      Cell() UTILS_DEFAULT;
 
       explicit
       Cell(
@@ -190,15 +190,15 @@ namespace Utils {
 
     class Row {
     protected:
-      typedef std::vector<Cell>        vecCell;
-      typedef std::vector<std::string> vecstr;
+      using vecCell = std::vector<Cell>;
+      using vecstr  = std::vector<std::string>;
 
       Table * m_Table = nullptr;
       vecCell m_Cells;
 
     public:
 
-      Row() = default;
+      Row() UTILS_DEFAULT;
 
       explicit
       Row(
@@ -228,11 +228,11 @@ namespace Utils {
 
     class Table {
     public:
-      typedef std::vector<Row>    vecRow;
-      typedef std::vector<Cell>   vecCell;
-      typedef std::vector<string> vecstr;
-      typedef std::vector<vecstr> vecvecstr;
-      typedef int integer;
+      using vecRow    = std::vector<Row>;
+      using vecCell   = std::vector<Cell>;
+      using vecstr    = std::vector<string>;
+      using vecvecstr = std::vector<vecstr>;
+      using integer   = int;
 
     private:
       Style       m_Style;
@@ -242,7 +242,7 @@ namespace Utils {
 
     public:
 
-      Table() = default;
+      Table() UTILS_DEFAULT;
 
       explicit
       Table(
