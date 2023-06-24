@@ -29,6 +29,8 @@
 
 #ifndef UTILS_dot_HH
   #include "Utils.hh"
+  #include "Utils_eigen.hh"
+  #include "Utils_Poly.hh"
 #endif
 
 namespace AstroLib {
@@ -52,38 +54,40 @@ namespace AstroLib {
   using Utils::m_2pi;
   using Utils::m_pi_2;
 
+  using dvec3_t = Eigen::Matrix<real_type,3,1>;
+
   integer
   Lambert(
-    real_type const R1[3],
-    real_type const R2[3],
+    dvec3_t const & R1,
+    dvec3_t const & R2,
     real_type       tf_in, // tempo di volo
     integer         m_in,  // numero di rivoluzioni
     real_type       muC,
-    real_type       V1[3],
-    real_type       V2[3]
+    dvec3_t &       V1,
+    dvec3_t &       V2
   );
 
   integer
   Lambert_Lancaster_Blanchard(
-    real_type const r1vec[3],
-    real_type const r2vec[3],
+    dvec3_t const & r1vec,
+    dvec3_t const & r2vec,
     real_type       tf_in,
     integer         m_in,
     real_type       muC,
-    real_type       V1[3],
-    real_type       V2[3]
+    dvec3_t &       V1,
+    dvec3_t &       V2
   );
 
   void
   Lambert_minmax_distances(
-    real_type const r1vec[3],
+    dvec3_t const & r1vec,
     real_type       r1,
-    real_type const r2vec[3],
+    dvec3_t const & r2vec,
     real_type       r2,
     real_type       dth,
     real_type       a,
-    real_type const V1[3],
-    real_type const V2[3],
+    dvec3_t const & V1,
+    dvec3_t const & V2,
     integer         m,
     real_type       muC,
     real_type &     minimum_distance,
@@ -105,6 +109,28 @@ namespace AstroLib {
   check_EQ_for_consistency( Equinoctial const & EQ, real_type L0 ) {
     return check_EQ_for_consistency( EQ.p, EQ.f, EQ.g, EQ.h, EQ.k, L0 );
   }
+
+  typedef struct {
+    bool      long_path;   // true se il minimo è sulla "long path"
+    bool      left_branch; // true se il minimo è sul "left branch"
+    real_type DeltaV0;
+    real_type DeltaV1;
+    real_type optimal_travel_time;
+    real_type period;
+    dvec3_t   W0;
+    dvec3_t   W1;
+  } minimum_DeltaV_extra;
+
+  // return minDV
+  real_type
+  minimum_DeltaV(
+    real_type       mu,
+    dvec3_t const & R0,
+    dvec3_t const & V0,
+    dvec3_t const & R1,
+    dvec3_t const & V1,
+    minimum_DeltaV_extra * extra = nullptr
+  );
 
   class Astro {
 
@@ -187,9 +213,7 @@ namespace AstroLib {
       real_type         M0,
       real_type         muS
     ) {
-      return setup_Keplerian(
-        n, t0, K.a, K.e, K.Omega, K.omega, K.i, M0, muS
-      );
+      return setup_Keplerian( n, t0, K.a, K.e, K.Omega, K.omega, K.i, M0, muS );
     }
 
     Astro const &
@@ -200,9 +224,7 @@ namespace AstroLib {
       real_type           L,
       real_type           muS
     ) {
-      return setup_Equinoctial(
-        n, t0, EQ.p, EQ.f, EQ.g, EQ.h, EQ.k, EQ.retrograde, L, muS
-      );
+      return setup_Equinoctial( n, t0, EQ.p, EQ.f, EQ.g, EQ.h, EQ.k, EQ.retrograde, L, muS );
     }
 
     bool
@@ -336,6 +358,31 @@ namespace AstroLib {
     void
     jerk( real_type t, real_type J[3] ) const
     { this->jerk( t, J[0], J[1], J[2] ); }
+
+    // Eigen 3 vec
+    void
+    position_by_L( real_type L, dvec3_t & P ) const
+    { position_by_L( L, P.data() ); }
+
+    void
+    velocity_by_L( real_type L, dvec3_t & V ) const
+    { velocity_by_L( L, V.data() ); }
+
+    void
+    position( real_type t, dvec3_t & P ) const
+    { position( t, P.data() ); }
+
+    void
+    velocity( real_type t, dvec3_t & V ) const
+    { velocity( t, V.data() ); }
+
+    void
+    acceleration( real_type t, dvec3_t & A ) const
+    { acceleration( t, A.data() ); }
+
+    void
+    jerk( real_type t, dvec3_t & J ) const
+    { jerk( t, J.data() ); }
 
     void
     get_Keplerian_orbital(

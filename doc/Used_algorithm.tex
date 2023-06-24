@@ -1,0 +1,657 @@
+\makeatletter
+\def\input@path{{macros/}}
+\makeatother 
+
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[UKenglish]{babel}
+
+%\usepackage{colortbl}
+\usepackage{graphics,graphicx}
+\usepackage{subfigure}
+\graphicspath{{figs/}}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{listings}
+\usepackage{fancyvrb}
+\usepackage{bm}
+\usepackage[math]{easyeqn}
+
+\title{Astro DOC}
+\author{Enrico Bertolazzi}
+\date{2023}			
+
+
+
+\begin{document}
+\maketitle
+
+% ___           _              _   _      _ 
+%| __|__ _ _  _(_)_ _  ___  __| |_(_)__ _| |
+%| _|/ _` | || | | ' \/ _ \/ _|  _| / _` | |
+%|___\__, |\_,_|_|_||_\___/\__|\__|_\__,_|_|
+%       |_|                                 
+%                    _ _           _          
+% __ ___  ___ _ _ __| (_)_ _  __ _| |_ ___ ___
+%/ _/ _ \/ _ \ '_/ _` | | ' \/ _` |  _/ -_|_-<
+%\__\___/\___/_| \__,_|_|_||_\__,_|\__\___/__/
+
+\section{Modified equinoctial coordinates}
+
+The problem has been formulated with modified equinoctial coordinates.
+In this way, the dynamics of the system can be described in terms of state variables:
+%%%
+\begin{EQ}
+  \pmatrix{\bm{y}^{T},m}=\pmatrix{p,f,g,h,k,L,m}
+\end{EQ}
+%%%
+and the control variables in spacecraft-attached Frenet reference frame:
+%%%
+\begin{EQ}
+  \bm{T}^{T}=\pmatrix{T_{r},T_{t},T_{n}}
+\end{EQ}
+%%%
+The equations of motion for the spacecraft with variable thrust can be stated as:
+%%%
+\begin{EQ}[rcl]\label{eq:equi}
+  \dot{\bm{y}} &=& \bm{A}(\bm{y})\frac{\bm{T}}{m} + \bm{b}, \\
+  \dot{m}      &=& -\frac{\norm{\bm{T}}}{g_{E}I_{sp}} \\
+  \abs{\bm{T}} &=& \sqrt{T_{r}^{2}+T_{t}^{2}+T_{n}^{2}} \leq T_{max}
+\end{EQ}
+%%%
+The equinoctial dynamics are in fact defined by:
+%%%
+\begin{EQ}[rcl]
+  \bm{A}&=&
+  \dfrac{1}{q}
+  \sqrt{\dfrac{p}{\mu}}
+  \pmatrix{
+    0 &  2p &  0\\
+    q\sin L  & \{(q+1)\cos L+f\} & -g\{h\sin L-k\cos L\} \\
+    -q\cos L & \{(q+1)\sin L+g\} & f\{h\sin L-k\cos L\} \\
+    0 & 0 & \dfrac{s^{2}\cos L}{2}\\
+    0 & 0 & \dfrac{s^{2}\sin L}{2}\\
+    0 & 0 & h\sin L-k\cos L
+  }
+  \\
+  \bm{b}^{T}&=&\pmatrix{
+    0 & 0 & 0 & 0 & 0 & \sqrt{\mu p}\left(\dfrac{q}{p}\right)^{2}
+  }
+\end{EQ}
+%%%
+where:
+%%%
+\begin{EQ}
+  q = 1 + f\cos L + g\sin L, \qquad
+  r = \frac{p}{q},\qquad
+  \alpha^{2} = h^{2} - k^{2}, \\
+  \chi = \sqrt{h^{2} + k^{2}}, \qquad
+  s^{2}=1+\chi^{2}
+\end{EQ}
+%%%
+The equinoctial coordinates y are related to the Cartesian state $(r, v)$ according to the expressions:
+%%%
+\begin{EQ}[rcl]
+  \bm{r}(p, f, g, h, k, L) &=&\dfrac{r}{s^{2}}\pmatrix{
+     (1+\alpha^{2})\cos L + 2hk\sin L\\
+     (1-\alpha^{2})\sin L + 2hk\cos L\\
+     2\left( h\sin L -k\cos L \right)\\
+  }
+  \\
+  \bm{v}(p, f, g, h, k, L) &=&
+  \dfrac{1}{s^{2}}\sqrt{\frac{\mu}{p}}
+  \pmatrix{ 
+     -\left( (1+\alpha^{2})(g+\sin L) - 2hk(f+\cos L)\right)\\
+     -\left( (\alpha^{2}-1)(f+\cos L) + 2hk(g+\sin L)\right)\\
+     2\left( h(f+\cos L) + k(g+\sin L)\right)\\
+  }
+\end{EQ}
+%%%
+The vector $\bm{T}$ is expressed in the Frenet rotating radial
+frame whose principal axes are defined by:
+%%%
+\begin{EQ}
+  \bm{Q}_{r} = \pmatrix{
+    \bm{i}_{r} & \bm{i}_{t}	& 	\bm{i}_{n}
+   }
+   = \pmatrix{
+       \dfrac{\bm{r}}{\norm{\bm{r}}} &
+       \dfrac{(\bm{r} \times \bm{v}) \times \bm{r}}{\norm{\bm{r} \times \bm{v}}\norm{\bm{r}}}&
+       \dfrac{\bm{r} \times \bm{v}}{\norm{\bm{r} \times \bm{v}}}
+  }
+\end{EQ}
+%%%
+The choice of these coordinates is made because when the thrust is zero $\textbf{T}^{T} = [ 0, \; 0, \; 0 ]$ the first five equations are simply $\dot{p} = \dot{f} = \dot{g} = \dot{h} = \dot{k} = 0$, which implies that the elements are constant. Moreover the behaviour of the controls becomes more regular. These two features allow a good formulation of the optimal control problem and they simplify the numerical solution.
+
+
+\newcommand{\SP}{\mathrm{d}}
+\section{Equinoctial coordinates with $\SP=\sqrt{p}$}
+
+%%%
+\begin{EQ}
+  \pmatrix{\bm{y}^{T},m}=\pmatrix{\SP,f,g,h,k,L,m},\qquad
+  \bm{T}^{T}=\pmatrix{T_{r},T_{t},T_{n}}
+\end{EQ}
+%%%
+The equations of motion for the spacecraft with variable thrust can be stated as:
+%%%
+\begin{EQ}\label{eq:equi}
+  \dot{\bm{y}} = \bm{A}(\bm{y})\frac{\bm{T}}{m} + \bm{b},\quad
+  \dot{m}      = -\frac{\norm{\bm{T}}}{g_{E}I_{sp}}, \quad
+  \abs{\bm{T}} = \sqrt{T_{r}^{2}+T_{t}^{2}+T_{n}^{2}} \leq T_{max}
+\end{EQ}
+%%%
+Usando la relazione
+%%%
+\begin{EQ}
+   \dfrac{dp}{dt} =
+   \dfrac{db^2}{dt} =
+   2b\dfrac{db}{dt}
+\end{EQ}
+%%%
+\begin{EQ}[rcl]
+  \bm{A}&=&
+  \dfrac{1}{\sqrt{\mu}}
+  \dfrac{b}{q}
+  \pmatrix{
+    0 & b & 0\\
+     q\sin L & (q+1)\cos L+f & -g\Big(h\sin L-k\cos L\Big) \\
+    -q\cos L & (q+1)\sin L+g & f\Big(h\sin L-k\cos L\Big) \\
+    0 & 0 & \dfrac{s^{2}}{2}\cos L\\
+    0 & 0 & \dfrac{s^{2}}{2}\sin L\\
+    0 & 0 & h\sin L-k\cos L
+  }
+  \\
+  \bm{b}^{T}&=& \sqrt{\mu}\pmatrix{
+    0 & 0 & 0 & 0 & 0 &\dfrac{q^2}{b^3}
+  }
+\end{EQ}
+%%%
+where:
+%%%
+\begin{EQ}
+  q = 1 + f\cos L + g\sin L, \qquad
+  r = \frac{p}{q}= \frac{b^2}{q},\qquad
+  \alpha^{2} = h^{2} - k^{2}, \\
+  \chi = \sqrt{h^{2} + k^{2}}, \qquad
+  s^{2}=1+\chi^{2}
+\end{EQ}
+%%%
+The equinoctial coordinates y are related to the Cartesian state $(r, v)$ according to the expressions:
+%%%
+\begin{EQ}[rcl]
+  \bm{r}(b, f, g, h, k, L) &=&\dfrac{r}{s^{2}}\pmatrix{
+     (1+\alpha^{2})\cos L + 2hk\sin L\\
+     (1-\alpha^{2})\sin L + 2hk\cos L\\
+     2\left( h\sin L -k\cos L \right)\\
+  }
+  \\
+  \bm{v}(b, f, g, h, k, L) &=&
+     \frac{\sqrt{\mu}}{bs^2}\pmatrix{ 
+     -\left( (1+\alpha^{2})(g+\sin L) - 2hk(f+\cos L)\right)\\
+     -\left( (\alpha^{2}-1)(f+\cos L) + 2hk(g+\sin L)\right)\\
+      2\left( h(f+\cos L) + k(g+\sin L)\right)\\
+  }
+\end{EQ}
+%%%
+
+
+\section{Lambert Maneuvre}
+
+\begin{itemize}
+  \item mean anomaly difference 
+  \begin{EQ}[rcl]
+    M_2(t_2)-M_1(t_1) &=& n(t_2-t_1)
+    =
+    \sqrt{\dfrac{\mu}{a^3}}(t_2-t_1)
+    \\
+    t_2-t_1 
+    &=& 
+    \sqrt{\dfrac{a^3}{\mu}}
+    \left[
+      E_2-E_1-e(\sin E_2-\sin E_1)
+    \right]
+    \\
+    &=& 
+    2\sqrt{\dfrac{a^3}{\mu}}
+    \left[
+      \dfrac{E_2-E_1}{2}
+      -e\left(\sin\left(\dfrac{E_2-E_1}{2}\right)
+              \cos\left(\dfrac{E_2+E_1}{2}\right)\right)
+    \right]
+    \\
+  \end{EQ}
+  \item define
+  %%%%
+  \begin{EQ}
+     A=\dfrac{E_2-E_1}{2},\qquad
+     \cos B = e\cos\left(\dfrac{E_2+E_1}{2}\right)
+  \end{EQ}
+  %%%
+  \item and
+  %%%
+  \begin{EQ}
+    t_2-t_1 = 2\sqrt{\dfrac{a^3}{\mu}}(A-\sin A \cos B)
+  \end{EQ}
+  %%%
+  \item substitute $\alpha=A+B$, $\beta=B-A$ and using
+  %%%
+  \begin{EQ}
+    \sin\left(\frac{\alpha}{2}\right)^2=\frac{s}{2a},\qquad
+    \sin\left(\frac{\beta}{2}\right)^2=\frac{s-c}{2a},
+  \end{EQ}
+  %%%
+  where
+  %%%
+  \begin{EQ}
+     2s=r_1+r_2+c,\qquad
+     c^2 = \norm{\bm{r}_1-\bm{r}_2}=r_1^2 + r_2^2 - 2r_1r_2\cos\theta
+  \end{EQ}
+  %%%
+  \item obtain a single equation in the unknown $a$
+  %%%
+  \begin{EQ}
+     t_2-t_1 = 
+     \sqrt{\dfrac{a^3}{\mu}}
+     \left[
+       (\alpha-\sin\alpha)-
+       (\beta-\sin\beta)
+     \right]
+  \end{EQ}
+\end{itemize}
+%%%
+Eccentricity equation:
+%%%
+\begin{EQ}[rcl]
+  F(E) &=& E(t)- e \sin E(t) - M(t)=0\\
+  F(a) &=& \sqrt{\dfrac{a^3}{\mu}}
+         \left[
+           (\alpha(a)-\sin\alpha(a))-
+           (\beta(a)-\sin\beta(a))
+         \right]
+         -t
+         =0\\
+  F(x) &=& \phi(x)+\phi(y(x,\tau))+N\pi-\tau = 0,\\
+  \phi(u) &=& \cot^{-1}\left(\dfrac{u}{\sqrt{1-u^2}}\right)
+  -\dfrac{1}{3u}(2+u^2)\sqrt{1-u^2} \\
+  \tau &=& 4t\sqrt{\dfrac{\mu}{m^3}},\qquad
+  m=\norm{\bm{r}_1}+\norm{\bm{r}_2}+\norm{\bm{r}_1-\bm{r}_2}
+\end{EQ}
+
+\section{Optimal two-impulse rendezvous using constrained multiple-revolution Lambert solutions}
+\paragraph{Gang Zhang, Di Zhou, Daniele Mortari}
+
+Maneuver from $(\bm{r}_0,\bm{v}_0)$ a $(\bm{r}_1,\bm{v}_1)$ 
+with free time minimizing $\Delta V$:
+%%%
+\begin{EQ}
+   \Delta V = \Delta V_0 + \Delta V_1 = \norm{\bm{v}_0-\bm{w}_0}+\norm{\bm{v}_1-\bm{w}_1}
+\end{EQ}
+%%%
+maneuver is determined from $(\bm{r}_0,\bm{w}_0)$ to $(\bm{r}_1,\bm{w}_1)$.
+Solution can be written as
+%%%
+\begin{EQ}
+   \cases{
+      \bm{w}_0 = \omega_c \hat{\bm{c}}+\omega_\rho\hat{\bm{r}}_0 & \\
+      \bm{w}_1 = \omega_c \hat{\bm{c}}-\omega_\rho\hat{\bm{r}}_1 & \\
+   }
+   \\
+   c = \norm{\bm{r}_1-\bm{r}_0},\qquad
+   \hat{\bm{c}} = \dfrac{\bm{r}_1-\bm{r}_0}{c},\\
+   r_0 = \norm{\bm{r}_0}, \qquad
+   \hat{\bm{r}}_0 = \dfrac{\bm{r}_0}{r_0},\qquad
+   r_1 = \norm{\bm{r}_1}, \qquad
+   \hat{\bm{r}}_1 = \dfrac{\bm{r}_1}{r_1},
+\end{EQ}
+%%%
+moreover 
+%%%
+\begin{EQ}\label{eq:omegac}
+   \omega_c = \dfrac{c\sqrt{\mu p}}{r_0 r_2\sin\theta},
+   \quad
+   \omega_\rho = \sqrt{\dfrac{\mu}{p}}\dfrac{1-\cos\theta}{\sin\theta},
+   \quad
+   K = \omega_c \omega_\rho = \dfrac{\mu c}{r_0r_1+\bm{r}_0\cdot\bm{r}_1}
+\end{EQ}
+%%%
+so that
+%%%
+\begin{EQ}[rcl]
+   \bm{w}_0-\bm{v}_0 &=&
+   \omega_c\hat{\bm{c}}+(K/\omega_c)\hat{\bm{r}}_0-\bm{v}_0
+   \\
+   \bm{v}_1-\bm{w}_1 &=& 
+   \bm{v}_1-\omega_c\hat{\bm{c}}+(K/\omega_c)\hat{\bm{r}}_1
+\end{EQ}
+%%%
+and
+%%%
+\begin{EQ}[rcl]
+   \norm{\Delta V_0}^2 &=& 
+   \omega_c(\omega_c-2(\bm{v}_0\cdot \hat{\bm{c}}))
+   + 2K(\hat{\bm{c}}\cdot\hat{\bm{r}}_0)
+   +\norm{\bm{v}_0}^2
+   +
+   \dfrac{K}{\omega_c}
+   \left(
+    \dfrac{K}{\omega_c} 
+   -2(\bm{v}_0\cdot\hat{\bm{r}}_0)
+   \right)
+   \\
+   \norm{\Delta V_1}^2 &=& 
+   \omega_c(\omega_c-2(\bm{v}_1\cdot \hat{\bm{c}}))
+   -2K(\hat{\bm{c}}\cdot\hat{\bm{r}}_1)
+   +\norm{\bm{v}_1}^2
+   +
+   \dfrac{K}{\omega_c}
+   \left(
+    \dfrac{K}{\omega_c} 
+   -2(\bm{v}_1\cdot\hat{\bm{r}}_1)
+   \right)
+   %+ \dfrac{K^2}{\omega_c^2}
+   %+2\dfrac{K}{\omega_c} (\bm{v}_1\cdot\hat{\bm{r}}_1)
+\end{EQ}
+%%%
+and derivatives
+%%%
+\begin{EQ}[rcl]
+   \dfrac{\mathrm{d}\norm{\Delta V_i}}{\mathrm{d}\omega_c}
+   &=&\dfrac{1}{2\norm{\Delta V_i}}\dfrac{\mathrm{d}\norm{\Delta V_i}^2}{\mathrm{d}\omega_c},
+   \\
+   \dfrac{\mathrm{d}^2\norm{\Delta V_i}}{\mathrm{d}\omega_c^2}
+   &=&
+   \dfrac{1}{2\norm{\Delta V_i}}\dfrac{\mathrm{d}^2\norm{\Delta V_i}^2}{\mathrm{d}\omega_c^2}
+   -
+   \dfrac{1}{4\norm{\Delta V_i}^3}
+   \left(\dfrac{\mathrm{d}\norm{\Delta V_i}^2}{\mathrm{d}\omega_c}\right)^2
+\end{EQ}
+%%%
+with values
+%%%
+%%%
+\begin{EQ}[rcl]
+   \dfrac{1}{2}\dfrac{\mathrm{d}}{\mathrm{d}\omega_c}\norm{\Delta V_0}^2 &=& 
+   %\omega_c - \dfrac{K^2}{\omega_c^3} 
+   %-(\bm{v}_0\cdot \hat{\bm{c}})
+   %+\dfrac{K}{\omega_c^2} (\bm{v}_0\cdot\hat{\bm{r}}_0)
+   %=
+   \omega_c-(\bm{v}_0\cdot \hat{\bm{c}})
+   +\dfrac{K}{\omega_c^2}\left(\bm{v}_0\cdot\hat{\bm{r}}_0-\dfrac{K}{\omega_c}\right)
+   \\
+   \dfrac{1}{2}\dfrac{\mathrm{d}}{\mathrm{d}\omega_c}\norm{\Delta V_1}^2 &=&
+   %\omega_c - \dfrac{K^2}{\omega_c^3}
+   %-(\bm{v}_1\cdot \hat{\bm{c}})
+   %-\dfrac{K}{\omega_c^2} (\bm{v}_1\cdot\hat{\bm{r}}_1)
+   %=
+   \omega_c-(\bm{v}_1\cdot \hat{\bm{c}})
+   -\dfrac{K}{\omega_c^2}\left(\bm{v}_1\cdot\hat{\bm{r}}_1+\dfrac{K}{\omega_c}\right)
+   \\
+   \dfrac{1}{2}\dfrac{\mathrm{d}^2}{\mathrm{d}\omega_c^2}\norm{\Delta V_0}^2 &=& 
+   %1 + 3 \dfrac{K^2}{\omega_c^4} 
+   %-2\dfrac{K}{\omega_c^3} (\bm{v}_0\cdot\hat{\bm{r}}_0)
+   %=
+   1+\dfrac{K}{\omega_c^3}\left(3\dfrac{K}{\omega_c}-2\,\bm{v}_0\cdot\hat{\bm{r}}_0\right)
+   \\
+   \dfrac{1}{2}\dfrac{\mathrm{d}^2}{\mathrm{d}\omega_c^2}\norm{\Delta V_1}^2 &=&
+   %1+3\dfrac{K^2}{\omega_c^4}
+   %+2\dfrac{K}{\omega_c^3} (\bm{v}_1\cdot\hat{\bm{r}}_1)
+   %=
+   1+\dfrac{K}{\omega_c^3}\left(3\dfrac{K}{\omega_c}+2\,\bm{v}_1\cdot\hat{\bm{r}}_1\right)
+\end{EQ}
+%%%
+and finally
+%%%
+\begin{EQ}
+  \dfrac{\mathrm{d}\Delta V}{\mathrm{d}\omega_c}=0,
+  \qquad\Rightarrow\qquad
+  \dfrac{1}{\norm{\Delta V_0}}\dfrac{\mathrm{d}\norm{\Delta V_0}^2}{\mathrm{d}\omega_c}
+  =
+  -\dfrac{1}{\norm{\Delta V_1}}\dfrac{\mathrm{d}\norm{\Delta V_1}^2}{\mathrm{d}\omega_c}
+  \\
+  \Rightarrow\qquad
+  \norm{\Delta V_1}^2\left(\dfrac{\mathrm{d}\norm{\Delta V_0}^2}{\mathrm{d}\omega_c}\right)^2
+  -
+  \norm{\Delta V_0}^2\left(\dfrac{\mathrm{d}\norm{\Delta V_1}^2}{\mathrm{d}\omega_c}\right)^2
+  =0
+\end{EQ}
+%%%
+The condition zero derivative results in a polynomial in $\omega_c$ of degree $8$
+with coefficients:
+%%%
+\newcommand{\crz}{t_0}
+\newcommand{\cru}{t_1}
+\newcommand{\cvz}{t_2}
+\newcommand{\cvu}{t_3}
+\newcommand{\vzrz}{t_4}
+\newcommand{\vuru}{t_5}
+\begin{EQ}[rclrclrcl]
+  \crz  &=& \hat{\bm{c}}\cdot\hat{\bm{r}_0},\quad&
+  \cru  &=& \hat{\bm{c}}\cdot\hat{\bm{r}_1},\quad&
+  \cvz  &=& \hat{\bm{c}}\cdot\bm{v}_0,\\
+  \cvu  &=& \hat{\bm{c}}\cdot\bm{v}_1,\quad&
+  \vzrz &=& \bm{v}_0\cdot\hat{\bm{r}}_0,\quad&
+  \vuru &=& \bm{v}_1\cdot\hat{\bm{r}}_1,
+\end{EQ}
+\begin{EQ}[rcl]
+  a_0 &=&
+  2(\crz+\cru) {K}^{5}+ \left( {v_0}^{
+2}-{v_1}^{2}-{\vzrz}^{2}+{\vuru}^{2} \right) {K}^{4}
+  \\
+  a_1 &=&
+  4\left(\crz\vuru-\cru\vzrz-\cvz+\cvu\right) {K}^{4}+
+  2\left( {v_0}^{2}\vuru+{v_1}^{2}\vzrz-\vuru{\vzrz}^{2}-{\vuru}^{2}\vzrz \right) {K}^{3}
+\\
+a_2 &=&
+2\left(\crz{\vuru}^{2}+\cru{\vzrz}^{2}+\cvz\vzrz-4(\cvz\vuru+\vzrz\cvu)+\vuru\cvu\right) {K}^{3}
+\\
+&+& \left( {v_0}^{2}{
+\vuru}^{2}-{v_1}^{2}{\vzrz}^{2} \right) {K}^{2}
+\\
+a_3 &=&
+4\left(\crz\cvu+\cru\cvz+\vzrz+\vuru\right) {K}^{3} \\
+&+& 
+2\left( \left( -{v_1}^{2}+2{\vzrz}\vuru-{\vuru}^{2}\right) \cvz+
+        \left( {v_0}^{2}+{\vzrz}^{2}-2\vzrz\vuru\right) \cvu \right) {K}^{2}
+\\
+a_4 &=&
+\left( 4(\crz\vuru\cvu-\cru\vzrz\cvz)+2(v_1^{2}-v_0^{2})-{\cvz}^{2}+{\cvu}^{2}-{\vzrz
+}^{2}+{\vuru}^{2} \right) {K}^{2}
+\\
+&+& 2\left({v_0}^{2}\cvu\vuru+2v_1^{2}\vzrz\cvz \right) K-4\left(\crz+\cru\right) {K}^{3}
+\\
+a_5 &=&
+4\left( -\crz\vuru+\cru\vzrz+\cvz-\cvu\right) {K}^{2} \\
+&-& 2\left(\vuru\cvz^{2}+ 2\left(\vzrz+\vuru\right) \cvu\cvz+{v_0}^{2}\vuru+{v_1}^{2}\vzrz
+    +\vzrz{{\cvu}}^{2} \right) K
+\\
+a_6 &=&
+2\left( \cru\cvz^{2}+ \left(\vzrz+4\,{\vuru} \right) \cvz
++\crz\cvu^{2}+ \left( 4\vzrz+\vuru\right) \cvu \right) K+{v_0}^{2}{{\cvu}}^{2}-{v_1}^{2}{\cvz}^{2}
+\\
+a_7 &=&
+-4\left(\crz\cvu+\cru\cvz+\vzrz\vuru\right) K+2\,{\cvz}^{2}\cvu+ 
+2\left({v_1}^{2}-{\cvu}^{2}\right) \cvz-2\,{v_0}^{2}
+{\cvu}
+\\
+a_8 &=&
+2\left( \crz+\cru\right) K+{v_0}^{2}-{v_1}^
+{2}-{\cvz}^{2}+{\cvu}^{2}
+\end{EQ}
+%%%
+real roots that satisfy first and second order conditions are candidate
+for the minimum.
+Given $s=(r_0+r_1+c)/2$ parameter $p$ (derived from $\omega_s$) 
+must be searched in the interval $[p^-,p_m]$ for the ``long`` trajectory,
+and in the interval $[p_m,p^+]$ for the ``short`` trajectory,
+%%%
+\begin{EQ}
+   p^{\pm}=\dfrac{2}{c^2}(s-r_0)(s-r_1)
+   \left[ 2s-c\pm2\sqrt{s(s-c)}\right],
+   \quad
+   p_m = \dfrac{2}{c}(s-r_0)(s-r_1)
+\end{EQ}
+%%%
+from~\eqref{eq:omegac} a limitation for the real roots of the 
+polynomial is:
+%%%
+\begin{EQ}
+  s \in ......
+\end{EQ}
+
+
+\section{Invariants}
+
+\begin{itemize}
+  \item Orbit energy $v^2/2-\mu/r=-\mu/(2a)=-\mu(1-e^2)/(2p)$
+\end{itemize}
+
+
+\section{Impulsive maneuver}
+
+Variazione parametri orbitali sotto spinta impulsiva,
+approssimo $\bm{y}(t)=\bm{y}(0)+\bm{y}'(0)t+\mathcal{O}(t^2)$
+e integro sotto la spinta costante $\bm{T}/m=\bm{J}/\Delta t$ nell'intervallo
+$[0,\Delta t]$.
+%%%
+\begin{EQ}
+  \Delta t\bm{y}'(0) 
+  \approx
+  \int_0^{\Delta t}\bm{A}(\bm{y}(0)+\bm{y}'(0)t)\frac{\bm{J}}{\Delta t}\mathrm{d}t
+  +\Delta t \bm{b}
+\end{EQ}
+%%%
+chiamo $\bm{B}(\bm{y})=\bm{A}(\bm{y})\bm{J}$ e $\Delta\bm{y}=\Delta t\bm{y}'$
+%%%
+\begin{EQ}[rcl]
+  \int_0^{\Delta t}\bm{A}(\bm{y}(0)+\bm{y}'(0)t)\frac{\bm{J}}{\Delta t}\mathrm{d}t
+  &\approx&
+  \dfrac{1}{\Delta t}\int_0^{\Delta t}\bm{B}(\bm{y}(0)+\dfrac{\partial\bm{B}(\bm{y}(0))}{\partial\bm{y}}\bm{y}'(0)t\mathrm{d}t
+  \\
+  &\approx&\bm{B}(\bm{y}(0))+\dfrac{\partial\bm{B}(\bm{y}(0))}{\partial\bm{y}}\bm{y}'(0)\dfrac{\Delta t}{2}
+  \\
+  &\approx&\bm{B}(\bm{y}(0))+\dfrac{1}{2}\dfrac{\partial\bm{B}(\bm{y}(0))}{\partial\bm{y}}\Delta\bm{y}
+\end{EQ}
+%%%
+per cui abbiamo la relazione sui salti delle coordinate equinoziali
+%%%
+\begin{EQ}
+  \left(\bm{I}-\dfrac{1}{2}\dfrac{\partial}{\partial\bm{y}}\bm{A}(\bm{y}(0))\bm{J}\right)\Delta\bm{y}
+  =\bm{A}(\bm{y}(0))\bm{J}
+\end{EQ}
+%%%
+
+
+
+La prima manovra sposta il razzo madre dalla terra ad un cluster di asteroidi.
+Si può formulare un questo modo: (caso 2 soli impulsi)\\
+
+\begin{itemize}
+  \item $\bm{r}_E(t)$ posizione della terra.
+  \item $\bm{v}_E(t)$ velocità della terra.
+  \item $p_0$, $f_0$, $g_0$, $h_0$, $k_0$ parametri equinoziali della terra con 
+        $L_0=L(t_0)$ posizione sulla traiettoria
+  \item $p_1$, $f_1$, $g_1$, $h_1$, $k_1$ parametri equinoziali del cluster
+\end{itemize}
+
+Bisogna trovare i parametri equinoziali $p$, $f$, $g$, $h$, $k$
+che danno la traiettoria del razzo nella tratto ``senza motore'' che 
+soddisfano le equazioni:
+%%%
+\begin{EQ}[rcl]
+   \bm{r}(p, f, g, h, k, L_0) &=& \bm{r}_E(t_0) \\
+   \bm{v}(p, f, g, h, k, L_0) &=& \bm{v}_E(t_0)+(v_{\infty}+\Delta v_0)\bm{d}
+\end{EQ}
+%%%
+cioè parto dalla terra e uso un po di motore e l'eccesso di velocità che ci regalano.
+Messe così le equazioni sono incasinate, sotto una spinta impulsiva
+dalla~\eqref{eq:equi} il cambiamento dei parametri equinoziali dovrebbe valere
+%%%
+\begin{EQ}[rcl]
+  \bm{y}_+ &=& \bm{y}_-\bm{A}(\bm{y}_-)\frac{\bm{J}}{m}
+\end{EQ}
+%%%
+bisogna verificare che $\bm{r}(\bm{y}_+) = \bm{r}(\bm{y}_-)$...[DA FINIRE]
+
+
+\begin{EQ}
+   L_1 = L_0+\Delta t\sqrt{\mu p}\left(\dfrac{q}{p}\right)^{2}
+\end{EQ}
+
+
+\section{Asteroid position}
+
+\paragraph{position}
+\begin{EQ}[rcl]
+  x &=& \dfrac{p( (1+h^2-k^2)\cos(L)+2hk\sin(L))}
+              {(1+f\cos(L)+g\sin(L))(1+h^2+k^2)}
+  \\
+  y &=& \dfrac{p( (1-h^2+k^2)\sin(L)+2hk\cos(L))}
+              {(1+f\cos(L)+g\sin(L))(1+h^2+k^2)}
+  \\
+  z &=& \dfrac{2p(h\sin(L)-k\cos(L))}
+              {(1+f\cos(L)+g\sin(L))(1+h^2+k^2)}
+\end{EQ}
+\paragraph{velocity}
+\begin{EQ}[rcl]
+  v_x &=&
+  \sqrt{\dfrac{\mu}{p}}\,
+  \dfrac{2hk(\cos(L)+f) - (1+h^2-k^2)(\sin(L)+g)}{1+h^2+k^2} 
+  \\
+  v_y &=&
+  \sqrt{\dfrac{\mu}{p}}\,
+  \dfrac{(1-h^2+k^2)(\cos(L)+f) - 2hk(\sin(L)+g)}{1+h^2+k^2}
+  \\
+  v_z &=&
+  2\sqrt{\dfrac{\mu}{p}}\,
+  \dfrac{h(\cos(L)+f) + k(\sin(L)+g)}{1+h^2+k^2}
+\end{EQ}
+
+\begin{EQ}
+  a = \dfrac{p}{1-e^2},
+  \qquad
+  M(t) = M_0 + (t-t_0)\sqrt{\dfrac{\mu}{a^3}},
+\end{EQ}
+%%%
+solve
+%%%
+\begin{EQ}
+  E(t)-e\sin(E(t))=M(t),\qquad e\sinh(F(t))-F(t)=M(t)
+\end{EQ}
+%%%
+\begin{EQ}
+  \tan\frac{\nu(t)}{2} = \frac{\sqrt{1+e}\sin(E(t)/2)}{\sqrt{1-e}\cos(E(t)/2)},
+  \qquad
+  L(t) = \nu(t) + \omega + \Omega= \nu(t)+\arctan\dfrac{g}{f} 
+\end{EQ}
+%%%
+\begin{EQ}
+  \sqrt{1-e}\sin\frac{\nu(t)}{2}\cos\frac{E(t)}{2} = \sqrt{1+e}\sin\frac{E(t)}{2}\cos\frac{\nu(t)}{2},
+\end{EQ}
+
+\paragraph{From $L(t)$ to $M(t)$}
+
+\begin{EQ}[rcl]
+   \nu(t) &=& L(t)-\arctan\dfrac{g}{f}
+   \\
+   E(t) &=&2\arctan\frac{\sin(\nu(t)/2)\sqrt{1-e}}{\cos(\nu(t)/2)\sqrt{1+e}}
+   \\
+   M(t) &=&E(t)-e\sin(E(t)),
+\end{EQ}
+
+\paragraph{Condition for $L(t_1)-L(t_0)$}
+\begin{EQ}[rcl]
+   L(t_1)-L(t_0) &=& \nu(t_1)-\nu(t_0)
+   \\
+   \dfrac{\sqrt{1-e}}{\sqrt{1+e}}\sin\frac{\nu(t_0)}{2}\cos\frac{E(t_0)}{2} 
+   &=& \sin\frac{E(t_0)}{2}\cos\frac{\nu(t_0)}{2},
+   \\
+   \dfrac{\sqrt{1-e}}{\sqrt{1+e}}\sin\frac{\nu(t_1)}{2}\cos\frac{E(t_1)}{2} 
+   &=& \sin\frac{E(t_1)}{2}\cos\frac{\nu(t_1)}{2},
+   \\
+   E(t_1)-E(t_0)-e(\sin(E(t_1))-\sin(E(t_0)))&=&
+   (t_1-t_0)\sqrt{\dfrac{\mu}{a^3}},
+\end{EQ}
+
+
+\end{document}             
