@@ -43,6 +43,8 @@ namespace AstroLib {
   using Utils::m_2pi;
   using Utils::m_pi_2;
   using dvec3_t = Eigen::Matrix<real_type,3,1>;
+  using dvec_t  = Eigen::Matrix<real_type,Eigen::Dynamic,1>;
+  using dmat_t  = Eigen::Matrix<real_type,Eigen::Dynamic,Eigen::Dynamic>;
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -111,93 +113,7 @@ namespace AstroLib {
 
 namespace AstroLib {
 
-  integer
-  Lambert(
-    dvec3_t const & R1,
-    dvec3_t const & R2,
-    real_type       tf_in, // tempo di volo
-    integer         m_in,  // numero di rivoluzioni
-    real_type       muC,
-    dvec3_t &       V1,
-    dvec3_t &       V2
-  );
-
-  integer
-  Lambert_Lancaster_Blanchard(
-    dvec3_t const & r1vec,
-    dvec3_t const & r2vec,
-    real_type       tf_in,
-    integer         m_in,
-    real_type       muC,
-    dvec3_t &       V1,
-    dvec3_t &       V2
-  );
-
-  void
-  Lambert_minmax_distances(
-    dvec3_t const & r1vec,
-    real_type       r1,
-    dvec3_t const & r2vec,
-    real_type       r2,
-    real_type       dth,
-    real_type       a,
-    dvec3_t const & V1,
-    dvec3_t const & V2,
-    integer         m,
-    real_type       muC,
-    real_type &     minimum_distance,
-    real_type &     maximum_distance
-  );
-
-  bool
-  check_EQ_for_consistency(
-    real_type p,
-    real_type f,
-    real_type g,
-    real_type h,
-    real_type k,
-    real_type L
-  );
-
-  inline
-  bool
-  check_EQ_for_consistency( Equinoctial const & EQ, real_type L0 ) {
-    return check_EQ_for_consistency( EQ.p, EQ.f, EQ.g, EQ.h, EQ.k, L0 );
-  }
-
-  typedef struct {
-    bool      long_path;   // true se il minimo è sulla "long path"
-    bool      left_branch; // true se il minimo è sul "left branch"
-    real_type optimal_travel_time;
-    real_type period;
-    dvec3_t   W1;
-    dvec3_t   W2;
-  } minimum_DeltaV_extra;
-
-  // return min |DV1|+|DV2|
-  real_type
-  minimum_DeltaV(
-    real_type       mu,
-    dvec3_t const & R1,
-    dvec3_t const & V1,
-    dvec3_t const & R2,
-    dvec3_t const & V2,
-    real_type     & DeltaV1,
-    real_type     & DeltaV2,
-    minimum_DeltaV_extra * extra = nullptr
-  );
-
-  // return  min |DV1|^2+|DV2|^2
-  real_type
-  minimum_DeltaV2(
-    real_type       mu,
-    dvec3_t const & R0,
-    dvec3_t const & V0,
-    dvec3_t const & R1,
-    dvec3_t const & V1,
-    real_type     & DeltaV1,
-    real_type     & DeltaV2
-  );
+  using std::vector;
 
   class Astro {
 
@@ -502,7 +418,6 @@ namespace AstroLib {
 
     real_type orbit_energy() const;
 
-
     // trasformazioni varie
     void normal( real_type N[3] ) const; // normale al piano dell'ellisse
     void local_frame_by_L( real_type L, real_type M[3][3] ) const; // terna solidare al satellite
@@ -576,6 +491,170 @@ namespace AstroLib {
     void velocity_EQ_jacobian_FD( real_type t, real_type JV[3][6] ) const;
 
   };
+
+  integer
+  Lambert(
+    dvec3_t const & R1,
+    dvec3_t const & R2,
+    real_type       tf_in, // tempo di volo
+    integer         m_in,  // numero di rivoluzioni
+    real_type       muC,
+    dvec3_t &       V1,
+    dvec3_t &       V2
+  );
+
+  integer
+  Lambert_Lancaster_Blanchard(
+    dvec3_t const & r1vec,
+    dvec3_t const & r2vec,
+    real_type       tf_in,
+    integer         m_in,
+    real_type       muC,
+    dvec3_t &       V1,
+    dvec3_t &       V2
+  );
+
+  void
+  Lambert_minmax_distances(
+    dvec3_t const & r1vec,
+    real_type       r1,
+    dvec3_t const & r2vec,
+    real_type       r2,
+    real_type       dth,
+    real_type       a,
+    dvec3_t const & V1,
+    dvec3_t const & V2,
+    integer         m,
+    real_type       muC,
+    real_type &     minimum_distance,
+    real_type &     maximum_distance
+  );
+
+  bool
+  check_EQ_for_consistency(
+    real_type p,
+    real_type f,
+    real_type g,
+    real_type h,
+    real_type k,
+    real_type L
+  );
+
+  inline
+  bool
+  check_EQ_for_consistency( Equinoctial const & EQ, real_type L0 ) {
+    return check_EQ_for_consistency( EQ.p, EQ.f, EQ.g, EQ.h, EQ.k, L0 );
+  }
+
+  typedef struct {
+    bool      long_path;   // true se il minimo è sulla "long path"
+    bool      left_branch; // true se il minimo è sul "left branch"
+    real_type optimal_travel_time;
+    real_type period;
+    dvec3_t   W1;
+    dvec3_t   W2;
+  } minimum_DeltaV_extra;
+
+  // return min |DV1|+|DV2|
+  real_type
+  minimum_DeltaV(
+    real_type       mu,
+    dvec3_t const & R1,
+    dvec3_t const & V1,
+    dvec3_t const & R2,
+    dvec3_t const & V2,
+    real_type     & DeltaV1,
+    real_type     & DeltaV2,
+    minimum_DeltaV_extra * extra = nullptr
+  );
+
+  // return  min |DV1|^2+|DV2|^2
+  real_type
+  minimum_DeltaV2(
+    real_type       mu,
+    dvec3_t const & R1,
+    dvec3_t const & V1,
+    dvec3_t const & R2,
+    dvec3_t const & V2,
+    real_type     & DeltaV1,
+    real_type     & DeltaV2
+  );
+
+  class minimum_DeltaV_trip {
+  public:
+    real_type t_begin;
+    real_type t_end;
+    dvec3_t   P1, V1, W1;
+    dvec3_t   P2, V2, W2;
+    real_type DeltaV1;
+    real_type DeltaV2;
+
+    explicit
+    minimum_DeltaV_trip(
+      real_type _t1,
+      dvec3_t   _P1,
+      dvec3_t   _V1,
+      dvec3_t   _W1,
+      real_type _t2,
+      dvec3_t   _P2,
+      dvec3_t   _V2,
+      dvec3_t   _W2
+    )
+    : t_begin(_t1)
+    , t_end(_t2)
+    , P1(_P1), V1(_V1), W1(_W1)
+    , P2(_P2), V2(_V2), W2(_W2)
+    {
+      DeltaV1 = (V1-W1).norm();
+      DeltaV2 = (V2-W2).norm();
+    }
+
+    minimum_DeltaV_trip const &
+    operator = ( minimum_DeltaV_trip const & rhs ) {
+      this->t_begin = rhs.t_begin;
+      this->t_end   = rhs.t_end;
+      this->P1      = rhs.P1;
+      this->V1      = rhs.V1;
+      this->W1      = rhs.W1;
+      this->P2      = rhs.P2;
+      this->V2      = rhs.V2;
+      this->W2      = rhs.W2;
+      this->DeltaV1 = rhs.DeltaV1;
+      this->DeltaV2 = rhs.DeltaV2;
+      return *this;
+    }
+
+    minimum_DeltaV_trip( minimum_DeltaV_trip const & rhs ) {
+      *this = rhs;
+    }
+
+  };
+
+  inline
+  bool
+  operator == ( minimum_DeltaV_trip const & A,  minimum_DeltaV_trip const & B ) {
+    return abs( A.t_begin-B.t_begin ) < 0.1 && abs( A.t_end-B.t_end ) < 0.1;
+  }
+
+  void
+  minimum_DeltaV(
+    integer       who,
+    real_type     muS,
+    real_type     t_begin,
+    real_type     t_end,
+    real_type     delta_t,
+    Astro const & a_from,
+    Astro const & a_to,
+    vector<minimum_DeltaV_trip> & trips,
+    real_type     maxDV
+  );
+
+  real_type
+  minimum_DeltaV(
+    real_type     muS,
+    Astro const & a_from,
+    Astro const & a_to
+  );
 
 }
 

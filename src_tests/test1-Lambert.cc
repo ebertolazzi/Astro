@@ -36,7 +36,6 @@ main() {
   int ok = AstroLib::Lambert( P1, P2, t2-t1, m, muSun_UA3DAY2, V1, V2 );
   std::cout << "ok = " << ok << "\n";
 
-
   AstroLib::Astro A, B;
 
   real_type AU_to_km = 1.49597870691E8;

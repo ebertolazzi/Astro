@@ -82,19 +82,19 @@ end
 
 axis equal;
 
+t0 = 0;
+t1 = 300;
+dt = 0.5;
 
-[PE,VE] = Earth.get_PV(0);
-[PM,VM] = Mars.get_PV(0);
+[PE,VE] = Earth.get_PV(t0);
+[PM,VM] = Mars.get_PV(t0);
 
-[DV,DV2] = DeltaV( mu_SUN, PE, VE, PM, VM );
+[ta,tb,DV] = LambertMinDeltaV( mu_SUN, PE, VE, PM, VM, t0, t1, dt );
 
-fprintf('DV1 = %g   DV2 = %g\n',DV(2),DV(3));
-fprintf('DV1 = %g   DV2 = %g\n',DV2(2),DV2(3));
+fprintf('ta = %g, tb = %g\n', ta, tb);
 
-fprintf('DV1+DV2 = %g\n',DV(2)+DV(3));
-fprintf('DV1+DV2 = %g\n',DV2(2)+DV2(3));
-fprintf('sqrt((DV1^2+DV2^2)) = %g\n',sqrt(2*(DV2(2)^2+DV2(3)^2)));
-fprintf('sqrt(2*(DV1^2+DV2^2)) = %g\n',sqrt(2*(DV2(2)^2+DV2(3)^2)));
-fprintf('sqrt((DV1^2+DV2^2)/2) = %g\n',sqrt((DV2(2)^2+DV2(3)^2)/2));
+fprintf('(AU/Y) DV1 = %g DV2 = %g\n',DV(1),DV(2));
+DV = DV*AU_to_km/Y_to_s;
+fprintf('(km/s) DV1 = %g DV2 = %g\n',DV(1),DV(2));
 
 fprintf('done\n');

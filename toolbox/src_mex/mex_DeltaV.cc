@@ -23,7 +23,7 @@
 "=====================================================================================\n" \
 "\n" \
 "USAGE:\n" \
-"    [deltaV,deltaV2] = DeltaV(P0,V0,P1,V1,mu);\n" \
+"    [deltaV,deltaV2] = DeltaV(mu,P0,V0,P1,V1);\n" \
 "\n"
 
 #define CHECK_IN(N) \

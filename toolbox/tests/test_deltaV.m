@@ -88,40 +88,35 @@ axis equal;
 
 [DV,DV2] = DeltaV( mu_SUN, PE, VE, PM, VM );
 
-fprintf('DV1 = %g   DV2 = %g\n',DV(2),DV(3));
-fprintf('DV1 = %g   DV2 = %g\n',DV2(2),DV2(3));
+fprintf('(1) DV1 = %g   DV2 = %g\n',DV(2),DV(3));
+fprintf('(2) DV1 = %g   DV2 = %g\n',DV2(2),DV2(3));
 
-fprintf('DV1+DV2 = %g\n',DV(2)+DV(3));
-fprintf('DV1+DV2 = %g\n',DV2(2)+DV2(3));
-fprintf('sqrt(DV1^2+DV2^2)     = %g\n',sqrt(DV2(2)^2+DV2(3)^2));
-fprintf('sqrt(2*(DV1^2+DV2^2)) = %g\n',sqrt(2*(DV2(2)^2+DV2(3)^2)));
-fprintf('sqrt((DV1^2+DV2^2)/2) = %g\n',sqrt((DV2(2)^2+DV2(3)^2)/2));
+if false
+  fprintf('\n\n\n');
 
-DV  = DV*AU_to_km/Y_to_s;
-DV2 = DV2*AU_to_km/Y_to_s;
+  DV  = DV*AU_to_km/Y_to_s;
+  DV2 = DV2*AU_to_km/Y_to_s;
 
-fprintf('\n\n\n');
+  fprintf('DV1 = %g   DV2 = %g\n',DV(2),DV(3));
+  fprintf('DV1 = %g   DV2 = %g\n',DV2(2),DV2(3));
+  fprintf('DV1+DV2 = %g\n',DV(2)+DV(3));
+  fprintf('DV1+DV2 = %g\n',DV2(2)+DV2(3));
+  fprintf('sqrt(DV1^2+DV2^2)     = %g\n',sqrt(DV2(2)^2+DV2(3)^2));
+  fprintf('sqrt(2*(DV1^2+DV2^2)) = %g\n',sqrt(2*(DV2(2)^2+DV2(3)^2)));
+  fprintf('sqrt((DV1^2+DV2^2)/2) = %g\n',sqrt((DV2(2)^2+DV2(3)^2)/2));
 
-fprintf('DV1 = %g   DV2 = %g\n',DV(2),DV(3));
-fprintf('DV1 = %g   DV2 = %g\n',DV2(2),DV2(3));
-fprintf('DV1+DV2 = %g\n',DV(2)+DV(3));
-fprintf('DV1+DV2 = %g\n',DV2(2)+DV2(3));
-fprintf('sqrt(DV1^2+DV2^2)     = %g\n',sqrt(DV2(2)^2+DV2(3)^2));
-fprintf('sqrt(2*(DV1^2+DV2^2)) = %g\n',sqrt(2*(DV2(2)^2+DV2(3)^2)));
-fprintf('sqrt((DV1^2+DV2^2)/2) = %g\n',sqrt((DV2(2)^2+DV2(3)^2)/2));
+  mu_SUN   = 1.32712440018E11; %km^3/s^2
+  [DV,DV2] = DeltaV( mu_SUN, PE*AU_to_km, VE*AU_to_km/Y_to_s, PM*AU_to_km, VM*AU_to_km/Y_to_s );
+  fprintf('\n\n\n');
 
-
-mu_SUN   = 1.32712440018E11; %km^3/s^2
-[DV,DV2] = DeltaV( mu_SUN, PE*AU_to_km, VE*AU_to_km/Y_to_s, PM*AU_to_km, VM*AU_to_km/Y_to_s );
-fprintf('\n\n\n');
-
-fprintf('DV1 = %g   DV2 = %g\n',DV(2),DV(3));
-fprintf('DV1 = %g   DV2 = %g\n',DV2(2),DV2(3));
-fprintf('DV1+DV2 = %g\n',DV(2)+DV(3));
-fprintf('DV1+DV2 = %g\n',DV2(2)+DV2(3));
-fprintf('sqrt(DV1^2+DV2^2)     = %g\n',sqrt(DV2(2)^2+DV2(3)^2));
-fprintf('sqrt(2*(DV1^2+DV2^2)) = %g\n',sqrt(2*(DV2(2)^2+DV2(3)^2)));
-fprintf('sqrt((DV1^2+DV2^2)/2) = %g\n',sqrt((DV2(2)^2+DV2(3)^2)/2));
+  fprintf('DV1 = %g   DV2 = %g\n',DV(2),DV(3));
+  fprintf('DV1 = %g   DV2 = %g\n',DV2(2),DV2(3));
+  fprintf('DV1+DV2 = %g\n',DV(2)+DV(3));
+  fprintf('DV1+DV2 = %g\n',DV2(2)+DV2(3));
+  fprintf('sqrt(DV1^2+DV2^2)     = %g\n',sqrt(DV2(2)^2+DV2(3)^2));
+  fprintf('sqrt(2*(DV1^2+DV2^2)) = %g\n',sqrt(2*(DV2(2)^2+DV2(3)^2)));
+  fprintf('sqrt((DV1^2+DV2^2)/2) = %g\n',sqrt((DV2(2)^2+DV2(3)^2)/2));
+end
 
 
 fprintf('done\n');

@@ -19,6 +19,8 @@
 \*--------------------------------------------------------------------------*/
 
 #include "Astro.hh"
+//#include "Utils_NelderMead.hh"
+#include "Utils_HJPatternSearch.hh"
 
 namespace AstroLib {
 
@@ -27,6 +29,19 @@ namespace AstroLib {
   using std::min;
   using std::max;
   using std::atan2;
+  using std::floor;
+  using std::ceil;
+
+  /*\
+   |
+   |  Optimal two-impulse rendezvous using constrained multiple-revolution Lambert solutions
+   |  Gang Zhang · Di Zhou · Daniele Mortari
+   |  2011
+   |
+   |  Celest Mech Dyn Astr (2011) 110:305-317
+   |  DOI 10.1007/s10569-011-9349-z
+   |
+  \*/
 
   real_type
   minimum_DeltaV(
@@ -231,12 +246,12 @@ namespace AstroLib {
 
   /*\
    |
-   |    A closed-form solution to the minimum deltaV^2 problem Lambert's problem
-   |    Martín Avendaño, Daniele Mortari
-   |    2009
+   |  A closed-form solution to the minimum deltaV^2 problem Lambert's problem
+   |  Martín Avendaño, Daniele Mortari
+   |  2009
    |
-   |    Celest Mech Dyn Astr (2010) 106:25-37
-   |    DOI 10.1007/s10569-009-9238-x
+   |  Celest Mech Dyn Astr (2010) 106:25-37
+   |  DOI 10.1007/s10569-009-9238-x
    |
   \*/
 
@@ -335,318 +350,286 @@ namespace AstroLib {
     return minDV2;
   }
 
-  #if 0
-
   // ---------------------------------------------------------------------------
 
-  #define SUB_TABLE_SIZE 64
-  //#define TABLE_SIZE     12
-  #define TABLE_SIZE     18
-
+  //!
+  //!  Given two plates/asteroids find the best trips in term of DV
+  //!  in a specific time range
+  //!
+  //!  \param[IN]  who -1  minimize initial DV1 +1 minimize final DV2 0 minimize DV1+DV2
+  //!  \param[IN]  muS     gravitatioon costant of the Keplerian system
+  //!  \param[IN]  t_begin initial time
+  //!  \param[IN]  t_end   final time
+  //!  \param[IN]  delta_t initial granularity of the search
+  //!  \param[IN]  a_from  starting planet/asteroid
+  //!  \param[IN]  a_to    arrival planet/asteroid
+  //!  \param[OUT] trips   list of the minimal DV trips
+  //!
   void
-  globalFreeTimeMinimumDeltaV( real_type const   tBegin,
-                               int               fromAst,
-                               Asteroid  const & from,
-                               int               toAst,
-                               Asteroid  const & to,
-                               vector<LambertFreeTimeTrip> & trips ) {
+  minimum_DeltaV(
+    integer       who,
+    real_type     muS,
+    real_type     t_begin,
+    real_type     t_end,
+    real_type     delta_t,
+    Astro const & a_from,
+    Astro const & a_to,
+    vector<minimum_DeltaV_trip> & trips,
+    real_type     maxDV
+  ) {
 
-    real_type E_table[TABLE_SIZE];
+    trips.clear();
+    trips.reserve(10);
 
-    real_type L_from_table[TABLE_SIZE];
-    real_type L_to_table[TABLE_SIZE];
-    real_type DV_table[TABLE_SIZE][TABLE_SIZE];
+    integer N_TABLE = ceil((t_end-t_begin)/delta_t);
 
-    real_type L_from_sub_table[2*SUB_TABLE_SIZE+1];
-    real_type L_to_sub_table[2*SUB_TABLE_SIZE+1];
-    real_type DV_sub_table[2*SUB_TABLE_SIZE+1][2*SUB_TABLE_SIZE+1];
+    dvec_t t_table;
+    dmat_t DV_table;
 
-    bool      long_path, left_branch;
-    real_type DeltaV0, DeltaV1, travelTime, period;
+    t_table.resize(N_TABLE+1);
+    DV_table.resize(N_TABLE+1,N_TABLE+1);
 
-    real_type R0[TABLE_SIZE][3], V0[TABLE_SIZE][3],
-              R1[TABLE_SIZE][3], V1[TABLE_SIZE][3],
-              R0_sub[2*SUB_TABLE_SIZE+1][3], V0_sub[2*SUB_TABLE_SIZE+1][3],
-              R1_sub[2*SUB_TABLE_SIZE+1][3], V1_sub[2*SUB_TABLE_SIZE+1][3],
-              W0[3], W1[3];
+    std::vector<dvec3_t> R1_vec(N_TABLE+1),
+                         V1_vec(N_TABLE+1),
+                         R2_vec(N_TABLE+1),
+                         V2_vec(N_TABLE+1);
 
-    real_type dE  = (2*m_pi)/TABLE_SIZE;
-    real_type ddE = dE/SUB_TABLE_SIZE;
-    for ( indexType i = 0; i < TABLE_SIZE; ++i ) {
-      E_table[i]      = i*dE;
-      L_from_table[i] = from.LfromTrueAnomaly( eccentricAnomalyToTrueAnomaly( E_table[i], from.eOrbital() ) );
-      L_to_table[i]   = to.LfromTrueAnomaly( eccentricAnomalyToTrueAnomaly( E_table[i], to.eOrbital() ) );
-
-      from.position_by_L( L_from_table[i], R0[i][0], R0[i][1], R0[i][2] ); // UA
-      from.velocity_by_L( L_from_table[i], V0[i][0], V0[i][1], V0[i][2] ); // UA/day
-
-      to.position_by_L( L_to_table[i], R1[i][0], R1[i][1], R1[i][2] ); // UA
-      to.velocity_by_L( L_to_table[i], V1[i][0], V1[i][1], V1[i][2] ); // UA/day
+    real_type dt = (t_end-t_begin)/N_TABLE;
+    for ( integer i = 0; i <= N_TABLE; ++i ) {
+      real_type t = t_begin+i*dt;
+      t_table.coeffRef(i) = t;
+      a_from.position( t, R1_vec[i] );
+      a_from.velocity( t, V1_vec[i] );
+      a_to.position( t, R2_vec[i] );
+      a_to.velocity( t, V2_vec[i] );
     }
 
+    auto fun = [ &a_from, &a_to, &t_begin, &t_end, muS, who ]( real_type const X[] )->real_type {
+      real_type DV = Utils::Inf<real_type>();
+      real_type t1 = X[0];
+      real_type t2 = X[1];
+      if ( ! ( t_begin <= t1 && t1 < t2 && t2 <= t_end ) ) return DV;
+      dvec3_t P1, V1, P2, V2, VV1, VV2;
+      a_from.position( t1, P1 );
+      a_from.velocity( t1, V1 );
+      a_to.position( t2, P2 );
+      a_to.velocity( t2, V2 );
+      integer okk = Lambert( P1, P2, t2-t1, 0, muS, VV1, VV2 );
+      if ( okk == 1 ) {
+        real_type DV1 = (V1-VV1).norm();
+        real_type DV2 = (V2-VV2).norm();
+        switch ( who ) {
+          case -1: DV = DV1;     break;
+          case  1: DV = DV2;     break;
+          default: DV = DV1+DV2; break;
+        }
+      }
+      return DV;
+    };
+
+    std::function<real_type(real_type const[])> F(fun);
+
     // riempio tabella 8*8
-    for ( indexType i = 0; i < TABLE_SIZE; ++i ) {
-      for ( indexType j = 0; j < TABLE_SIZE; ++j ) {
-        DV_table[i][j] = freeTimeMinimumDeltaV( R0[i], V0[i],
-                                                R1[j], V1[j],
-                                                false,
-                                                long_path,
-                                                left_branch,
-                                                DeltaV0,
-                                                DeltaV1,
-                                                travelTime,
-                                                period,
-                                                W0, W1 );
+    DV_table.fill( Utils::Inf<real_type>() );
+    real_type X[2];
+    for ( integer i = 0; i < N_TABLE; ++i ) {
+      X[0] = t_table.coeff(i);
+      for ( integer j = i+1; j <= N_TABLE; ++j ) {
+        X[1] = t_table.coeff(j);
+        DV_table(i,j) = fun( X );
+        //fmt::print( "DV_table({},{}) = {}, DT={}\n", i, j, DV_table(i,j), X[1]-X[0] );
       }
     }
 
     // cerco minimi locali
-    trips.clear();
-    real_type DV_min = 1e10;
-    for ( indexType i = 0; i < TABLE_SIZE; ++i ) {
-      indexType im1 = (i+TABLE_SIZE-1)%TABLE_SIZE;
-      indexType ip1 = (i+1)%TABLE_SIZE;
+    for ( integer i = 0; i < N_TABLE; ++i ) {
 
-      for ( indexType j = 0; j < TABLE_SIZE; ++j ) {
-        indexType jm1 = (j+TABLE_SIZE-1)%TABLE_SIZE;
-        indexType jp1 = (j+1)%TABLE_SIZE;
-        real_type DV  = DV_table[i][j];
+      // trovato minimo locale, raffino con Nelder Mead
+      real_type t1 = t_table.coeff(i);
 
-        if ( DV > DV_table[ip1][jm1] ||
-             DV > DV_table[ip1][j]   ||
-             DV > DV_table[ip1][jp1] ||
-             DV > DV_table[im1][jm1] ||
-             DV > DV_table[im1][j]   ||
-             DV > DV_table[im1][jp1] ||
-             DV > DV_table[i][jm1]   ||
-             DV > DV_table[i][jp1] ) continue;
+      // calcolo primi vicini
+      integer im1{i-1}, ip1{i+1};
+      if      ( im1 < 0       ) im1 = N_TABLE;
+      else if ( ip1 > N_TABLE ) ip1 = 0;
 
-        // trovato minimo locale, raffino
-        std::fill( DV_sub_table[0], DV_sub_table[0] + (2*SUB_TABLE_SIZE+1)*(2*SUB_TABLE_SIZE+1), -1.0 );
+      integer ii[] = { im1, i, ip1,
+                       im1,    ip1,
+                       im1, i, ip1 };
 
-        DV_sub_table[0*SUB_TABLE_SIZE][0*SUB_TABLE_SIZE] = DV_table[im1][jm1];
-        DV_sub_table[1*SUB_TABLE_SIZE][0*SUB_TABLE_SIZE] = DV_table[i  ][jm1];
-        DV_sub_table[2*SUB_TABLE_SIZE][0*SUB_TABLE_SIZE] = DV_table[ip1][jm1];
+      for ( integer j = i+1; j <= N_TABLE; ++j ) {
+        real_type DV = DV_table.coeff(i,j);
 
-        DV_sub_table[0*SUB_TABLE_SIZE][1*SUB_TABLE_SIZE] = DV_table[im1][j];
-        DV_sub_table[1*SUB_TABLE_SIZE][1*SUB_TABLE_SIZE] = DV_table[i  ][j];
-        DV_sub_table[2*SUB_TABLE_SIZE][1*SUB_TABLE_SIZE] = DV_table[ip1][j];
+        // calcolo primi vicini
+        integer jm1{j-1}, jp1{j+1};
+        if      ( jm1 < 0       ) jm1 = N_TABLE;
+        else if ( jp1 > N_TABLE ) jp1 = 0;
 
-        DV_sub_table[0*SUB_TABLE_SIZE][2*SUB_TABLE_SIZE] = DV_table[im1][jp1];
-        DV_sub_table[1*SUB_TABLE_SIZE][2*SUB_TABLE_SIZE] = DV_table[i  ][jp1];
-        DV_sub_table[2*SUB_TABLE_SIZE][2*SUB_TABLE_SIZE] = DV_table[ip1][jp1];
+        integer jj[] = { jm1, jm1, jm1,
+                         j,        j,
+                         jp1, jp1, jp1 };
 
-        for ( indexType ii = -SUB_TABLE_SIZE; ii <= SUB_TABLE_SIZE; ++ii ) {
-          indexType idx = ii+SUB_TABLE_SIZE;
-          real_type L_from = from.LfromTrueAnomaly( eccentricAnomalyToTrueAnomaly( E_table[i]+ddE*ii, from.eOrbital() ) );
-          real_type L_to   = to.LfromTrueAnomaly( eccentricAnomalyToTrueAnomaly( E_table[j]+ddE*ii, to.eOrbital() ) );
+        // controllo se minimo locale
+        bool ok_min = true;
+        for ( integer k=0; k < 8 && ok_min; ++k )
+          ok_min = DV <= DV_table.coeff( ii[k], jj[k] );
 
-          L_from_sub_table[idx] = L_from;
-          L_to_sub_table[idx]   = L_to;
+        if ( !ok_min ) continue ;
 
-          from.position_by_L( L_from, R0_sub[idx][0], R0_sub[idx][1], R0_sub[idx][2] ); // UA
-          from.velocity_by_L( L_from, V0_sub[idx][0], V0_sub[idx][1], V0_sub[idx][2] ); // UA/day
+        // trovato minimo locale, raffino con Nelder Mead
+        real_type t2 = t_table.coeff(j);
 
-          to.position_by_L( L_to, R1_sub[idx][0], R1_sub[idx][1], R1_sub[idx][2] ); // UA
-          to.velocity_by_L( L_to, V1_sub[idx][0], V1_sub[idx][1], V1_sub[idx][2] ); // UA/day
-        }
+        Utils::Console console(&std::cout,0);
+        //Utils::NelderMead<real_type> solver("NMsolver");
+        Utils::HJPatternSearch<real_type> solver("HJPatternSearch");
 
-        indexType i_pivot    = SUB_TABLE_SIZE;
-        indexType j_pivot    = SUB_TABLE_SIZE;
-        real_type DV_min_loc = DV_sub_table[i_pivot][j_pivot];
-        for ( indexType kstep = SUB_TABLE_SIZE; kstep > 0; kstep /= 2 ) {
+        solver.setup( 2, F, &console );
+        solver.set_tolerance( 0.01 );
+        real_type X[2] = {t1,t2};
+        solver.run( X, dt );
+        DV = solver.get_last_solution( X );
 
-          // calcolo primi vicini
-          indexType ii[] = { i_pivot-kstep, i_pivot,       i_pivot+kstep,
-                             i_pivot-kstep,                i_pivot+kstep,
-                             i_pivot-kstep, i_pivot,       i_pivot+kstep };
-          indexType jj[] = { j_pivot-kstep, j_pivot-kstep, j_pivot+kstep,
-                             j_pivot,                      j_pivot,
-                             j_pivot+kstep, j_pivot+kstep, j_pivot+kstep };
-          int kk_min = -1;
-          DV_min_loc = DV_sub_table[i_pivot][j_pivot];
-          // cerco minimo
-          for ( int kk = 0; kk < 8; ++kk ) {
-            indexType & iii = ii[kk];
-            indexType & jjj = jj[kk];
-            if ( iii < 0 || iii > 2*SUB_TABLE_SIZE ||
-                 jjj < 0 || jjj > 2*SUB_TABLE_SIZE ) continue;
-            // controllo se gia calcolato
-            real_type & DV = DV_sub_table[iii][jjj];
-            if ( DV < 0 ) {
-              DV = freeTimeMinimumDeltaV( R0_sub[iii], V0_sub[iii],
-                                          R1_sub[jjj], V1_sub[jjj],
-                                          false,
-                                          long_path,
-                                          left_branch,
-                                          DeltaV0, DeltaV1,
-                                          travelTime, period,
-                                          W0, W1 );
-            }
+        if ( DV > maxDV ) continue;
 
-            // confronto con minimo
-            if ( DV < DV_min_loc ) {
-              DV_min_loc = DV;
-              kk_min     = kk;
-            }
-          }
-          // kk_min contiene posizione minimo, se kk_min = -1 pozizione centrale
-          if ( kk_min >= 0 ) {
-            i_pivot = ii[kk_min];
-            j_pivot = jj[kk_min];
-          }
-        }
-        // fine raffinamento trovato minimo locale
-        // lo aggiungo alla lista
-        LambertFreeTimeTrip tmp;
+        real_type tt1 = X[0];
+        real_type tt2 = X[1];
 
-        copy3(R0_sub[i_pivot],tmp.P0);
-        copy3(V0_sub[i_pivot],tmp.V0);
+        //fmt::print( "X={}, Y={}, DV={}\n", tt1, tt2, DV );
 
-        copy3(R1_sub[j_pivot],tmp.P1);
-        copy3(V1_sub[j_pivot],tmp.V1);
+        // confronto con minimo
+        dvec3_t  P1, V1, W1, P2, V2, W2;
+        //trip.t_begin = tt1;
+        //trip.t_end   = tt2;
 
-        tmp.fromAst = fromAst;
-        tmp.toAst   = toAst;
+        a_from.position( tt1, P1 );
+        a_from.velocity( tt1, V1 );
+        a_to.position( tt2, P2 );
+        a_to.velocity( tt2, V2 );
 
-        tmp.Lfrom = L_from_sub_table[i_pivot];
-        tmp.Lto   = L_to_sub_table[j_pivot];
+        integer okk = Lambert( P1, P2, tt2-tt1, 0, muS, W1, W2 );
+        //trip.DeltaV1 = (V1-trip.W1).norm();
+        //trip.DeltaV2 = (V2-trip.W2).norm();
 
-        freeTimeMinimumDeltaV( tmp.P0, tmp.V0,
-                               tmp.P1, tmp.V1,
-                               true,
-                               tmp.long_path,
-                               tmp.left_branch,
-                               tmp.DeltaV0,
-                               tmp.DeltaV1,
-                               tmp.optimalTravelTime,
-                               tmp.period,
-                               tmp.W0,
-                               tmp.W1 );
+        trips.emplace_back( tt1, P1, V1, W1, tt2, P2, V2, W2 );
+      }
+    }
+    std::sort(
+      trips.begin(), trips.end(),
+      []( minimum_DeltaV_trip const & A, minimum_DeltaV_trip const & B ) -> bool { return A.t_end < B.t_end; }
+    );
+    trips.erase( std::unique(trips.begin(), trips.end()), trips.end());
+  }
 
-        // controllo che non sia troppo vicino ad un minimo precedente
-        bool found_nearby = false;
-        for ( int i = 0; i < trips.size() && !found_nearby; ++i ) {
-          LambertFreeTimeTrip & itrip = trips[i];
-          found_nearby = abs(tmp.Lfrom-itrip.Lfrom) < 0.05*m_pi &&
-                         abs(tmp.Lto-itrip.Lto)     < 0.05*m_pi;
-          if ( found_nearby ) {
-            // trovati minimi vicini, scelgo il piu piccolo o tengo vecchio
-            if ( tmp.DeltaV0+tmp.DeltaV1 < itrip.DeltaV0+itrip.DeltaV1 ) {
-              copyto( tmp, itrip );
-              DV_min = min( DV_min, tmp.DeltaV0+tmp.DeltaV1 );
-            }
-          }
-        }
+  // ---------------------------------------------------------------------------
 
-        if ( !found_nearby ) { // nessun vicino aggiungo alla lista
-          if ( DV_min_loc < DV_min ) {
-            DV_min = DV_min_loc;
-            trips.insert ( trips.begin(), tmp );
-          } else {
-            trips.push_back( tmp );
-          }
-        }
+  #define TABLE_SIZE 8
+
+  //!
+  //!  Given two plates/asteroids find the best possible theoretical DV.
+  //!
+  //!  \param[IN]  muS     gravitatioon costant of the Keplerian system
+  //!  \param[IN]  a_from  starting planet/asteroid
+  //!  \param[IN]  a_to    arrival planet/asteroid
+  //!  \return  the minimal DV
+  //!
+  real_type
+  minimum_DeltaV(
+    real_type     muS,
+    Astro const & a_from,
+    Astro const & a_to
+  ) {
+
+    real_type L_table[TABLE_SIZE];
+    real_type DV_table[TABLE_SIZE][TABLE_SIZE];
+
+    real_type DeltaV1, DeltaV2;
+
+    dvec3_t R1[TABLE_SIZE], V1[TABLE_SIZE],
+            R2[TABLE_SIZE], V2[TABLE_SIZE],
+            W1, W2;
+
+    // prima tabella
+    real_type delta_L = m_2pi/TABLE_SIZE;
+    for ( integer i = 0 ; i < TABLE_SIZE ; ++i ) {
+      L_table[i] = i*delta_L;
+      a_from.position_by_L( L_table[i], R1[i] );
+      a_from.velocity_by_L( L_table[i], V1[i] );
+      a_to.position_by_L( L_table[i], R2[i] );
+      a_to.velocity_by_L( L_table[i], V2[i] );
+    }
+
+    // trovato minimo locale, raffino con Nelder Mead
+    auto fun = [ &a_from, &a_to, muS ] ( real_type const X[] )->real_type {
+      real_type La = X[0];
+      real_type Lb = X[1];
+      //if ( ! ( 0 <= La && La <= m_2pi && Lb  < L_from_begin || La > L_from_end || Lb < L_to_begin || Lb > L_to_end ) return Utils::Inf<real_type>();
+      dvec3_t P1, V1, P2, V2;
+      real_type DV1, DV2;
+      a_from.position_by_L( La, P1 );
+      a_from.velocity_by_L( La, V1 );
+      a_to.position_by_L( Lb, P2 );
+      a_to.velocity_by_L( Lb, V2 );
+      return minimum_DeltaV( muS, P1, V1, P2, V2, DV1, DV2, nullptr );
+    };
+    std::function<real_type(real_type const[])> F(fun);
+
+    // riempio tabella 8*8
+    for ( integer i = 0; i < TABLE_SIZE; ++i ) {
+      for ( integer j = 0; j < TABLE_SIZE; ++j ) {
+        DV_table[i][j] = minimum_DeltaV( muS, R1[i], V1[i], R2[j], V2[j], DeltaV1, DeltaV2, nullptr );
       }
     }
 
-    #if 0
-    cout << "Lfrom = " << trip.Lfrom << " apo = " << from.LatApoapsis() << " peri = " << from.LatPeriapsis() << '\n';
-    cout << "Lto   = " << trip.Lto   << " apo = " << to.LatApoapsis()   << " peri = " << to.LatPeriapsis() << '\n';
-    #endif
+    // cerco minimi locali
+    real_type DV_min = Utils::Inf<real_type>();
+    for ( integer i = 0; i < TABLE_SIZE; ++i ) {
 
-    #if 0
-    real_type tol = 1e-6;
-    bool ok;
-    real_type WW0[3], WW1[3], PP[3];
-    Asteroid ast;
+      integer im1{i-1}, ip1{i+1};
+      if      ( im1 < 0           ) im1 = TABLE_SIZE-1;
+      else if ( ip1 >= TABLE_SIZE ) ip1 = 0;
 
-    cout << '\n';
-    cout << "long = " << trip.long_path   << '\n';
-    cout << "left = " << trip.left_branch << '\n';
+      integer ii[] = { im1, i, ip1,
+                       im1,    ip1,
+                       im1, i, ip1 };
 
-    // controllo salti
-    real_type dv = dist3(trip.W0,trip.V0);
-    ASSERT( abs( dv-trip.DeltaV0 ) < tol,
-            "DeltaV0 errato ERR " << dv-trip.DeltaV0 );
+      real_type La = L_table[i];
 
-    dv = dist3(trip.W1,trip.V1);
-    ASSERT( abs( dv-trip.DeltaV1 ) < tol,
-            "DeltaV1 errato ERR " << dv-trip.DeltaV1 );
+      for ( integer j = 0 ; j < TABLE_SIZE ; ++j ) {
+        real_type DV = DV_table[i][j] ;
 
-    ok = ast.setupUsingPointAndVelocity( "pippo",
-                                         trip.P0,
-                                         trip.W0,
-                                         muSun_UA3DAY2,
-                                         trip.timeFrom );
-    ASSERT( ok, "failed to build asteroid" );
+        // calcolo primi vicini
+        integer jm1{j-1}, jp1{j+1};
+        if      ( jm1 < 0           ) jm1 = TABLE_SIZE-1;
+        else if ( jp1 >= TABLE_SIZE ) jp1 = 0;
 
-    ast.position( trip.timeFrom+trip.optimalTravelTime, PP[0], PP[1], PP[2] );
-    ASSERT( dist3(trip.P1,PP) < tol,
-            "P1 trip failed, difference = " << dist3(trip.P1,PP) <<
-            " optimalTravelTime = " << trip.optimalTravelTime );
+        integer jj[] = { jm1, jm1, jm1,
+                         j,        j,
+                         jp1, jp1, jp1 };
 
-    ok = ast.setupUsingPointAndVelocity( "pippo",
-                                          trip.P1,
-                                          trip.W1,
-                                          muSun_UA3DAY2,
-                                          trip.timeFrom+trip.optimalTravelTime );
+        // controllo se minimo locale
+        bool ok_min = true;
+        for ( integer k=0 ; k < 8 && ok_min ; ++k )
+          ok_min = DV <= DV_table[ ii[k] ][ jj[k] ];
 
-    ASSERT( ok, "failed to build asteroid" );
+        if ( !ok_min ) continue ;
 
-    ast.position( trip.timeFrom, PP[0], PP[1], PP[2] );
-    ASSERT( dist3(trip.P0,PP) < tol,
-            "P0 trip failed, difference = " << dist3(trip.P0,PP)  <<
-            " optimalTravelTime = " << trip.optimalTravelTime);
+        // trovato minimo locale, raffino con Nelder Mead
+        real_type Lb = L_table[j];
 
+        Utils::Console console(&std::cout,0);
+        //Utils::NelderMead<real_type> solver("NMsolver");
+        Utils::HJPatternSearch<real_type> solver("HJPatternSearch");
+        solver.setup( 2, F, &console );
+        solver.set_tolerance( 0.01 );
+        real_type X[2] = {La,Lb};
+        solver.run( X, delta_L );
+        DV = solver.get_last_solution( X );
 
-    // controllo soluzione con Lambert
-    real_type tf = trip.optimalTravelTime;
-    int       m  = 0;
-    if ( trip.long_path   );
-    if ( trip.left_branch ) tf = -tf;
-    int okk = lambert( trip.P0,
-                       trip.P1,
-                       tf,
-                       m,
-                       muSun_UA3DAY2,
-                       WW0, WW1 );
-    ASSERT( okk == 1,
-            "lambert failed, ok = " << okk <<
-            (trip.long_path?" LONG " : " SHORT ") <<
-            (trip.left_branch?" LEFT " : " RIGHT ") );
+        fmt::print( "X={}, Y={}\n", X[0], X[1] );
 
-    // controllo che interpola la lambert
-    ok = ast.setupUsingPointAndVelocity( "pippo",
-                                         trip.P0,
-                                         WW0,
-                                         muSun_UA3DAY2,
-                                         trip.timeFrom );
-    ASSERT( ok, "failed to build asteroid" );
-
-    ast.position( trip.timeFrom+trip.optimalTravelTime, PP[0], PP[1], PP[2] );
-    ASSERT( dist3(trip.P1,PP) < tol, "P1 lambert failed, difference = " << dist3(trip.P1,PP) );
-
-    ok = ast.setupUsingPointAndVelocity( "pippo",
-                                         trip.P1,
-                                         WW1,
-                                         muSun_UA3DAY2,
-                                         trip.timeFrom+trip.optimalTravelTime );
-    ASSERT( ok, "failed to build asteroid" );
-
-    ast.position( trip.timeFrom, PP[0], PP[1], PP[2] );
-    ASSERT( dist3(trip.P0,PP) < tol, "P0 lambert failed, difference = " << dist3(trip.P0,PP) );
-
-
-    ASSERT( dist3(trip.W0,WW0) < tol, "W0 failed, difference = " << dist3(trip.W0,WW0) <<
-            (trip.long_path?" LONG " : " SHORT ") <<
-            (trip.left_branch?" LEFT " : " RIGHT ") << "  tf = " << tf );
-    ASSERT( dist3(trip.W1,WW1) < tol, "W1 failed, difference = " << dist3(trip.W1,WW1) <<
-            (trip.long_path?" LONG " : " SHORT ") <<
-            (trip.left_branch?" LEFT " : " RIGHT ") << "  tf = " << tf );
-    #endif
+        // confronto con minimo
+        if ( DV < DV_min ) DV_min = DV;
+      }
+    }
+    return DV_min;
   }
-
-  #endif
-
 }
