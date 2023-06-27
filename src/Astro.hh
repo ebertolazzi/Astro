@@ -589,6 +589,8 @@ namespace AstroLib {
     real_type DeltaV1;
     real_type DeltaV2;
 
+    minimum_DeltaV_trip( ) { }
+
     explicit
     minimum_DeltaV_trip(
       real_type _t1,
