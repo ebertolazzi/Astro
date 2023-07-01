@@ -40,7 +40,7 @@ namespace AstroLib {
   static bool const m_debug = true;
 
   real_type
-  astro_x_position__xo( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = cos(xo__L);
@@ -49,15 +49,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = cos(xo__L);
@@ -66,28 +66,28 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_1( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_1( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_1_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_1_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type result__ = 0;
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_1_1( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_1_1( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_1_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_1_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = cos(xo__L);
@@ -97,15 +97,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_1_2( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_1_2( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_1_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_1_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = cos(xo__L);
@@ -115,15 +115,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_1_3( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_1_3( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_1_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_1_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t11  = 1.0 / (t1 * xo__f + t4 * xo__g + 1);
@@ -135,15 +135,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_1_4( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_1_4( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_1_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_1_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t3   = xo__h * xo__retrograde;
     real_type t4   = sin(xo__L);
@@ -156,15 +156,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_1_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_1_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_1_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_1_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t3   = t1 - t2 + 1;
@@ -178,28 +178,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_1_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_1_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_1_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_x_position__xo_D_1_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_x_position__xo_D_1_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_1_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = sin(xo__L);
     real_type t3   = cos(xo__L);
     real_type t9   = xo__h * xo__h;
@@ -208,15 +195,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_1_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_1_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = cos(xo__L);
@@ -226,15 +213,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_2( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_2( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_2_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_2_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = cos(xo__L);
@@ -246,15 +233,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_2_2( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_2_2( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_2_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_2_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = cos(xo__L);
@@ -265,15 +252,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_2_3( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_2_3( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_2_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_2_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t12  = pow(t1 * xo__f + t4 * xo__g + 1, 2);
@@ -286,15 +273,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_2_4( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_2_4( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_2_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_2_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t3   = xo__h * xo__retrograde;
     real_type t4   = sin(xo__L);
@@ -308,15 +295,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_2_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_2_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_2_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_2_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t3   = t1 - t2 + 1;
@@ -332,28 +319,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_2_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_2_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_2_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_x_position__xo_D_2_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_x_position__xo_D_2_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_2_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t3   = sin(xo__L);
     real_type t4   = cos(xo__L);
     real_type t8   = pow(t3 * xo__g + t4 * xo__f + 1, 2);
@@ -363,15 +337,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_2_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_2_8( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = cos(xo__L);
@@ -381,15 +355,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_3( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_3( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_3_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_3_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = cos(xo__L);
@@ -401,15 +375,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_3_3( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_3_3( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_3_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_3_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t12  = pow(t1 * xo__f + t4 * xo__g + 1, 2);
@@ -422,15 +396,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_3_4( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_3_4( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_3_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_3_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t3   = xo__h * xo__retrograde;
     real_type t4   = sin(xo__L);
@@ -444,15 +418,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_3_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_3_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_3_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_3_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t3   = t1 - t2 + 1;
@@ -468,28 +442,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_3_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_3_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_3_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_x_position__xo_D_3_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_x_position__xo_D_3_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_3_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t3   = sin(xo__L);
     real_type t4   = t3 * t3;
     real_type t5   = cos(xo__L);
@@ -500,15 +461,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_3_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_3_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t12  = 1.0 / (t1 * xo__f + t4 * xo__g + 1);
@@ -520,15 +481,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_4( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_4( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_4_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_4_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t7   = 1.0 / (t1 * xo__f + t4 * xo__g + 1);
@@ -542,15 +503,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_4_4( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_4_4( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_4_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_4_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = sin(xo__L);
     real_type t3   = cos(xo__L);
     real_type t7   = 1.0 / (t2 * xo__g + t3 * xo__f + 1);
@@ -564,15 +525,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_4_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_4_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_4_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_4_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = sin(xo__L);
     real_type t3   = xo__k * xo__retrograde;
     real_type t4   = cos(xo__L);
@@ -593,28 +554,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_4_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_4_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_4_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_x_position__xo_D_4_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_x_position__xo_D_4_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_4_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = sin(xo__L);
     real_type t3   = cos(xo__L);
     real_type t8   = 1.0 / (t2 * xo__g + t3 * xo__f + 1) * t2;
@@ -626,15 +574,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_4_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_4_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t3   = xo__h * xo__retrograde;
     real_type t4   = sin(xo__L);
@@ -647,15 +595,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_5_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_5_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t7   = 1.0 / (t1 * xo__f + t4 * xo__g + 1);
@@ -670,15 +618,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_5_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_5_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_5_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_5_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = sin(xo__L);
     real_type t2   = t1 * xo__k;
     real_type t3   = xo__h * xo__retrograde;
@@ -700,28 +648,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_5_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_5_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_5_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_x_position__xo_D_5_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_x_position__xo_D_5_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_5_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__p * xo__h;
     real_type t2   = sin(xo__L);
     real_type t3   = cos(xo__L);
@@ -734,15 +669,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_5_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_5_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t3   = t1 - t2 + 1;
@@ -756,15 +691,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_6_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_6_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t3   = t1 - t2 + 1;
@@ -785,28 +720,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_6_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_6_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_6_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_x_position__xo_D_6_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_x_position__xo_D_6_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_6_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = xo__p * xo__h * xo__k;
     real_type t3   = cos(xo__L);
     real_type t5   = sin(xo__L);
@@ -819,54 +741,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_6_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_6_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_x_position__xo_D_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_x_position__xo_D_7_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_x_position__xo_D_7_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_x_position__xo_D_7_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_x_position__xo_D_7_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_x_position__xo_D_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t3   = sin(xo__L);
     real_type t4   = cos(xo__L);
     real_type t10  = xo__h * xo__h;
@@ -875,28 +758,28 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_x_position__xo_D_8_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_x_position__xo_D_7_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type result__ = 0;
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_x_position__xo_D_8_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_x_position__xo_D_7_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t5   = sin(xo__L);
@@ -905,15 +788,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t5   = sin(xo__L);
@@ -922,28 +805,28 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_1( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_1( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_1_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_1_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type result__ = 0;
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_1_1( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_1_1( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_1_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_1_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t5   = sin(xo__L);
@@ -953,15 +836,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_1_2( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_1_2( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_1_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_1_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t5   = sin(xo__L);
@@ -971,15 +854,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_1_3( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_1_3( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_1_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_1_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t11  = 1.0 / (t1 * xo__f + t4 * xo__g + 1);
@@ -991,15 +874,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_1_4( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_1_4( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_1_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_1_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = sin(xo__L);
     real_type t4   = cos(xo__L);
     real_type t11  = 1.0 / (t2 * xo__g + t4 * xo__f + 1);
@@ -1011,15 +894,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_1_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_1_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_1_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_1_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = (t1 - t2 - 1) * xo__retrograde;
@@ -1033,28 +916,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_1_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_1_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_1_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_y_position__xo_D_1_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_y_position__xo_D_1_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_1_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = sin(xo__L);
@@ -1063,15 +933,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_1_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_1_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t5   = sin(xo__L);
@@ -1081,15 +951,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_2( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_2( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_2_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_2_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t5   = sin(xo__L);
@@ -1101,15 +971,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_2_2( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_2_2( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_2_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_2_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t5   = sin(xo__L);
@@ -1120,15 +990,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_2_3( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_2_3( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_2_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_2_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t12  = pow(t1 * xo__f + t4 * xo__g + 1, 2);
@@ -1141,15 +1011,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_2_4( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_2_4( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_2_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_2_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = sin(xo__L);
     real_type t4   = cos(xo__L);
     real_type t12  = pow(t2 * xo__g + t4 * xo__f + 1, 2);
@@ -1162,15 +1032,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_2_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_2_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_2_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_2_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = (t1 - t2 - 1) * xo__retrograde;
@@ -1186,28 +1056,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_2_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_2_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_2_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_y_position__xo_D_2_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_y_position__xo_D_2_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_2_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t5   = sin(xo__L);
@@ -1217,15 +1074,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_2_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_2_8( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t5   = sin(xo__L);
@@ -1235,15 +1092,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_3( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_3( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_3_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_3_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t5   = sin(xo__L);
@@ -1255,15 +1112,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_3_3( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_3_3( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_3_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_3_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t12  = pow(t1 * xo__f + t4 * xo__g + 1, 2);
@@ -1276,15 +1133,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_3_4( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_3_4( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_3_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_3_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = sin(xo__L);
     real_type t4   = cos(xo__L);
     real_type t12  = pow(t2 * xo__g + t4 * xo__f + 1, 2);
@@ -1297,15 +1154,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_3_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_3_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_3_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_3_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = (t1 - t2 - 1) * xo__retrograde;
@@ -1321,28 +1178,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_3_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_3_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_3_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_y_position__xo_D_3_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_y_position__xo_D_3_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_3_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t5   = sin(xo__L);
@@ -1353,15 +1197,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_3_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_3_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t12  = 1.0 / (t1 * xo__f + t4 * xo__g + 1);
@@ -1373,15 +1217,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_4( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_4( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_4_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_4_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = sin(xo__L);
     real_type t3   = cos(xo__L);
     real_type t7   = 1.0 / (t2 * xo__g + t3 * xo__f + 1);
@@ -1395,15 +1239,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_4_4( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_4_4( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_4_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_4_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t7   = 1.0 / (t1 * xo__f + t4 * xo__g + 1);
@@ -1416,15 +1260,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_4_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_4_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_4_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_4_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = sin(xo__L);
     real_type t3   = xo__h * xo__retrograde;
     real_type t4   = cos(xo__L);
@@ -1445,28 +1289,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_4_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_4_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_4_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_y_position__xo_D_4_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_y_position__xo_D_4_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_4_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = sin(xo__L);
     real_type t3   = cos(xo__L);
     real_type t7   = 1.0 / (t2 * xo__g + t3 * xo__f + 1);
@@ -1478,15 +1309,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_4_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_4_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = sin(xo__L);
     real_type t4   = cos(xo__L);
     real_type t12  = 1.0 / (t2 * xo__g + t4 * xo__f + 1);
@@ -1498,15 +1329,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_5_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_5_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = sin(xo__L);
     real_type t3   = cos(xo__L);
     real_type t7   = 1.0 / (t2 * xo__g + t3 * xo__f + 1);
@@ -1520,15 +1351,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_5_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_5_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_5_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_5_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__k * xo__retrograde;
     real_type t2   = cos(xo__L);
     real_type t4   = sin(xo__L);
@@ -1549,28 +1380,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_5_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_5_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_5_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_y_position__xo_D_5_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_y_position__xo_D_5_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_5_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = sin(xo__L);
     real_type t3   = cos(xo__L);
     real_type t7   = 1.0 / (t2 * xo__g + t3 * xo__f + 1);
@@ -1582,15 +1400,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_5_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_5_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = (t1 - t2 - 1) * xo__retrograde;
@@ -1604,15 +1422,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_6_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_6_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = (t1 - t2 - 1) * xo__retrograde;
@@ -1633,28 +1451,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_6_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_6_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_6_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_y_position__xo_D_6_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_y_position__xo_D_6_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_6_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t4   = (t1 - t2 - 1) * xo__p;
@@ -1667,54 +1472,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_6_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_6_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_y_position__xo_D_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_y_position__xo_D_7_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_y_position__xo_D_7_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_y_position__xo_D_7_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_y_position__xo_D_7_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_y_position__xo_D_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
     real_type t2   = xo__k * xo__k;
     real_type t5   = sin(xo__L);
@@ -1723,28 +1489,28 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_y_position__xo_D_8_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_y_position__xo_D_7_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type result__ = 0;
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_y_position__xo_D_8_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_y_position__xo_D_7_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t12  = xo__h * xo__h;
@@ -1753,15 +1519,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t12  = xo__h * xo__h;
@@ -1770,28 +1536,28 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_1( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_1( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_1_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_1_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type result__ = 0;
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_1_1( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_1_1( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_1_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_1_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t10  = pow(t2 * xo__f + t4 * xo__g + 1, 2);
@@ -1801,15 +1567,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_1_2( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_1_2( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_1_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_1_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t10  = pow(t2 * xo__f + t4 * xo__g + 1, 2);
@@ -1819,15 +1585,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_1_3( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_1_3( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_1_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_1_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = sin(xo__L);
     real_type t2   = cos(xo__L);
     real_type t6   = 1.0 / (t1 * xo__g + t2 * xo__f + 1);
@@ -1839,15 +1605,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_1_4( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_1_4( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_1_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_1_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t7   = 1.0 / (t1 * xo__f + t4 * xo__g + 1);
@@ -1859,15 +1625,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_1_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_1_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_1_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_1_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__k * xo__retrograde;
     real_type t2   = sin(xo__L);
     real_type t4   = cos(xo__L);
@@ -1880,28 +1646,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_1_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_1_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_1_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_z_position__xo_D_1_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_z_position__xo_D_1_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_1_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t8   = xo__h * xo__h;
@@ -1910,15 +1663,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_1_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_1_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t11  = pow(t2 * xo__f + t4 * xo__g + 1, 2);
@@ -1928,15 +1681,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_2( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_2( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_2_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_2_2( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t10  = t2 * xo__f + t4 * xo__g + 1;
@@ -1948,15 +1701,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_2_2( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_2_2( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_2_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_2_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t10  = t2 * xo__f + t4 * xo__g + 1;
@@ -1967,15 +1720,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_2_3( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_2_3( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_2_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_2_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = sin(xo__L);
     real_type t3   = cos(xo__L);
     real_type t7   = pow(t1 * xo__g + t3 * xo__f + 1, 2);
@@ -1988,15 +1741,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_2_4( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_2_4( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_2_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_2_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t3   = t2 * t2;
     real_type t5   = sin(xo__L);
@@ -2010,15 +1763,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_2_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_2_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_2_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_2_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__k * xo__retrograde;
     real_type t2   = sin(xo__L);
     real_type t4   = cos(xo__L);
@@ -2033,28 +1786,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_2_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_2_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_2_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_z_position__xo_D_2_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_z_position__xo_D_2_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_2_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t3   = t2 * t2;
     real_type t5   = sin(xo__L);
@@ -2065,15 +1805,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_2_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_2_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t11  = pow(t2 * xo__f + t4 * xo__g + 1, 2);
@@ -2083,15 +1823,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_3( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_3( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_3_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_3_3( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t10  = t2 * xo__f + t4 * xo__g + 1;
@@ -2103,15 +1843,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_3_3( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_3_3( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_3_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_3_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = sin(xo__L);
     real_type t2   = t1 * t1;
     real_type t4   = cos(xo__L);
@@ -2125,15 +1865,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_3_4( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_3_4( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_3_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_3_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t5   = sin(xo__L);
     real_type t8   = pow(t2 * xo__f + t5 * xo__g + 1, 2);
@@ -2146,15 +1886,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_3_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_3_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_3_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_3_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__k * xo__retrograde;
     real_type t2   = sin(xo__L);
     real_type t4   = cos(xo__L);
@@ -2169,28 +1909,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_3_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_3_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_3_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_z_position__xo_D_3_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_z_position__xo_D_3_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_3_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t5   = sin(xo__L);
     real_type t8   = pow(t2 * xo__f + t5 * xo__g + 1, 2);
@@ -2200,15 +1927,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_3_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_3_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = sin(xo__L);
     real_type t3   = cos(xo__L);
     real_type t7   = 1.0 / (t1 * xo__g + t3 * xo__f + 1);
@@ -2220,15 +1947,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_4( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_4( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_4_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_4_4( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = sin(xo__L);
     real_type t3   = cos(xo__L);
     real_type t7   = 1.0 / (t1 * xo__g + t3 * xo__f + 1);
@@ -2242,15 +1969,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_4_4( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_4_4( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_4_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_4_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = sin(xo__L);
     real_type t3   = cos(xo__L);
     real_type t7   = 1.0 / (t1 * xo__g + t3 * xo__f + 1);
@@ -2263,15 +1990,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_4_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_4_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_4_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_4_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t6   = t1 * xo__f + t4 * xo__g + 1;
@@ -2290,28 +2017,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_4_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_4_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_4_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_z_position__xo_D_4_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_z_position__xo_D_4_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_4_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t5   = sin(xo__L);
     real_type t9   = xo__h * xo__h;
@@ -2321,15 +2035,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_4_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_4_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t7   = 1.0 / (t2 * xo__f + t4 * xo__g + 1);
@@ -2341,15 +2055,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_5_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_5_5( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t5   = sin(xo__L);
     real_type t8   = 1.0 / (t2 * xo__f + t5 * xo__g + 1);
@@ -2363,15 +2077,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_5_5( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_5_5( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_5_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_5_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__p * xo__retrograde;
     real_type t2   = sin(xo__L);
     real_type t3   = cos(xo__L);
@@ -2391,28 +2105,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_5_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_5_6( p={}, f={}, g={}, h={}, k={}, L={},  retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_5_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_z_position__xo_D_5_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_z_position__xo_D_5_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_5_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t7   = 1.0 / (t1 * xo__f + t4 * xo__g + 1);
@@ -2424,15 +2125,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_5_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_5_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__k * xo__retrograde;
     real_type t2   = sin(xo__L);
     real_type t4   = cos(xo__L);
@@ -2445,15 +2146,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_6_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_6_6( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__k * xo__retrograde;
     real_type t2   = cos(xo__L);
     real_type t4   = sin(xo__L);
@@ -2473,28 +2174,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_6_6( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_6_6( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_6_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_z_position__xo_D_6_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_z_position__xo_D_6_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_6_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__p * xo__k;
     real_type t2   = sin(xo__L);
     real_type t3   = cos(xo__L);
@@ -2507,54 +2195,15 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_6_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_6_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_z_position__xo_D_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_z_position__xo_D_7_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_z_position__xo_D_7_7( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_z_position__xo_D_7_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
-    real_type result__ = 0;
-    if ( m_debug ) {
-      UTILS_ASSERT(
-        Utils::is_finite(result__),
-        "astro_z_position__xo_D_7_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
-      );
-    }
-    return result__;
-  }
-
-  real_type
-  astro_z_position__xo_D_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
     real_type t4   = sin(xo__L);
     real_type t9   = xo__h * xo__h;
@@ -2563,21 +2212,21 @@ namespace AstroLib {
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
   }
 
   real_type
-  astro_z_position__xo_D_8_8( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
+  astro_z_position__xo_D_7_7( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type result__ = 0;
     if ( m_debug ) {
       UTILS_ASSERT(
         Utils::is_finite(result__),
-        "astro_z_position__xo_D_8_8( p={}, f={}, g={}, h={}, k={}, L={}, muS={}, retrograde={} ) return {}\n",
-        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__muS, xo__retrograde, result__
+        "astro_z_position__xo_D_7_7( p={}, f={}, g={}, h={}, k={}, L={}, retrograde={} ) return {}\n",
+        xo__p, xo__f, xo__g, xo__h, xo__k, xo__L, xo__retrograde, result__
       );
     }
     return result__;
