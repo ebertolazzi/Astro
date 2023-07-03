@@ -129,7 +129,8 @@ main() {
   #endif
 
   #if 1
-  real_type DV = minimum_DeltaV( mu_SUN, E, M );
+  Utils::Console console(&std::cout,-1);
+  real_type DV = minimum_DeltaV( E, M, 0.01, &console );
   fmt::print(
     "(UA/Y) DV = {:.8}\n"
     "(km/s) DV = {:.8}\n\n",

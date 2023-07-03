@@ -173,7 +173,7 @@ endif()
 #    | |/ -_|_-<  _(_-<
 #    |_|\___/__/\__/__/
 #
-if ( BUILD_EXECUTABLE OR UTILS_ENABLE_CTEST )
+if ( BUILD_EXECUTABLE OR UTILS_ENABLE_TESTS )
 
   enable_testing()
 

@@ -526,20 +526,24 @@ namespace AstroLib {
   //!
   //!  Given two plates/asteroids find the best possible theoretical DV.
   //!
-  //!  \param[IN]  muS     gravitatioon costant of the Keplerian system
-  //!  \param[IN]  a_from  starting planet/asteroid
-  //!  \param[IN]  a_to    arrival planet/asteroid
+  //!  \param[IN]  a_from        starting planet/asteroid
+  //!  \param[IN]  a_to          arrival planet/asteroid
+  //!  \param[IN]  day_tolerance tolerance for pattern search
+  //!  \param[IN]  console       pointer to console for printing
   //!  \return  the minimal DV
   //!
   real_type
   minimum_DeltaV(
-    real_type     muS,
-    Astro const & a_from,
-    Astro const & a_to
+    Astro const &    a_from,
+    Astro const &    a_to,
+    real_type        day_tolerance,
+    Utils::Console * console
   ) {
 
     real_type L_table[TABLE_SIZE];
     real_type DV_table[TABLE_SIZE][TABLE_SIZE];
+
+    real_type muS = a_from.get_muS();
 
     real_type DeltaV1, DeltaV2;
 
@@ -615,17 +619,14 @@ namespace AstroLib {
         // trovato minimo locale, raffino con Nelder Mead
         real_type Lb = L_table[j];
 
-        Utils::Console console(&std::cout,0);
         //Utils::NelderMead<real_type> solver("NMsolver");
         Utils::HJPatternSearch<real_type> solver("HJPatternSearch");
-        solver.setup( 2, F, &console );
-        solver.set_tolerance( 0.01 );
+        solver.setup( 2, F, console );
+        solver.set_tolerance( day_tolerance );
         real_type X[2] = {La,Lb};
         solver.run( X, delta_L );
         DV = solver.get_last_solution( X );
-
-        fmt::print( "X={}, Y={}\n", X[0], X[1] );
-
+        // console->message( fmt::format( "X={}, Y={}\n", X[0], X[1] ) );
         // confronto con minimo
         if ( DV < DV_min ) DV_min = DV;
       }

@@ -653,11 +653,14 @@ namespace AstroLib {
 
   real_type
   minimum_DeltaV(
-    real_type     muS,
-    Astro const & a_from,
-    Astro const & a_to
+    Astro const &    a_from,
+    Astro const &    a_to,
+    real_type        day_tolerance,
+    Utils::Console * console
   );
 
+  real_type
+  D_SH_similarity( Astro const & a, Astro const & b );
 
   real_type astro_x_position__xo       ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
   real_type astro_x_position__xo_D_1   ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );

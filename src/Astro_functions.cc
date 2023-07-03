@@ -37,7 +37,59 @@
 
 namespace AstroLib {
 
+  using std::abs;
+
   static bool const m_debug = true;
+
+  //
+  // Remarks on the Meteor Orbital Similarity D-Criterion -
+  //
+  // Remarks on the Meteor Orbital Similarity D-Criterion
+  // Tadeusz J. Jopek
+  // Icarus, 106, N.2, pp. 603-607, 1993,
+  // doi:10.1006/icar.1993.1195},
+
+  static inline
+  real_type D_SH_sin( real_type x )
+  { return 2*sin(0.5*x); }
+
+  static inline
+  real_type inrange( real_type x ) {
+    if ( x < -1 ) return -1;
+    if ( x >  1 ) return  1;
+    return x;
+  }
+
+  real_type
+  D_SH_similarity( Astro const & a, Astro const & b ) {
+
+    real_type const & a_a     = a.a_orbital();
+    real_type const & a_e     = a.e_orbital();
+    real_type const & a_i     = a.i_orbital();
+    real_type const & a_omega = a.omega_orbital();
+    real_type const & a_Omega = a.Omega_orbital();
+
+    real_type const & b_a     = b.a_orbital();
+    real_type const & b_e     = b.e_orbital();
+    real_type const & b_i     = b.i_orbital();
+    real_type const & b_omega = b.omega_orbital();
+    real_type const & b_Omega = b.Omega_orbital();
+
+    real_type delta_i{b_i - a_i};
+    real_type ave_i{0.5*(b_i+a_i)};
+    real_type delta_a{b_a - a_a};
+    real_type delta_e{b_e - a_e};
+    real_type ave_e{0.5*(b_e+a_e)};
+    real_type delta_omega{b_omega - a_omega};
+    real_type delta_Omega{b_Omega - a_Omega};
+    real_type sign_delta_Omega{ abs(delta_Omega) > Utils::m_pi ? 1.0 : -1.0 };
+
+    real_type sin2_I_ba{ power2(D_SH_sin(delta_i)) + sin(a_i)*sin(b_i)*power2(D_SH_sin(delta_Omega)) };
+    real_type sec_I_ba2{1/(sqrt(1-sin2_I_ba/4))};
+    real_type pi_ba = delta_omega + 2*sign_delta_Omega*sin(inrange(cos(ave_i) * sin(0.5*delta_Omega)*sec_I_ba2));
+
+    return delta_e*delta_e + delta_a*delta_a + sin2_I_ba + power2(ave_e*D_SH_sin(pi_ba));
+  }
 
   real_type
   astro_x_position__xo( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
