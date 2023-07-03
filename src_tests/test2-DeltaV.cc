@@ -90,7 +90,7 @@ main() {
     fmt::print(
       "DV1^2+DV2^2 = {:.4}\n"
       "(UA/Y) DV1  = {:.4}\n"
-      "(UA/Y) DV2  = {:.4}\n",
+      "(UA/Y) DV2  = {:.4}\n"
       "(km/s) DV1  = {:.4}\n"
       "(km/s) DV2  = {:.4}\n\n",
       DV2, DV0, DV1, DV0*(AU_to_km/Y_to_s), DV1*(AU_to_km/Y_to_s)
@@ -98,7 +98,7 @@ main() {
   }
   #endif
 
-  #if 1
+  #if 0
 
   std::vector<AstroLib::minimum_DeltaV_trip> trips;
   real_type maxDV = 6/((AU_to_km/day_to_s));
@@ -128,13 +128,20 @@ main() {
 
   #endif
 
+  Utils::Console console(&std::cout,4);
+
   #if 1
-  Utils::Console console(&std::cout,-1);
-  real_type DV = minimum_DeltaV( E, M, 0.01, &console );
+  real_type DV  = global_minimum_DeltaV( E, M, 0.01, &console );
+  real_type DV2 = global_minimum_DeltaV2( E, M, 0.01, &console );
   fmt::print(
     "(UA/Y) DV = {:.8}\n"
     "(km/s) DV = {:.8}\n\n",
     DV, DV*(AU_to_km/day_to_s)
+  );
+  fmt::print(
+    "(UA/Y) 2*sqrt(DV2/2) = {:.8}\n"
+    "(km/s) 2*sqrt(DV2/2) = {:.8}\n\n",
+    2*sqrt(DV2/2), 2*sqrt(DV2/2)*(AU_to_km/day_to_s)
   );
   #endif
 

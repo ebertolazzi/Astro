@@ -652,7 +652,15 @@ namespace AstroLib {
   );
 
   real_type
-  minimum_DeltaV(
+  global_minimum_DeltaV(
+    Astro const &    a_from,
+    Astro const &    a_to,
+    real_type        day_tolerance,
+    Utils::Console * console
+  );
+
+  real_type
+  global_minimum_DeltaV2(
     Astro const &    a_from,
     Astro const &    a_to,
     real_type        day_tolerance,
