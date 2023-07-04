@@ -140,7 +140,7 @@ namespace AstroLib {
     Utils::Poly<real_type>::dvec_t coeffs8;
     coeffs8.resize(9); // ordine 9
     coeffs8 << poly0, poly1, poly2, poly3, poly4, poly5, poly6, poly7, poly8;
-    for ( int i=0; i < 9;++i ) if ( isnan(coeffs8.coeff(i)) || isinf(coeffs8.coeff(i)) ) return Utils::Inf<real_type>();
+    for ( int i=0; i < 9;++i ) if ( !Utils::is_finite(coeffs8.coeff(i)) ) return Utils::Inf<real_type>();
     Utils::Poly<real_type> poly(coeffs8);
 
     {
