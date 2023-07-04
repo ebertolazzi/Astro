@@ -304,13 +304,13 @@ namespace AstroLib {
 
     // coefficienti del polinomio le cui radici sono candidati minimi
 
-    real_type V__1   = V1.norm();
-    real_type V__1r  = V1.dot(rr1);
-    real_type V__1c  = V1.dot(ch);
+    real_type V__1  = V1.norm();
+    real_type V__1r = V1.dot(rr1);
+    real_type V__1c = V1.dot(ch);
 
-    real_type V__2   = V2.norm();
-    real_type V__2r  = V2.dot(rr2);
-    real_type V__2c  = V2.dot(ch);
+    real_type V__2  = V2.norm();
+    real_type V__2r = V2.dot(rr2);
+    real_type V__2c = V2.dot(ch);
 
     real_type K           = mu*c/(r1*r2+R1.dot(R2)); // equation (7)
     real_type cos__phi__1 = ch.dot(rr1);
@@ -321,6 +321,10 @@ namespace AstroLib {
     real_type poly2 = 0;
     real_type poly3 = -2*(V__1c+V__2c);
     real_type poly4 = 4;
+
+    if ( ! ( Utils::is_finite(poly0) &&
+             Utils::is_finite(poly1) &&
+             Utils::is_finite(poly3) ) ) return Utils::Inf<real_type>();
 
     PolynomialRoots::Quartic quartic( poly4, poly3, poly2, poly1, poly0 );
 
