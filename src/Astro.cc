@@ -58,14 +58,6 @@ namespace AstroLib {
 
   Astro::Astro( string const & __name )
   : m_name(__name)
-  , m_t0(0)
-  , m_M0(0)
-  , m_M0_theta0(0)
-  , m_M0_e(0)
-  , m_Mdot(0)
-  , m_Mdot_p(0)
-  , m_Mdot_f(0)
-  , m_Mdot_g(0)
   {}
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -139,6 +131,12 @@ namespace AstroLib {
     real_type g    = m_EQ.g;
     real_type absa = m_K.a > 0 ? m_K.a : -m_K.a;
     real_type e    = m_K.e;
+
+    UTILS_ASSERT(
+      m_muS > 0 && absa > 0,
+      "Astro::M0_Mdot_grad_eval, mu = {} and |a| = {} must be > 0!\n",
+      m_muS, absa
+    );
 
     {
       real_type t1 = sqrt(m_muS);
