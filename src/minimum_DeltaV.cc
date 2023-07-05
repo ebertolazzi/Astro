@@ -368,25 +368,29 @@ namespace AstroLib {
   //!  in a specific time range
   //!
   //!  \param[IN]  who -1  minimize initial DV1 +1 minimize final DV2 0 minimize DV1+DV2
-  //!  \param[IN]  muS     gravitatioon costant of the Keplerian system
   //!  \param[IN]  t_begin initial time
   //!  \param[IN]  t_end   final time
   //!  \param[IN]  delta_t initial granularity of the search
   //!  \param[IN]  a_from  starting planet/asteroid
   //!  \param[IN]  a_to    arrival planet/asteroid
   //!  \param[OUT] trips   list of the minimal DV trips
+  //!  \param[IN]  max_accepted_DV
+  //!  \param[IN]  day_tolerance
+  //!  \param[IN]  max_subiter
   //!
   void
   minimum_DeltaV(
-    integer       who,
-    real_type     muS,
-    real_type     t_begin,
-    real_type     t_end,
-    real_type     delta_t,
-    Astro const & a_from,
-    Astro const & a_to,
+    integer                       who,
+    real_type                     t_begin,
+    real_type                     t_end,
+    real_type                     delta_t,
+    Astro const                 & a_from,
+    Astro const                 & a_to,
     vector<minimum_DeltaV_trip> & trips,
-    real_type     maxDV
+    real_type                     max_accepted_DV,
+    real_type                     day_tolerance,
+    real_type                     day_equal,
+    integer                       max_subiter
   ) {
 
     trips.clear();
@@ -414,6 +418,8 @@ namespace AstroLib {
       a_to.position( t, R2_vec[i] );
       a_to.velocity( t, V2_vec[i] );
     }
+
+    real_type muS = a_from.get_muS();
 
     auto fun = [ &a_from, &a_to, &t_begin, &t_end, muS, who ]( real_type const X[] )->real_type {
       real_type DV = Utils::Inf<real_type>();
@@ -494,13 +500,13 @@ namespace AstroLib {
         Utils::HJPatternSearch<real_type> solver("HJPatternSearch");
 
         solver.setup( 2, F, &console );
-        solver.set_tolerance( delta_t/100 );
-        solver.set_max_iterations(100);
+        solver.set_tolerance( day_tolerance );
+        solver.set_max_iterations( max_subiter );
         real_type X[2] = {t1,t2};
         solver.run( X, dt );
         DV = solver.get_last_solution( X );
 
-        if ( DV > maxDV ) continue;
+        if ( DV > max_accepted_DV ) continue;
 
         real_type tt1 = X[0];
         real_type tt2 = X[1];
@@ -524,11 +530,28 @@ namespace AstroLib {
         trips.emplace_back( tt1, P1, V1, W1, tt2, P2, V2, W2 );
       }
     }
+
     std::sort(
       trips.begin(), trips.end(),
-      []( minimum_DeltaV_trip const & A, minimum_DeltaV_trip const & B ) -> bool { return A.t_end < B.t_end; }
+      [day_equal]( minimum_DeltaV_trip const & A, minimum_DeltaV_trip const & B ) -> bool {
+        real_type dt = B.t_end-A.t_end;
+        if ( abs(dt) < day_equal ) return B.t_begin-A.t_begin;
+        else                       return dt > 0;
+      }
     );
-    trips.erase( std::unique(trips.begin(), trips.end()), trips.end());
+
+    // remove duplicates
+    trips.erase(
+      std::unique(
+        trips.begin(), trips.end(),
+        [day_equal]( minimum_DeltaV_trip const & A, minimum_DeltaV_trip const & B ) -> bool {
+          real_type dt1 = B.t_end-A.t_end;
+          real_type dt2 = B.t_begin-A.t_begin;
+          return abs(dt1) <= day_equal && abs(dt2) <= day_equal;
+        }
+      ),
+      trips.end()
+    );
   }
 
   // ---------------------------------------------------------------------------

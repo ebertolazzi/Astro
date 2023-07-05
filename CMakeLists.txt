@@ -184,6 +184,7 @@ if ( BUILD_EXECUTABLE OR UTILS_ENABLE_TESTS )
     EXELISTCPP
     test1-Lambert
     test2-DeltaV
+    test3-DeltaV
   )
 
   add_custom_target( all_tests ALL )

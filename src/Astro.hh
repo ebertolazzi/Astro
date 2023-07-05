@@ -640,15 +640,17 @@ namespace AstroLib {
 
   void
   minimum_DeltaV(
-    integer       who,
-    real_type     muS,
-    real_type     t_begin,
-    real_type     t_end,
-    real_type     delta_t,
-    Astro const & a_from,
-    Astro const & a_to,
+    integer                       who,
+    real_type                     t_begin,
+    real_type                     t_end,
+    real_type                     delta_t,
+    Astro const                 & a_from,
+    Astro const                 & a_to,
     vector<minimum_DeltaV_trip> & trips,
-    real_type     maxDV
+    real_type                     max_accepted_DV,
+    real_type                     day_tolerance,
+    real_type                     day_equal,
+    integer                       max_subiter
   );
 
   real_type
