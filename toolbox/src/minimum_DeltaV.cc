@@ -363,8 +363,6 @@ namespace AstroLib {
 
   // ---------------------------------------------------------------------------
 
-  #define TABLE_SIZE 16
-
   //!
   //!  Given two plates/asteroids find the best possible theoretical DV.
   //!
@@ -379,35 +377,39 @@ namespace AstroLib {
     Astro const        & a_from,
     Astro const        & a_to,
     vector<DV_collect> & v_DV,
+    integer              TABLE_SIZE,
+    integer              HJ_max_iter,
     Utils::Console     * console
   ) {
 
     real_type L_tolerance = m_pi/360;
-    real_type L_equal     = 5*L_tolerance;
-    integer   HJ_max_iter = 200;
+    real_type L_equal     = 10*m_pi/360;
 
     v_DV.clear();
     v_DV.reserve(10);
 
-    real_type L_table[TABLE_SIZE];
-    real_type DV_table[TABLE_SIZE][TABLE_SIZE];
+    dvec_t L_table;
+    dmat_t DV_table;
+    L_table.resize(TABLE_SIZE);
+    DV_table.resize(TABLE_SIZE,TABLE_SIZE);
 
     real_type muS = a_from.get_muS();
 
     real_type DeltaV1, DeltaV2;
 
-    dvec3_t R1[TABLE_SIZE], V1[TABLE_SIZE],
-            R2[TABLE_SIZE], V2[TABLE_SIZE],
-            W1, W2;
+    vector<dvec3_t> R1(TABLE_SIZE), V1(TABLE_SIZE),
+                    R2(TABLE_SIZE), V2(TABLE_SIZE);
+    dvec3_t W1, W2;
 
     // prima tabella
     real_type delta_L = m_2pi/TABLE_SIZE;
     for ( integer i = 0 ; i < TABLE_SIZE ; ++i ) {
-      L_table[i] = i*delta_L;
-      a_from.position_by_L( L_table[i], R1[i] );
-      a_from.velocity_by_L( L_table[i], V1[i] );
-      a_to.position_by_L( L_table[i], R2[i] );
-      a_to.velocity_by_L( L_table[i], V2[i] );
+      real_type L = i*delta_L;
+      L_table.coeffRef(i) = L;
+      a_from.position_by_L( L, R1[i] );
+      a_from.velocity_by_L( L, V1[i] );
+      a_to.position_by_L( L, R2[i] );
+      a_to.velocity_by_L( L, V2[i] );
     }
 
     real_type L_from_min, L_from_max, L_to_min, L_to_max;
@@ -426,7 +428,10 @@ namespace AstroLib {
     // riempio tabella 8*8
     for ( integer i = 0; i < TABLE_SIZE; ++i ) {
       for ( integer j = 0; j < TABLE_SIZE; ++j ) {
-        DV_table[i][j] = minimum_DeltaV( muS, R1[i], V1[i], R2[j], V2[j], DeltaV1, DeltaV2, nullptr );
+        DV_table.coeffRef(i,j) = minimum_DeltaV(
+          muS, R1[i], V1[i], R2[j], V2[j],
+          DeltaV1, DeltaV2, nullptr
+        );
       }
     }
 
@@ -441,12 +446,12 @@ namespace AstroLib {
                        im1,    ip1,
                        im1, i, ip1 };
 
-      real_type La = L_table[i];
+      real_type La = L_table.coeff(i);
       L_from_min = La-2*delta_L;
       L_from_max = La+2*delta_L;
 
       for ( integer j = 0 ; j < TABLE_SIZE ; ++j ) {
-        real_type DV = DV_table[i][j] ;
+        real_type DV = DV_table.coeff(i,j);
 
         // calcolo primi vicini
         integer jm1{j-1}, jp1{j+1};
@@ -460,12 +465,12 @@ namespace AstroLib {
         // controllo se minimo locale
         bool ok_min = true;
         for ( integer k=0 ; k < 8 && ok_min ; ++k )
-          ok_min = DV <= DV_table[ ii[k] ][ jj[k] ];
+          ok_min = DV <= DV_table.coeff( ii[k], jj[k] );
 
         if ( !ok_min ) continue ;
 
         // trovato minimo locale, raffino con Nelder Mead
-        real_type Lb = L_table[j];
+        real_type Lb = L_table.coeff(j);
         L_to_min = Lb-2*delta_L;
         L_to_max = Lb+2*delta_L;
 
@@ -478,7 +483,7 @@ namespace AstroLib {
         solver.run( X, delta_L );
         DV = solver.get_last_solution( X );
         // discard probaby double solutions
-        if ( abs(La-X[0]) > 1.5*delta_L || abs(Lb-X[1]) > 1.5*delta_L ) continue;
+        if ( abs(La-X[0]) > 1.6*delta_L || abs(Lb-X[1]) > 1.6*delta_L ) continue;
         v_DV.emplace_back(DV,X[0],X[1]);
       }
     }
@@ -504,6 +509,12 @@ namespace AstroLib {
       ),
       v_DV.end()
     );
+
+    // sort by DV
+    std::sort(
+      v_DV.begin(), v_DV.end(),
+      []( DV_collect const & A, DV_collect const & B ) -> bool { return A.DV < B.DV; }
+    );
   }
 
   // ==========================================================================
@@ -518,17 +529,19 @@ namespace AstroLib {
     real_type                     t_end,
     real_type                     t_tolerance,
     real_type                     max_accepted_DV,
+    integer                       TABLE_SIZE,
+    integer                       HJ_max_iter,
     vector<minimum_DeltaV_trip> & trips,
     Utils::Console              * console
   ) {
 
     using std::min;
 
-    real_type muS = a_from.get_muS();
-    integer   HJ_max_iter = 200;
+    real_type muS     = a_from.get_muS();
+    real_type T_equal = a_from.period()/100;
 
     vector<DV_collect> v_DV;
-    global_minimum_DeltaV( a_from, a_to, v_DV, console );
+    global_minimum_DeltaV( a_from, a_to, v_DV, TABLE_SIZE, HJ_max_iter, console );
     // loop sui candidati
     real_type from_period = a_from.period();
     real_type to_period   = a_to.period();
@@ -539,7 +552,9 @@ namespace AstroLib {
     auto fun = [ &a_from, &a_to, &t_from_min, &t_from_max, &t_to_min, &t_to_max, muS ] ( real_type const X[] )->real_type {
       real_type ta = X[0];
       real_type tb = X[1];
-      if ( ta < t_from_min || ta > t_from_max || tb < t_to_min || tb > t_to_max ) Utils::Inf<real_type>();
+      if ( ta < t_from_min || ta > t_from_max ||
+           tb < t_to_min   || tb > t_to_max   ||
+           ta > tb ) return Utils::Inf<real_type>();
       dvec3_t P1, V1, VV1, P2, V2, VV2;
       a_from.position( ta, P1 );  a_from.velocity( ta, V1 );
       a_to.position( tb, P2 );    a_to.velocity( tb, V2 );
@@ -593,6 +608,27 @@ namespace AstroLib {
         }
       }
     }
+
+    // sort by DV
+    std::sort(
+      trips.begin(), trips.end(),
+      []( minimum_DeltaV_trip const & A, minimum_DeltaV_trip const & B ) -> bool
+      { return A.DeltaV1+A.DeltaV2 < B.DeltaV1+B.DeltaV2; }
+    );
+
+    // remove duplicates
+    trips.erase(
+      std::unique(
+        trips.begin(), trips.end(),
+        [T_equal]( minimum_DeltaV_trip const & A, minimum_DeltaV_trip const & B ) -> bool {
+          real_type dT1 = B.t_begin-A.t_begin;
+          real_type dT2 = B.t_end-A.t_end;
+          return abs(dT1) <= T_equal && abs(dT2) <= T_equal;
+        }
+      ),
+      trips.end()
+    );
+
   }
 
   //!
@@ -609,35 +645,40 @@ namespace AstroLib {
     Astro const        & a_from,
     Astro const        & a_to,
     vector<DV_collect> & v_DV,
+    integer              TABLE_SIZE,
+    integer              HJ_max_iter,
     Utils::Console     * console
   ) {
 
     real_type L_tolerance = m_pi/360;
-    real_type L_equal     = 5*L_tolerance;
-    integer   HJ_max_iter = 200;
+    real_type L_equal     = 10*m_pi/360;
 
     v_DV.clear();
     v_DV.reserve(10);
 
-    real_type L_table[TABLE_SIZE];
-    real_type DV_table[TABLE_SIZE][TABLE_SIZE];
+    dvec_t L_table;
+    dmat_t DV_table;
+
+    L_table.resize(TABLE_SIZE);
+    DV_table.resize(TABLE_SIZE,TABLE_SIZE);
 
     real_type muS = a_from.get_muS();
 
     real_type DeltaV1, DeltaV2;
 
-    dvec3_t R1[TABLE_SIZE], V1[TABLE_SIZE],
-            R2[TABLE_SIZE], V2[TABLE_SIZE],
-            W1, W2;
+    vector<dvec3_t> R1(TABLE_SIZE), V1(TABLE_SIZE),
+                    R2(TABLE_SIZE), V2(TABLE_SIZE);
+    dvec3_t W1, W2;
 
     // prima tabella
     real_type delta_L = m_2pi/TABLE_SIZE;
     for ( integer i = 0 ; i < TABLE_SIZE ; ++i ) {
-      L_table[i] = i*delta_L;
-      a_from.position_by_L( L_table[i], R1[i] );
-      a_from.velocity_by_L( L_table[i], V1[i] );
-      a_to.position_by_L( L_table[i], R2[i] );
-      a_to.velocity_by_L( L_table[i], V2[i] );
+      real_type L = i*delta_L;
+      L_table.coeffRef(i) = L;
+      a_from.position_by_L( L, R1[i] );
+      a_from.velocity_by_L( L, V1[i] );
+      a_to.position_by_L( L, R2[i] );
+      a_to.velocity_by_L( L, V2[i] );
     }
 
     // trovato minimo locale, raffino con Nelder Mead
@@ -657,7 +698,9 @@ namespace AstroLib {
     // riempio tabella 8*8
     for ( integer i = 0; i < TABLE_SIZE; ++i ) {
       for ( integer j = 0; j < TABLE_SIZE; ++j ) {
-        DV_table[i][j] = minimum_DeltaV2( muS, R1[i], V1[i], R2[j], V2[j], DeltaV1, DeltaV2 );
+        DV_table.coeffRef(i,j) = minimum_DeltaV2(
+          muS, R1[i], V1[i], R2[j], V2[j], DeltaV1, DeltaV2
+        );
       }
     }
 
@@ -672,12 +715,12 @@ namespace AstroLib {
                        im1,    ip1,
                        im1, i, ip1 };
 
-      real_type La = L_table[i];
+      real_type La = L_table.coeff(i);
       L_from_min = La-2*delta_L;
       L_from_max = La+2*delta_L;
 
       for ( integer j = 0 ; j < TABLE_SIZE ; ++j ) {
-        real_type DV = DV_table[i][j] ;
+        real_type DV = DV_table.coeff(i,j);
 
         // calcolo primi vicini
         integer jm1{j-1}, jp1{j+1};
@@ -691,12 +734,12 @@ namespace AstroLib {
         // controllo se minimo locale
         bool ok_min = true;
         for ( integer k=0 ; k < 8 && ok_min ; ++k )
-          ok_min = DV <= DV_table[ ii[k] ][ jj[k] ];
+          ok_min = DV <= DV_table.coeff( ii[k], jj[k] );
 
         if ( !ok_min ) continue ;
 
         // trovato minimo locale, raffino con Nelder Mead
-        real_type Lb = L_table[j];
+        real_type Lb = L_table.coeff(j);
         L_to_min = Lb-2*delta_L;
         L_to_max = Lb+2*delta_L;
 
@@ -709,7 +752,7 @@ namespace AstroLib {
         solver.run( X, delta_L );
         DV = solver.get_last_solution( X );
         // discard probaby double solutions
-        if ( abs(La-X[0]) > 1.5*delta_L || abs(Lb-X[1]) > 1.5*delta_L ) continue;
+        if ( abs(La-X[0]) > 1.6*delta_L || abs(Lb-X[1]) > 1.6*delta_L ) continue;
         v_DV.emplace_back(DV,X[0],X[1]);
       }
     }
@@ -735,6 +778,12 @@ namespace AstroLib {
       ),
       v_DV.end()
     );
+
+    // sort by DV
+    std::sort(
+      v_DV.begin(), v_DV.end(),
+      []( DV_collect const & A, DV_collect const & B ) -> bool { return A.DV < B.DV; }
+    );
   }
 
   // ==========================================================================
@@ -749,17 +798,19 @@ namespace AstroLib {
     real_type                     t_end,
     real_type                     t_tolerance,
     real_type                     max_accepted_DV,
+    integer                       TABLE_SIZE,
+    integer                       HJ_max_iter,
     vector<minimum_DeltaV_trip> & trips,
     Utils::Console              * console
   ) {
 
     using std::min;
 
-    real_type muS = a_from.get_muS();
-    integer   HJ_max_iter = 200;
+    real_type muS     = a_from.get_muS();
+    real_type T_equal = a_from.period()/100;
 
     vector<DV_collect> v_DV;
-    global_minimum_DeltaV2( a_from, a_to, v_DV, console );
+    global_minimum_DeltaV2( a_from, a_to, v_DV, TABLE_SIZE, HJ_max_iter, console );
     // loop sui candidati
     real_type from_period = a_from.period();
     real_type to_period   = a_to.period();
@@ -770,7 +821,9 @@ namespace AstroLib {
     auto fun = [ &a_from, &a_to, &t_from_min, &t_from_max, &t_to_min, &t_to_max, muS ] ( real_type const X[] )->real_type {
       real_type ta = X[0];
       real_type tb = X[1];
-      if ( ta < t_from_min || ta > t_from_max || tb < t_to_min || tb > t_to_max ) Utils::Inf<real_type>();
+      if ( ta < t_from_min || ta > t_from_max ||
+           tb < t_to_min   || tb > t_to_max   ||
+           ta > tb ) return Utils::Inf<real_type>();
       dvec3_t P1, V1, VV1, P2, V2, VV2;
       a_from.position( ta, P1 );  a_from.velocity( ta, V1 );
       a_to.position( tb, P2 );    a_to.velocity( tb, V2 );
@@ -824,6 +877,26 @@ namespace AstroLib {
         }
       }
     }
+
+    // sort by DV
+    std::sort(
+      trips.begin(), trips.end(),
+      []( minimum_DeltaV_trip const & A, minimum_DeltaV_trip const & B ) -> bool
+      { return A.DeltaV1+A.DeltaV2 < B.DeltaV1+B.DeltaV2; }
+    );
+
+    // remove duplicates
+    trips.erase(
+      std::unique(
+        trips.begin(), trips.end(),
+        [T_equal]( minimum_DeltaV_trip const & A, minimum_DeltaV_trip const & B ) -> bool {
+          real_type dT1 = B.t_begin-A.t_begin;
+          real_type dT2 = B.t_end-A.t_end;
+          return abs(dT1) <= T_equal && abs(dT2) <= T_equal;
+        }
+      ),
+      trips.end()
+    );
   }
 
   // ---------------------------------------------------------------------------

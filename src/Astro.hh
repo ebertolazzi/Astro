@@ -658,8 +658,25 @@ namespace AstroLib {
     real_type DV{0};
     real_type L_from{0};
     real_type L_to{0};
+
+    explicit
     DV_collect( real_type _DV, real_type _L_from, real_type _L_to )
     : DV(_DV), L_from(_L_from), L_to(_L_to) {}
+
+    DV_collect( ) { }
+
+    DV_collect const &
+    operator = ( DV_collect const & rhs ) {
+      this->DV     = rhs.DV;
+      this->L_from = rhs.L_from;
+      this->L_to   = rhs.L_to;
+      return *this;
+    }
+
+    DV_collect( DV_collect const & rhs ) {
+      *this = rhs;
+    }
+
   };
 
   void
@@ -667,6 +684,8 @@ namespace AstroLib {
     Astro const        & a_from,
     Astro const        & a_to,
     vector<DV_collect> & v_DV,
+    integer              TABLE_SIZE,
+    integer              HJ_max_iter,
     Utils::Console     * console
   );
 
@@ -678,6 +697,8 @@ namespace AstroLib {
     real_type                     t_end,
     real_type                     t_tolerance,
     real_type                     max_accepted_DV,
+    integer                       TABLE_SIZE,
+    integer                       HJ_max_iter,
     vector<minimum_DeltaV_trip> & trips,
     Utils::Console              * console
   );
@@ -687,6 +708,8 @@ namespace AstroLib {
     Astro const        & a_from,
     Astro const        & a_to,
     vector<DV_collect> & v_DV,
+    integer              TABLE_SIZE,
+    integer              HJ_max_iter,
     Utils::Console     * console
   );
 
@@ -698,6 +721,8 @@ namespace AstroLib {
     real_type                     t_end,
     real_type                     t_tolerance,
     real_type                     max_accepted_DV,
+    integer                       TABLE_SIZE,
+    integer                       HJ_max_iter,
     vector<minimum_DeltaV_trip> & trips,
     Utils::Console              * console
   );

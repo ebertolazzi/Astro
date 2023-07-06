@@ -82,11 +82,15 @@ namespace AstroLib {
     real_type ave_e{0.5*(b_e+a_e)};
     real_type delta_omega{b_omega - a_omega};
     real_type delta_Omega{b_Omega - a_Omega};
-    real_type sign_delta_Omega{ abs(delta_Omega) > Utils::m_pi ? 1.0 : -1.0 };
+
+    if      ( delta_omega >  Utils::m_pi ) delta_omega -= Utils::m_2pi;
+    else if ( delta_omega < -Utils::m_pi ) delta_omega += Utils::m_2pi;
+    if      ( delta_Omega >  Utils::m_pi ) delta_Omega -= Utils::m_2pi;
+    else if ( delta_Omega < -Utils::m_pi ) delta_Omega += Utils::m_2pi;
 
     real_type sin2_I_ba{ power2(D_SH_sin(delta_i)) + sin(a_i)*sin(b_i)*power2(D_SH_sin(delta_Omega)) };
     real_type sec_I_ba2{1/(sqrt(1-sin2_I_ba/4))};
-    real_type pi_ba = delta_omega + 2*sign_delta_Omega*sin(inrange(cos(ave_i) * sin(0.5*delta_Omega)*sec_I_ba2));
+    real_type pi_ba = delta_omega + 2*sin(inrange(cos(ave_i) * sin(0.5*delta_Omega)*sec_I_ba2));
 
     return delta_e*delta_e + delta_a*delta_a + sin2_I_ba + power2(ave_e*D_SH_sin(pi_ba));
   }

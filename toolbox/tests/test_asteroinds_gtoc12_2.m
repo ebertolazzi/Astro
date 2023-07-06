@@ -98,13 +98,16 @@ P2  = A2.position(t0); V2 = A2.velocity(t0);
 %
 t_begin     = MJD_begin;
 t_end       = MJD_begin+15*365;
-t_tolerance = 0.01;
+t_tolerance = 0.1;
 maxDV       = 6/(AU_to_km/day_to_s);
-[v_t_begin,v_t_end,v_P1,v_V1,v_W1,v_P2,v_V2,v_W2,v_DV1,v_DV2] = globalMinimumDeltaV(muS,t0,P1,V1,P2,V2,t_begin,t_end,t_tolerance,maxDV);
+NTABLE      = 16;
+[v_t_begin,v_t_end,v_P1,v_V1,v_W1,v_P2,v_V2,v_W2,v_DV1,v_DV2] = globalMinimumDeltaV2(muS,t0,P1,V1,P2,V2,t_begin,t_end,t_tolerance,maxDV,NTABLE);
 
 A = Astro();
 
-tiledlayout(1,3, 'Padding', 'none', 'TileSpacing', 'compact');
+v_DV1+v_DV2
+
+tiledlayout(4,4, 'Padding', 'none', 'TileSpacing', 'compact');
 for kkk=1:length(v_t_begin)
   nexttile;
 

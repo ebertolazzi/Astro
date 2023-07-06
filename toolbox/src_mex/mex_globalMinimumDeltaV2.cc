@@ -23,7 +23,7 @@
 "=====================================================================================\n" \
 "\n" \
 "USAGE:\n" \
-"    [t_begin,t_end,P1,V1,W1,P2,V2,W2,DV1,DV2] = globalMinimumDeltaV2(mu,t0,P0,V0,P1,V1,t_begin,t_end,t_tolerance,maxDV);\n" \
+"    [t_begin,t_end,P1,V1,W1,P2,V2,W2,DV1,DV2] = globalMinimumDeltaV2(mu,t0,P0,V0,P1,V1,t_begin,t_end,t_tolerance,maxDV,TABLE_SIZE);\n" \
 "\n"
 
 #define CHECK_IN(N) \
@@ -37,14 +37,14 @@ namespace AstroLib {
 
   using namespace std;
 
-  #define CMD "[t_begin,t_end,P1,V1,W1,P2,V2,W2,DV1,DV2] = globalMinimumDeltaV2(mu,t0,P0,V0,P1,V1,t_begin,t_end,t_tolerance): "
+  #define CMD "[t_begin,t_end,P1,V1,W1,P2,V2,W2,DV1,DV2] = globalMinimumDeltaV2(mu,t0,P0,V0,P1,V1,t_begin,t_end,t_tolerance,maxDV,TABLE_SIZE): "
 
   extern "C"
   void
   mexFunction( int nlhs, mxArray       *plhs[],
                int nrhs, mxArray const *prhs[] ) {
     try {
-      UTILS_ASSERT0( nrhs == 10, CMD "Expected 10 arguments" );
+      UTILS_ASSERT0( nrhs == 11, CMD "Expected 11 arguments" );
       UTILS_ASSERT0( nlhs == 10, CMD "Expected 10 outputs" );
 
       real_type mu = Utils::mex_get_scalar_value( arg_in_0, CMD "mu must be a scalar\n" );
@@ -67,6 +67,7 @@ namespace AstroLib {
       real_type t_end           = Utils::mex_get_scalar_value( arg_in_7, CMD "t_end must be a scalar\n" );
       real_type t_tolerance     = Utils::mex_get_scalar_value( arg_in_8, CMD "t_tolerance must be a scalar\n" );
       real_type max_accepted_DV = Utils::mex_get_scalar_value( arg_in_9, CMD "max_accepted_DV must be a scalar\n" );
+      integer   TABLE_SIZE      = Utils::mex_get_int64( arg_in_10, CMD "TABLE_SIZE must be an integer\n" );
 
       dvec3_t P0, V0, P1, V1;
       std::copy_n( PP0, 3, P0.data() ); std::copy_n( VV0, 3, V0.data() );
@@ -76,8 +77,13 @@ namespace AstroLib {
       bool ok1 = a_from.setup_using_point_and_velocity( P0, V0, mu, t0 );
       bool ok2 = a_to.setup_using_point_and_velocity( P1, V1, mu, t0 );
 
+      integer max_iter = 200;
+
       vector<minimum_DeltaV_trip> trips;
-      global_minimum_DeltaV2( a_from, a_to, t_begin, t_end, t_tolerance, max_accepted_DV, trips, nullptr );
+      global_minimum_DeltaV2(
+        a_from, a_to, t_begin, t_end, t_tolerance, max_accepted_DV,
+        TABLE_SIZE, max_iter, trips, nullptr
+      );
 
       integer N = trips.size();
 
