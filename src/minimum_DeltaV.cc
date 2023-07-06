@@ -363,6 +363,471 @@ namespace AstroLib {
 
   // ---------------------------------------------------------------------------
 
+  #define TABLE_SIZE 16
+
+  //!
+  //!  Given two plates/asteroids find the best possible theoretical DV.
+  //!
+  //!  \param[IN]  a_from        starting planet/asteroid
+  //!  \param[IN]  a_to          arrival planet/asteroid
+  //!  \param[IN]  day_tolerance tolerance for pattern search
+  //!  \param[IN]  console       pointer to console for printing
+  //!  \return  the minimal DV
+  //!
+  void
+  global_minimum_DeltaV(
+    Astro const        & a_from,
+    Astro const        & a_to,
+    vector<DV_collect> & v_DV,
+    Utils::Console     * console
+  ) {
+
+    real_type L_tolerance = m_pi/360;
+    real_type L_equal     = 5*L_tolerance;
+    integer   HJ_max_iter = 200;
+
+    v_DV.clear();
+    v_DV.reserve(10);
+
+    real_type L_table[TABLE_SIZE];
+    real_type DV_table[TABLE_SIZE][TABLE_SIZE];
+
+    real_type muS = a_from.get_muS();
+
+    real_type DeltaV1, DeltaV2;
+
+    dvec3_t R1[TABLE_SIZE], V1[TABLE_SIZE],
+            R2[TABLE_SIZE], V2[TABLE_SIZE],
+            W1, W2;
+
+    // prima tabella
+    real_type delta_L = m_2pi/TABLE_SIZE;
+    for ( integer i = 0 ; i < TABLE_SIZE ; ++i ) {
+      L_table[i] = i*delta_L;
+      a_from.position_by_L( L_table[i], R1[i] );
+      a_from.velocity_by_L( L_table[i], V1[i] );
+      a_to.position_by_L( L_table[i], R2[i] );
+      a_to.velocity_by_L( L_table[i], V2[i] );
+    }
+
+    real_type L_from_min, L_from_max, L_to_min, L_to_max;
+    auto fun = [ &a_from, &a_to, &L_from_min, &L_from_max, &L_to_min, &L_to_max, muS ] ( real_type const X[] )->real_type {
+      real_type La = X[0];
+      real_type Lb = X[1];
+      if ( La < L_from_min || La > L_from_max || Lb < L_to_min || Lb > L_to_max ) Utils::Inf<real_type>();
+      dvec3_t P1, V1, P2, V2;
+      real_type DV1, DV2;
+      a_from.position_by_L( La, P1 );  a_from.velocity_by_L( La, V1 );
+      a_to.position_by_L( Lb, P2 );    a_to.velocity_by_L( Lb, V2 );
+      return minimum_DeltaV( muS, P1, V1, P2, V2, DV1, DV2, nullptr );
+    };
+    std::function<real_type(real_type const[])> F(fun);
+
+    // riempio tabella 8*8
+    for ( integer i = 0; i < TABLE_SIZE; ++i ) {
+      for ( integer j = 0; j < TABLE_SIZE; ++j ) {
+        DV_table[i][j] = minimum_DeltaV( muS, R1[i], V1[i], R2[j], V2[j], DeltaV1, DeltaV2, nullptr );
+      }
+    }
+
+    // cerco minimi locali
+    for ( integer i = 0; i < TABLE_SIZE; ++i ) {
+
+      integer im1{i-1}, ip1{i+1};
+      if      ( im1 < 0           ) im1 = TABLE_SIZE-1;
+      else if ( ip1 >= TABLE_SIZE ) ip1 = 0;
+
+      integer ii[] = { im1, i, ip1,
+                       im1,    ip1,
+                       im1, i, ip1 };
+
+      real_type La = L_table[i];
+      L_from_min = La-2*delta_L;
+      L_from_max = La+2*delta_L;
+
+      for ( integer j = 0 ; j < TABLE_SIZE ; ++j ) {
+        real_type DV = DV_table[i][j] ;
+
+        // calcolo primi vicini
+        integer jm1{j-1}, jp1{j+1};
+        if      ( jm1 < 0           ) jm1 = TABLE_SIZE-1;
+        else if ( jp1 >= TABLE_SIZE ) jp1 = 0;
+
+        integer jj[] = { jm1, jm1, jm1,
+                         j,        j,
+                         jp1, jp1, jp1 };
+
+        // controllo se minimo locale
+        bool ok_min = true;
+        for ( integer k=0 ; k < 8 && ok_min ; ++k )
+          ok_min = DV <= DV_table[ ii[k] ][ jj[k] ];
+
+        if ( !ok_min ) continue ;
+
+        // trovato minimo locale, raffino con Nelder Mead
+        real_type Lb = L_table[j];
+        L_to_min = Lb-2*delta_L;
+        L_to_max = Lb+2*delta_L;
+
+        //Utils::NelderMead<real_type> solver("NMsolver");
+        Utils::HJPatternSearch<real_type> solver("HJPatternSearch");
+        solver.setup( 2, F, console );
+        solver.set_tolerance( L_tolerance );
+        solver.set_max_iterations(HJ_max_iter);
+        real_type X[2] = {La,Lb};
+        solver.run( X, delta_L );
+        DV = solver.get_last_solution( X );
+        // discard probaby double solutions
+        if ( abs(La-X[0]) > 1.5*delta_L || abs(Lb-X[1]) > 1.5*delta_L ) continue;
+        v_DV.emplace_back(DV,X[0],X[1]);
+      }
+    }
+
+    std::sort(
+      v_DV.begin(), v_DV.end(),
+      [L_equal]( DV_collect const & A, DV_collect const & B ) -> bool {
+        real_type dL = B.L_from-A.L_from;
+        if ( abs(dL) < L_equal ) return B.L_to-A.L_to;
+        else                     return dL > 0;
+      }
+    );
+
+    // remove duplicates
+    v_DV.erase(
+      std::unique(
+        v_DV.begin(), v_DV.end(),
+        [L_equal]( DV_collect const & A, DV_collect const & B ) -> bool {
+          real_type dL1 = B.L_from-A.L_from;
+          real_type dL2 = B.L_to-A.L_to;
+          return abs(dL1) <= L_equal && abs(dL2) <= L_equal;
+        }
+      ),
+      v_DV.end()
+    );
+  }
+
+  // ==========================================================================
+  // ==========================================================================
+  // ==========================================================================
+
+  void
+  global_minimum_DeltaV(
+    Astro const                 & a_from,
+    Astro const                 & a_to,
+    real_type                     t_begin,
+    real_type                     t_end,
+    real_type                     t_tolerance,
+    real_type                     max_accepted_DV,
+    vector<minimum_DeltaV_trip> & trips,
+    Utils::Console              * console
+  ) {
+
+    using std::min;
+
+    real_type muS = a_from.get_muS();
+    integer   HJ_max_iter = 200;
+
+    vector<DV_collect> v_DV;
+    global_minimum_DeltaV( a_from, a_to, v_DV, console );
+    // loop sui candidati
+    real_type from_period = a_from.period();
+    real_type to_period   = a_to.period();
+    trips.clear();
+    trips.reserve( 4*v_DV.size());
+
+    real_type t_from_min, t_from_max, t_to_min, t_to_max;
+    auto fun = [ &a_from, &a_to, &t_from_min, &t_from_max, &t_to_min, &t_to_max, muS ] ( real_type const X[] )->real_type {
+      real_type ta = X[0];
+      real_type tb = X[1];
+      if ( ta < t_from_min || ta > t_from_max || tb < t_to_min || tb > t_to_max ) Utils::Inf<real_type>();
+      dvec3_t P1, V1, VV1, P2, V2, VV2;
+      a_from.position( ta, P1 );  a_from.velocity( ta, V1 );
+      a_to.position( tb, P2 );    a_to.velocity( tb, V2 );
+      integer okk = Lambert( P1, P2, tb-ta, 0, muS, VV1, VV2 );
+      if ( okk != 1 ) return Utils::Inf<real_type>();
+      return (V1-VV1).norm()+(V2-VV2).norm();
+    };
+    std::function<real_type(real_type const[])> F(fun);
+
+    real_type DeltaT = min(from_period,to_period)/16;
+
+    for ( DV_collect const & S : v_DV ) {
+
+      if ( S.DV > max_accepted_DV ) continue; // skip
+
+      real_type a_t0 = a_from.time_from_L_angle( t_begin, S.L_from );
+      real_type b_t0 = a_to.time_from_L_angle( t_begin, S.L_to );
+
+      for ( real_type ta = a_t0; ta < t_end; ta += from_period ) {
+
+        t_from_min = ta - DeltaT;
+        t_from_max = ta + DeltaT;
+
+        for ( real_type tb = b_t0; tb < t_end; tb += to_period ) {
+          if ( tb <= ta ) continue;
+
+          t_to_min = tb - DeltaT;
+          t_to_max = tb + DeltaT;
+
+          Utils::HJPatternSearch<real_type> solver("HJPatternSearch");
+          solver.setup( 2, F, console );
+          solver.set_tolerance( t_tolerance );
+          solver.set_max_iterations(HJ_max_iter);
+          real_type X[2] = {ta,tb};
+          solver.run( X, DeltaT/2 );
+          real_type DV = solver.get_last_solution( X );
+
+          if ( DV > max_accepted_DV ) continue;
+
+          real_type tt1 = X[0];
+          real_type tt2 = X[1];
+
+          dvec3_t  P1, V1, W1, P2, V2, W2;
+          a_from.position( tt1, P1 );
+          a_from.velocity( tt1, V1 );
+          a_to.position( tt2, P2 );
+          a_to.velocity( tt2, V2 );
+
+          integer okk = Lambert( P1, P2, tt2-tt1, 0, muS, W1, W2 );
+          trips.emplace_back( tt1, P1, V1, W1, tt2, P2, V2, W2 );
+        }
+      }
+    }
+  }
+
+  //!
+  //!  Given two plates/asteroids find the best possible theoretical DV.
+  //!
+  //!  \param[IN]  a_from        starting planet/asteroid
+  //!  \param[IN]  a_to          arrival planet/asteroid
+  //!  \param[IN]  day_tolerance tolerance for pattern search
+  //!  \param[IN]  console       pointer to console for printing
+  //!  \return  the minimal DV
+  //!
+  void
+  global_minimum_DeltaV2(
+    Astro const        & a_from,
+    Astro const        & a_to,
+    vector<DV_collect> & v_DV,
+    Utils::Console     * console
+  ) {
+
+    real_type L_tolerance = m_pi/360;
+    real_type L_equal     = 5*L_tolerance;
+    integer   HJ_max_iter = 200;
+
+    v_DV.clear();
+    v_DV.reserve(10);
+
+    real_type L_table[TABLE_SIZE];
+    real_type DV_table[TABLE_SIZE][TABLE_SIZE];
+
+    real_type muS = a_from.get_muS();
+
+    real_type DeltaV1, DeltaV2;
+
+    dvec3_t R1[TABLE_SIZE], V1[TABLE_SIZE],
+            R2[TABLE_SIZE], V2[TABLE_SIZE],
+            W1, W2;
+
+    // prima tabella
+    real_type delta_L = m_2pi/TABLE_SIZE;
+    for ( integer i = 0 ; i < TABLE_SIZE ; ++i ) {
+      L_table[i] = i*delta_L;
+      a_from.position_by_L( L_table[i], R1[i] );
+      a_from.velocity_by_L( L_table[i], V1[i] );
+      a_to.position_by_L( L_table[i], R2[i] );
+      a_to.velocity_by_L( L_table[i], V2[i] );
+    }
+
+    // trovato minimo locale, raffino con Nelder Mead
+    real_type L_from_min, L_from_max, L_to_min, L_to_max;
+    auto fun = [ &a_from, &a_to, &L_from_min, &L_from_max, &L_to_min, &L_to_max, muS ] ( real_type const X[] )->real_type {
+      real_type La = X[0];
+      real_type Lb = X[1];
+      if ( La < L_from_min || La > L_from_max || Lb < L_to_min || Lb > L_to_max ) Utils::Inf<real_type>();
+      dvec3_t P1, V1, P2, V2;
+      real_type DV1, DV2;
+      a_from.position_by_L( La, P1 ); a_from.velocity_by_L( La, V1 );
+      a_to.position_by_L( Lb, P2 );   a_to.velocity_by_L( Lb, V2 );
+      return minimum_DeltaV2( muS, P1, V1, P2, V2, DV1, DV2 );
+    };
+    std::function<real_type(real_type const[])> F(fun);
+
+    // riempio tabella 8*8
+    for ( integer i = 0; i < TABLE_SIZE; ++i ) {
+      for ( integer j = 0; j < TABLE_SIZE; ++j ) {
+        DV_table[i][j] = minimum_DeltaV2( muS, R1[i], V1[i], R2[j], V2[j], DeltaV1, DeltaV2 );
+      }
+    }
+
+    // cerco minimi locali
+    for ( integer i = 0; i < TABLE_SIZE; ++i ) {
+
+      integer im1{i-1}, ip1{i+1};
+      if      ( im1 < 0           ) im1 = TABLE_SIZE-1;
+      else if ( ip1 >= TABLE_SIZE ) ip1 = 0;
+
+      integer ii[] = { im1, i, ip1,
+                       im1,    ip1,
+                       im1, i, ip1 };
+
+      real_type La = L_table[i];
+      L_from_min = La-2*delta_L;
+      L_from_max = La+2*delta_L;
+
+      for ( integer j = 0 ; j < TABLE_SIZE ; ++j ) {
+        real_type DV = DV_table[i][j] ;
+
+        // calcolo primi vicini
+        integer jm1{j-1}, jp1{j+1};
+        if      ( jm1 < 0           ) jm1 = TABLE_SIZE-1;
+        else if ( jp1 >= TABLE_SIZE ) jp1 = 0;
+
+        integer jj[] = { jm1, jm1, jm1,
+                         j,        j,
+                         jp1, jp1, jp1 };
+
+        // controllo se minimo locale
+        bool ok_min = true;
+        for ( integer k=0 ; k < 8 && ok_min ; ++k )
+          ok_min = DV <= DV_table[ ii[k] ][ jj[k] ];
+
+        if ( !ok_min ) continue ;
+
+        // trovato minimo locale, raffino con Nelder Mead
+        real_type Lb = L_table[j];
+        L_to_min = Lb-2*delta_L;
+        L_to_max = Lb+2*delta_L;
+
+        //Utils::NelderMead<real_type> solver("NMsolver");
+        Utils::HJPatternSearch<real_type> solver("HJPatternSearch");
+        solver.setup( 2, F, console );
+        solver.set_tolerance( L_tolerance );
+        solver.set_max_iterations(HJ_max_iter);
+        real_type X[2] = {La,Lb};
+        solver.run( X, delta_L );
+        DV = solver.get_last_solution( X );
+        // discard probaby double solutions
+        if ( abs(La-X[0]) > 1.5*delta_L || abs(Lb-X[1]) > 1.5*delta_L ) continue;
+        v_DV.emplace_back(DV,X[0],X[1]);
+      }
+    }
+
+    std::sort(
+      v_DV.begin(), v_DV.end(),
+      [L_equal]( DV_collect const & A, DV_collect const & B ) -> bool {
+        real_type dL = B.L_from-A.L_from;
+        if ( abs(dL) < L_equal ) return B.L_to-A.L_to;
+        else                     return dL > 0;
+      }
+    );
+
+    // remove duplicates
+    v_DV.erase(
+      std::unique(
+        v_DV.begin(), v_DV.end(),
+        [L_equal]( DV_collect const & A, DV_collect const & B ) -> bool {
+          real_type dL1 = B.L_from-A.L_from;
+          real_type dL2 = B.L_to-A.L_to;
+          return abs(dL1) <= L_equal && abs(dL2) <= L_equal;
+        }
+      ),
+      v_DV.end()
+    );
+  }
+
+  // ==========================================================================
+  // ==========================================================================
+  // ==========================================================================
+
+  void
+  global_minimum_DeltaV2(
+    Astro const                 & a_from,
+    Astro const                 & a_to,
+    real_type                     t_begin,
+    real_type                     t_end,
+    real_type                     t_tolerance,
+    real_type                     max_accepted_DV,
+    vector<minimum_DeltaV_trip> & trips,
+    Utils::Console              * console
+  ) {
+
+    using std::min;
+
+    real_type muS = a_from.get_muS();
+    integer   HJ_max_iter = 200;
+
+    vector<DV_collect> v_DV;
+    global_minimum_DeltaV2( a_from, a_to, v_DV, console );
+    // loop sui candidati
+    real_type from_period = a_from.period();
+    real_type to_period   = a_to.period();
+    trips.clear();
+    trips.reserve( 4*v_DV.size());
+
+    real_type t_from_min, t_from_max, t_to_min, t_to_max;
+    auto fun = [ &a_from, &a_to, &t_from_min, &t_from_max, &t_to_min, &t_to_max, muS ] ( real_type const X[] )->real_type {
+      real_type ta = X[0];
+      real_type tb = X[1];
+      if ( ta < t_from_min || ta > t_from_max || tb < t_to_min || tb > t_to_max ) Utils::Inf<real_type>();
+      dvec3_t P1, V1, VV1, P2, V2, VV2;
+      a_from.position( ta, P1 );  a_from.velocity( ta, V1 );
+      a_to.position( tb, P2 );    a_to.velocity( tb, V2 );
+      integer okk = Lambert( P1, P2, tb-ta, 0, muS, VV1, VV2 );
+      if ( okk != 1 ) return Utils::Inf<real_type>();
+      return (V1-VV1).norm()+(V2-VV2).norm();
+    };
+    std::function<real_type(real_type const[])> F(fun);
+
+    real_type DeltaT = min(from_period,to_period)/16;
+
+    for ( DV_collect const & S : v_DV ) {
+
+      if ( S.DV > max_accepted_DV ) continue; // skip
+
+      real_type a_t0 = a_from.time_from_L_angle( t_begin, S.L_from );
+      real_type b_t0 = a_to.time_from_L_angle( t_begin, S.L_to );
+
+      for ( real_type ta = a_t0; ta < t_end; ta += from_period ) {
+
+        t_from_min = ta - DeltaT;
+        t_from_max = ta + DeltaT;
+
+        for ( real_type tb = b_t0; tb < t_end; tb += to_period ) {
+          if ( tb <= ta ) continue;
+
+          t_to_min = tb - DeltaT;
+          t_to_max = tb + DeltaT;
+
+          Utils::HJPatternSearch<real_type> solver("HJPatternSearch");
+          solver.setup( 2, F, console );
+          solver.set_tolerance( t_tolerance );
+          solver.set_max_iterations(HJ_max_iter);
+          real_type X[2] = {ta,tb};
+          solver.run( X, DeltaT/2 );
+          real_type DV = solver.get_last_solution( X );
+
+          if ( DV > max_accepted_DV ) continue;
+
+          real_type tt1 = X[0];
+          real_type tt2 = X[1];
+
+          dvec3_t  P1, V1, W1, P2, V2, W2;
+          a_from.position( tt1, P1 );
+          a_from.velocity( tt1, V1 );
+          a_to.position( tt2, P2 );
+          a_to.velocity( tt2, V2 );
+
+          integer okk = Lambert( P1, P2, tt2-tt1, 0, muS, W1, W2 );
+          trips.emplace_back( tt1, P1, V1, W1, tt2, P2, V2, W2 );
+        }
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+
   //!
   //!  Given two plates/asteroids find the best trips in term of DV
   //!  in a specific time range
@@ -554,231 +1019,4 @@ namespace AstroLib {
     );
   }
 
-  // ---------------------------------------------------------------------------
-
-  #define TABLE_SIZE 8
-
-  //!
-  //!  Given two plates/asteroids find the best possible theoretical DV.
-  //!
-  //!  \param[IN]  a_from        starting planet/asteroid
-  //!  \param[IN]  a_to          arrival planet/asteroid
-  //!  \param[IN]  day_tolerance tolerance for pattern search
-  //!  \param[IN]  console       pointer to console for printing
-  //!  \return  the minimal DV
-  //!
-  real_type
-  global_minimum_DeltaV(
-    Astro const &    a_from,
-    Astro const &    a_to,
-    real_type        day_tolerance,
-    Utils::Console * console
-  ) {
-
-    real_type L_table[TABLE_SIZE];
-    real_type DV_table[TABLE_SIZE][TABLE_SIZE];
-
-    real_type muS = a_from.get_muS();
-
-    real_type DeltaV1, DeltaV2;
-
-    dvec3_t R1[TABLE_SIZE], V1[TABLE_SIZE],
-            R2[TABLE_SIZE], V2[TABLE_SIZE],
-            W1, W2;
-
-    // prima tabella
-    real_type delta_L = m_2pi/TABLE_SIZE;
-    for ( integer i = 0 ; i < TABLE_SIZE ; ++i ) {
-      L_table[i] = i*delta_L;
-      a_from.position_by_L( L_table[i], R1[i] );
-      a_from.velocity_by_L( L_table[i], V1[i] );
-      a_to.position_by_L( L_table[i], R2[i] );
-      a_to.velocity_by_L( L_table[i], V2[i] );
-    }
-
-    // trovato minimo locale, raffino con Nelder Mead
-    auto fun = [ &a_from, &a_to, muS ] ( real_type const X[] )->real_type {
-      real_type La = X[0];
-      real_type Lb = X[1];
-      //if ( ! ( 0 <= La && La <= m_2pi && Lb  < L_from_begin || La > L_from_end || Lb < L_to_begin || Lb > L_to_end ) return Utils::Inf<real_type>();
-      dvec3_t P1, V1, P2, V2;
-      real_type DV1, DV2;
-      a_from.position_by_L( La, P1 );
-      a_from.velocity_by_L( La, V1 );
-      a_to.position_by_L( Lb, P2 );
-      a_to.velocity_by_L( Lb, V2 );
-      return minimum_DeltaV( muS, P1, V1, P2, V2, DV1, DV2, nullptr );
-    };
-    std::function<real_type(real_type const[])> F(fun);
-
-    // riempio tabella 8*8
-    for ( integer i = 0; i < TABLE_SIZE; ++i ) {
-      for ( integer j = 0; j < TABLE_SIZE; ++j ) {
-        DV_table[i][j] = minimum_DeltaV( muS, R1[i], V1[i], R2[j], V2[j], DeltaV1, DeltaV2, nullptr );
-      }
-    }
-
-    // cerco minimi locali
-    real_type DV_min = Utils::Inf<real_type>();
-    for ( integer i = 0; i < TABLE_SIZE; ++i ) {
-
-      integer im1{i-1}, ip1{i+1};
-      if      ( im1 < 0           ) im1 = TABLE_SIZE-1;
-      else if ( ip1 >= TABLE_SIZE ) ip1 = 0;
-
-      integer ii[] = { im1, i, ip1,
-                       im1,    ip1,
-                       im1, i, ip1 };
-
-      real_type La = L_table[i];
-
-      for ( integer j = 0 ; j < TABLE_SIZE ; ++j ) {
-        real_type DV = DV_table[i][j] ;
-
-        // calcolo primi vicini
-        integer jm1{j-1}, jp1{j+1};
-        if      ( jm1 < 0           ) jm1 = TABLE_SIZE-1;
-        else if ( jp1 >= TABLE_SIZE ) jp1 = 0;
-
-        integer jj[] = { jm1, jm1, jm1,
-                         j,        j,
-                         jp1, jp1, jp1 };
-
-        // controllo se minimo locale
-        bool ok_min = true;
-        for ( integer k=0 ; k < 8 && ok_min ; ++k )
-          ok_min = DV <= DV_table[ ii[k] ][ jj[k] ];
-
-        if ( !ok_min ) continue ;
-
-        // trovato minimo locale, raffino con Nelder Mead
-        real_type Lb = L_table[j];
-
-        //Utils::NelderMead<real_type> solver("NMsolver");
-        Utils::HJPatternSearch<real_type> solver("HJPatternSearch");
-        solver.setup( 2, F, console );
-        solver.set_tolerance( day_tolerance );
-        solver.set_max_iterations(100);
-        real_type X[2] = {La,Lb};
-        solver.run( X, delta_L );
-        DV = solver.get_last_solution( X );
-        // console->message( fmt::format( "X={}, Y={}\n", X[0], X[1] ) );
-        // confronto con minimo
-        if ( DV < DV_min ) DV_min = DV;
-      }
-    }
-    return DV_min;
-  }
-
-  //!
-  //!  Given two plates/asteroids find the best possible theoretical DV.
-  //!
-  //!  \param[IN]  a_from        starting planet/asteroid
-  //!  \param[IN]  a_to          arrival planet/asteroid
-  //!  \param[IN]  day_tolerance tolerance for pattern search
-  //!  \param[IN]  console       pointer to console for printing
-  //!  \return  the minimal DV
-  //!
-  real_type
-  global_minimum_DeltaV2(
-    Astro const &    a_from,
-    Astro const &    a_to,
-    real_type        day_tolerance,
-    Utils::Console * console
-  ) {
-
-    real_type L_table[TABLE_SIZE];
-    real_type DV_table[TABLE_SIZE][TABLE_SIZE];
-
-    real_type muS = a_from.get_muS();
-
-    real_type DeltaV1, DeltaV2;
-
-    dvec3_t R1[TABLE_SIZE], V1[TABLE_SIZE],
-            R2[TABLE_SIZE], V2[TABLE_SIZE],
-            W1, W2;
-
-    // prima tabella
-    real_type delta_L = m_2pi/TABLE_SIZE;
-    for ( integer i = 0 ; i < TABLE_SIZE ; ++i ) {
-      L_table[i] = i*delta_L;
-      a_from.position_by_L( L_table[i], R1[i] );
-      a_from.velocity_by_L( L_table[i], V1[i] );
-      a_to.position_by_L( L_table[i], R2[i] );
-      a_to.velocity_by_L( L_table[i], V2[i] );
-    }
-
-    // trovato minimo locale, raffino con Nelder Mead
-    auto fun = [ &a_from, &a_to, muS ] ( real_type const X[] )->real_type {
-      real_type La = X[0];
-      real_type Lb = X[1];
-      //if ( ! ( 0 <= La && La <= m_2pi && Lb  < L_from_begin || La > L_from_end || Lb < L_to_begin || Lb > L_to_end ) return Utils::Inf<real_type>();
-      dvec3_t P1, V1, P2, V2;
-      real_type DV1, DV2;
-      a_from.position_by_L( La, P1 );
-      a_from.velocity_by_L( La, V1 );
-      a_to.position_by_L( Lb, P2 );
-      a_to.velocity_by_L( Lb, V2 );
-      return minimum_DeltaV2( muS, P1, V1, P2, V2, DV1, DV2 );
-    };
-    std::function<real_type(real_type const[])> F(fun);
-
-    // riempio tabella 8*8
-    for ( integer i = 0; i < TABLE_SIZE; ++i ) {
-      for ( integer j = 0; j < TABLE_SIZE; ++j ) {
-        DV_table[i][j] = minimum_DeltaV2( muS, R1[i], V1[i], R2[j], V2[j], DeltaV1, DeltaV2 );
-      }
-    }
-
-    // cerco minimi locali
-    real_type DV_min = Utils::Inf<real_type>();
-    for ( integer i = 0; i < TABLE_SIZE; ++i ) {
-
-      integer im1{i-1}, ip1{i+1};
-      if      ( im1 < 0           ) im1 = TABLE_SIZE-1;
-      else if ( ip1 >= TABLE_SIZE ) ip1 = 0;
-
-      integer ii[] = { im1, i, ip1,
-                       im1,    ip1,
-                       im1, i, ip1 };
-
-      real_type La = L_table[i];
-
-      for ( integer j = 0 ; j < TABLE_SIZE ; ++j ) {
-        real_type DV = DV_table[i][j] ;
-
-        // calcolo primi vicini
-        integer jm1{j-1}, jp1{j+1};
-        if      ( jm1 < 0           ) jm1 = TABLE_SIZE-1;
-        else if ( jp1 >= TABLE_SIZE ) jp1 = 0;
-
-        integer jj[] = { jm1, jm1, jm1,
-                         j,        j,
-                         jp1, jp1, jp1 };
-
-        // controllo se minimo locale
-        bool ok_min = true;
-        for ( integer k=0 ; k < 8 && ok_min ; ++k )
-          ok_min = DV <= DV_table[ ii[k] ][ jj[k] ];
-
-        if ( !ok_min ) continue ;
-
-        // trovato minimo locale, raffino con Nelder Mead
-        real_type Lb = L_table[j];
-
-        //Utils::NelderMead<real_type> solver("NMsolver");
-        Utils::HJPatternSearch<real_type> solver("HJPatternSearch");
-        solver.setup( 2, F, console );
-        solver.set_tolerance( day_tolerance );
-        solver.set_max_iterations(100);
-        real_type X[2] = {La,Lb};
-        solver.run( X, delta_L );
-        DV = solver.get_last_solution( X );
-        // console->message( fmt::format( "X={}, Y={}\n", X[0], X[1] ) );
-        // confronto con minimo
-        if ( DV < DV_min ) DV_min = DV;
-      }
-    }
-    return DV_min;
-  }
 }

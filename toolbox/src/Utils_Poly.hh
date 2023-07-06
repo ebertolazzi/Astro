@@ -173,6 +173,8 @@ namespace Utils {
       Real    b;
       Integer va;
       Integer vb;
+      bool    a_on_root;
+      bool    b_on_root;
     };
 
     class Algo748_fun : public Algo748_base_fun<Real> {

@@ -23,7 +23,7 @@
 "=====================================================================================\n" \
 "\n" \
 "USAGE:\n" \
-"    [deltaV,deltaV2] = DeltaV(mu,P0,V0,P1,V1);\n" \
+"    [deltaV,deltaV2] = minimumDeltaV(mu,P0,V0,P1,V1);\n" \
 "\n"
 
 #define CHECK_IN(N) \
@@ -65,16 +65,6 @@ namespace AstroLib {
       std::copy_n( VV0, 3, V0.data() );
       std::copy_n( PP1, 3, P1.data() );
       std::copy_n( VV1, 3, V1.data() );
-/*
-  typedef struct {
-    bool      long_path;   // true se il minimo è sulla "long path"
-    bool      left_branch; // true se il minimo è sul "left branch"
-    real_type optimal_travel_time;
-    real_type period;
-    dvec3_t   W1;
-    dvec3_t   W2;
-  } minimum_DeltaV_extra;
-*/
 
       real_type * DV  = Utils::mex_create_matrix_value( arg_out_0, 3, 1 );
       real_type * DV2 = Utils::mex_create_matrix_value( arg_out_1, 3, 1 );

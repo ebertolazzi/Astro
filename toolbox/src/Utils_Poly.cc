@@ -639,83 +639,101 @@ namespace Utils {
   template <typename Real>
   typename Sturm<Real>::Integer
   Sturm<Real>::separate_roots( Real a_in, Real b_in ) {
-    Real a{a_in}, b{b_in};
-    m_a = a;
-    m_b = b;
-    bool on_root_a, on_root_b;
-    Integer va = sign_variations(a,on_root_a);
-    Integer vb = sign_variations(b,on_root_b);
+    using std::abs;
+    using std::max;
 
-    while ( on_root_a ) {
-      // on root, move interval a
-      a -= Real(1e-8)*(b-a);
-      va = sign_variations(a,on_root_a);
+    m_intervals.clear();
+    m_intervals.reserve( m_sturm.size() );
+
+    Interval I0, I1;
+    m_a = I0.a = a_in;
+    m_b = I0.b = b_in;
+
+    I0.va = sign_variations( I0.a, I0.a_on_root );
+    I0.vb = sign_variations( I0.b, I0.b_on_root );
+
+    Integer n_roots = std::abs( I0.va - I0.vb );
+
+    if ( n_roots <= 1 ) {
+      if ( n_roots == 1 && !I0.a_on_root && !I0.b_on_root ) {
+        m_intervals.push_back(I0);
+      }
+      if ( I0.a_on_root ) {
+        I1.a  = I1.b  = I0.a;
+        I1.va = I1.vb = I0.va;
+        I1.a_on_root = I1.b_on_root = true;
+        m_intervals.push_back(I1);
+      }
+      if ( I0.b_on_root ) {
+        I1.a  = I1.b  = I0.b;
+        I1.va = I1.vb = I0.vb;
+        I1.a_on_root = I1.b_on_root = true;
+        m_intervals.push_back(I1);
+      }
+      return m_intervals.size();
     }
-    while ( on_root_b ) {
-      // on root, move interval a
-      b += Real(1e-8)*(b-a);
-      vb = sign_variations(b,on_root_b);
-    }
-
-    Integer n_roots = std::abs( va - vb );
-
-    if ( n_roots == 0 ) return 0;
-
-    m_intervals.resize( n_roots );
-    Interval & I0 = m_intervals[0];
-    I0.a = a; I0.va = va;
-    I0.b = b; I0.vb = vb;
-
-    if ( n_roots == 1 ) return 1;
 
     // search intervals
-    Integer i_pos = 0;
-    Integer n_seg = 1;
-    while ( i_pos < n_roots ) {
-      Interval & I = m_intervals[i_pos];
-      // refine segment
-      Real    c  = (I.a+I.b)/2;
-      bool    on_root_c;
-      Integer vc = sign_variations(c,on_root_c);
-
-      if ( on_root_c ) {
-        for ( Integer iter = 2; iter <= 20 && on_root_c; ++iter ) {
-          c  = (I.a*iter+I.b)/(1+iter);
-          vc = sign_variations(c,on_root_c);
-          if ( on_root_c ) {
-            c  = (I.a+I.b*iter)/(1+iter);
-            vc = sign_variations(c,on_root_c);
+    vector<Interval> I_stack; I_stack.clear(); I_stack.reserve(m_sturm.size());
+    I_stack.push_back(I0);
+    while ( I_stack.size() > 0 ) {
+      I0 = I_stack.back(); I_stack.pop_back();
+      // controllo se una sola radice
+      n_roots = std::abs( I0.va - I0.vb );
+      if ( n_roots <= 1 ) {
+        if ( I0.a_on_root ) {
+          I0.b         = I0.a;
+          I0.vb        = I0.va;
+          I0.b_on_root = true;
+          m_intervals.push_back(I0);
+        } else if ( I0.b_on_root ) {
+          I0.a         = I0.b;
+          I0.va        = I0.vb;
+          I0.a_on_root = true;
+          m_intervals.push_back(I0);
+        } else if ( n_roots == 1 ) {
+          m_intervals.push_back(I0);
+        }
+      } else if ( abs(I0.b-I0.a) <= 10*machine_eps<Real>()*max(Real(1),max(abs(I0.b),abs(I0.a))) ) {
+        I1.a  = I1.b  = I0.a;
+        I1.va = I1.vb = 0;
+        I1.a_on_root = I1.b_on_root = true;
+        I_stack.push_back(I1);
+      } else {
+        Real    c  = (I0.a+I0.b)/2;
+        bool    c_on_root;
+        Integer vc = sign_variations( c, c_on_root );
+        // check interval [a,c]
+        if ( I0.va != vc || c_on_root || I0.a_on_root ) {
+          if ( c < I1.b ) { // check if it is a true reduction
+            I1.a = I0.a; I1.va = I0.va; I1.a_on_root = I0.a_on_root;
+            I1.b = c;    I1.vb = vc;    I1.b_on_root = c_on_root;
+            I_stack.push_back(I1);
+          } else if ( c_on_root ) {
+            I1.a         = I1.b         = c;
+            I1.a_on_root = I1.b_on_root = true;
+            I1.va        = I1.vb        = 0;
+            I_stack.push_back(I1);
+          } else if ( I0.a_on_root ) {
+            I1.a         = I1.b         = I0.a;
+            I1.a_on_root = I1.b_on_root = true;
+            I1.va        = I1.vb        = 0;
+            I_stack.push_back(I1);
           }
         }
-      }
-      UTILS_ASSERT(
-        !on_root_c,
-        "Sturm<Real>::separate_roots(a={},b={}), failed\n",
-        m_a, m_b
-      );
-      if ( I.va == vc ) { // LO <- c
-        I.a  = c;
-        I.va = vc;
-      } else if ( I.vb == vc ) { // HI <- c
-        I.b  = c;
-        I.vb = vc;
-      } else { // split interval!
-
-        // second interval
-        Interval & I1 = m_intervals[n_seg];
-        I1.a = c;   I1.va = vc;
-        I1.b = I.b; I1.vb = I.vb;
-
-        // first interval
-        I.b = c; I.vb = vc;
-
-        ++n_seg;
-        // skip interval with sign variation == 1
-        while ( i_pos < n_seg ) {
-          Interval const & I2 = m_intervals[i_pos];
-          if ( std::abs( I2.vb - I2.va ) > 1 ) break; // found interval to be analysed
-          ++i_pos;
-        };
+        // check interval [c,b]
+        if ( I0.vb != vc || I0.b_on_root ) {
+          if ( c > I0.a ) {
+            I1.a = c;    I1.va = vc;    I1.a_on_root = c_on_root;
+            I1.b = I0.b; I1.vb = I0.vb; I1.b_on_root = I0.b_on_root;
+            I_stack.push_back(I1);
+          } else if ( I0.b_on_root ) {
+            I1.a         = I1.b         = I0.b;
+            I1.a_on_root = I1.b_on_root = true;
+            I1.va        = I1.vb        = 0;
+            I_stack.push_back(I1);
+          }
+        }
       }
     }
     // sort intervals
@@ -724,7 +742,7 @@ namespace Utils {
       m_intervals.end(),
       []( Interval const & Sa, Interval const & Sb ) { return Sa.a < Sb.a; }
     );
-    return n_roots;
+    return m_intervals.size();
   }
 
   /*
@@ -749,9 +767,14 @@ namespace Utils {
     m_roots.resize( m_intervals.size() );
     Integer n = 0;
     for ( auto & I : m_intervals ) {
-      m_roots.coeffRef(n++) = m_solver.eval( I.a, I.b, &m_fun );
-      if ( !m_solver.converged() )
-        fmt::print( "Warning: Sturm<Real>::refine_roots failed at interval N.{}\n", n );
+      Real & r = m_roots.coeffRef(n++);
+      if      ( I.a_on_root ) r = I.a;
+      else if ( I.b_on_root ) r = I.b;
+      else {
+        r = m_solver.eval( I.a, I.b, &m_fun );
+        if ( !m_solver.converged() )
+          fmt::print( "Warning: Sturm<Real>::refine_roots failed at interval N.{}\n", n );
+      }
     }
   }
 

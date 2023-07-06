@@ -58,7 +58,9 @@ set(
   MEX_CMDS
   AstroMexWrapper
   Lambert
-  DeltaV
+  minimumDeltaV
+  globalMinimumDeltaV
+  globalMinimumDeltaV2
   Check_EQ_for_consistency
 )
 

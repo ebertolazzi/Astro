@@ -653,20 +653,53 @@ namespace AstroLib {
     integer                       max_subiter
   );
 
-  real_type
+  class DV_collect {
+  public:
+    real_type DV{0};
+    real_type L_from{0};
+    real_type L_to{0};
+    DV_collect( real_type _DV, real_type _L_from, real_type _L_to )
+    : DV(_DV), L_from(_L_from), L_to(_L_to) {}
+  };
+
+  void
   global_minimum_DeltaV(
-    Astro const &    a_from,
-    Astro const &    a_to,
-    real_type        day_tolerance,
-    Utils::Console * console
+    Astro const        & a_from,
+    Astro const        & a_to,
+    vector<DV_collect> & v_DV,
+    Utils::Console     * console
   );
 
-  real_type
+  void
+  global_minimum_DeltaV(
+    Astro const                 & a_from,
+    Astro const                 & a_to,
+    real_type                     t_begin,
+    real_type                     t_end,
+    real_type                     t_tolerance,
+    real_type                     max_accepted_DV,
+    vector<minimum_DeltaV_trip> & trips,
+    Utils::Console              * console
+  );
+
+  void
   global_minimum_DeltaV2(
-    Astro const &    a_from,
-    Astro const &    a_to,
-    real_type        day_tolerance,
-    Utils::Console * console
+    Astro const        & a_from,
+    Astro const        & a_to,
+    vector<DV_collect> & v_DV,
+    Utils::Console     * console
+  );
+
+  void
+  global_minimum_DeltaV2(
+    Astro const                 & a_from,
+    Astro const                 & a_to,
+    real_type                     t_begin,
+    real_type                     t_end,
+    real_type                     t_tolerance,
+    real_type                     max_accepted_DV,
+    vector<minimum_DeltaV_trip> & trips,
+    Utils::Console              * console
   );
 
   real_type

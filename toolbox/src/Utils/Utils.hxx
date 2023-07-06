@@ -376,6 +376,9 @@ namespace Utils {
     N |= N >> 32;
     return tab64[uint64_t((N - (N>>1))*0x07EDD5E59A4E28C2) >> 58];
   }
+
+  string progress_bar( double progress, int width );
+
 }
 
 ///
