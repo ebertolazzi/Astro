@@ -23,9 +23,8 @@
 #pragma clang diagnostic ignored "-Wglobal-constructors"
 #endif
 
-using AstroLib::real_type;
-using AstroLib::integer;
 using Utils::m_pi;
+using namespace AstroLib;
 
 real_type const MJD_begin = 64328; // January 1, 2035, 00:00:00
 real_type const MJD_end   = 69807; // January 1, 2050, 00:00:00
@@ -131,8 +130,16 @@ main() {
   Utils::Console console(&std::cout,4);
 
   #if 1
-  real_type DV  = global_minimum_DeltaV( E, M, 0.01, &console );
-  real_type DV2 = global_minimum_DeltaV2( E, M, 0.01, &console );
+  vector<DV_collect> v_DV;
+  integer            TABLE_SIZE{8};
+  integer            HJ_max_iter{100};
+  //Utils::Console     * console
+
+  global_minimum_DeltaV( E, M, v_DV, TABLE_SIZE, HJ_max_iter, &console );
+  real_type DV = v_DV.front().DV;
+  global_minimum_DeltaV2( E, M, v_DV, TABLE_SIZE, HJ_max_iter, &console );
+  real_type DV2 = v_DV.front().DV;
+
   fmt::print(
     "(UA/Y) DV = {:.8}\n"
     "(km/s) DV = {:.8}\n\n",
