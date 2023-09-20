@@ -73,6 +73,10 @@ list(FILTER PRIVATE_HEADERS EXCLUDE REGEX ".*.tmpl$")
 # extra include directory for compilation
 include_directories( ./lib3rd/include )
 
+if ( APPLE )
+  set( CMAKE_OSX_ARCHITECTURES arm64;x86_64 )
+endif()
+
 #       _                           _                 _
 #    __| | ___ _ __   ___ _ __   __| | ___ _ __   ___(_) ___  ___
 #   / _` |/ _ \ '_ \ / _ \ '_ \ / _` |/ _ \ '_ \ / __| |/ _ \/ __|
