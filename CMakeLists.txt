@@ -73,8 +73,8 @@ list(FILTER PRIVATE_HEADERS EXCLUDE REGEX ".*.tmpl$")
 # extra include directory for compilation
 include_directories( ./lib3rd/include )
 
-if( EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../CMakeLists-customize.txt" )
-  include(../CMakeLists-customize.txt)
+if( EXISTS "${CMAKE_CURRENT_LIST_DIR}/../CMakeLists-customize.txt" )
+  include(${CMAKE_CURRENT_LIST_DIR}/../CMakeLists-customize.txt)
 endif()
 
 #       _                           _                 _
