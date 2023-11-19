@@ -73,8 +73,8 @@ list(FILTER PRIVATE_HEADERS EXCLUDE REGEX ".*.tmpl$")
 # extra include directory for compilation
 include_directories( ./lib3rd/include )
 
-if ( APPLE )
-  set( CMAKE_OSX_ARCHITECTURES arm64;x86_64 )
+if( EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../CMakeLists-customize.txt" )
+  include(../CMakeLists-customize.txt)
 endif()
 
 #       _                           _                 _
