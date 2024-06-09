@@ -12,15 +12,28 @@
 cmake_minimum_required(VERSION 3.14)
 
 project( Astro )
-include(./cmake_utils/CMakeLists-common.txt)
+
+
+if (IS_DIRECTORY "${PROJECT_SOURCE_DIR}/cmake_utils")
+  set( HOME "${PROJECT_SOURCE_DIR}/cmake_utils/" )
+else()
+  if (IS_DIRECTORY "${PROJECT_SOURCE_DIR}/../cmake_utils")
+    set( HOME "${PROJECT_SOURCE_DIR}/../cmake_utils/" )
+  else()
+    set( HOME "${PROJECT_SOURCE_DIR}/../../cmake_utils/" )
+  endif()
+endif()
+
+
+include( "${HOME}/CMakeLists-common.txt" )
 
 project(
   ${PROJECT_NAME}
   VERSION ${UTILS_PROJECT_VERSION}
 )
 
-include(./cmake_utils/CMakeLists-cflags.txt)
-include(./cmake_utils/CMakeLists-utilities.txt)
+include( "${HOME}/CMakeLists-cflags.txt" )
+include( "${HOME}/CMakeLists-utilities.txt" )
 
 # Evaluating the suffix to append to target built by this CMake file
 utils_artifacts_suffix(ARTIFACTS_STATIC_SUFFIX TRUE)
@@ -87,59 +100,9 @@ endif()
 set(DEPEND_TARGETS)
 
 # DEPENDENCIES (TRY TO USE ALREADY COMPILED SUBMODULE IN LARGE PROJECT)
-set(UPDIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
-find_library(
-  UTILS Utils${ARTIFACTS_STATIC_SUFFIX}
-  HINTS ${UPDIR}/Utils/lib/lib
-  NO_DEFAULT_PATH
-)
-if( UTILS )
-  message(STATUS "Found Utils${ARTIFACTS_STATIC_SUFFIX}")
-  utils_copy_directory(
-    "${UPDIR}/Utils/lib"
-    "${CMAKE_CURRENT_SOURCE_DIR}/lib3rd"
-  )
-else()
-  message(STATUS "NOT Found Utils${ARTIFACTS_STATIC_SUFFIX} use submodule")
-  add_subdirectory(./submodules/Utils)
-  include_directories(./submodules/Utils/src)
-  set( UTILS utils_Utils_Static )
-  set( DEPEND_TARGETS ${DEPEND_TARGETS} ${UTILS} )
-endif()
-
-# DEPENDENCIES (TRY TO USE ALREADY COMPILED SUBMODULE IN LARGE PROJECT)
-find_library(
-  ROOTS quarticRootsFlocke${ARTIFACTS_STATIC_SUFFIX}
-  HINTS ${UPDIR}/quarticRootsFlocke/lib/lib
-  NO_DEFAULT_PATH
-)
-if( ROOTS )
-  message(STATUS "Found quarticRootsFlocke${ARTIFACTS_STATIC_SUFFIX}")
-  include_directories(${UPDIR}/quarticRootsFlocke/lib/include)
-else()
-  message(STATUS "NOT Found quarticRootsFlocke${ARTIFACTS_STATIC_SUFFIX}")
-  add_subdirectory(./submodules/quarticRootsFlocke)
-  include_directories(./submodules/quarticRootsFlocke/src)
-  set( ROOTS utils_quarticRootsFlocke_Static )
-  set( DEPEND_TARGETS ${DEPEND_TARGETS} ${ROOTS} )
-endif()
-
-# DEPENDENCIES (TRY TO USE ALREADY COMPILED SUBMODULE IN LARGE PROJECT)
-find_library(
-  GC GenericContainer${ARTIFACTS_STATIC_SUFFIX}
-  HINTS ${UPDIR}/GC/lib/lib
-  NO_DEFAULT_PATH
-)
-if( GC )
-  message(STATUS "Found GenericContainer${ARTIFACTS_STATIC_SUFFIX}")
-  include_directories(${UPDIR}/GC/lib/include)
-else()
-  message(STATUS "NOT Found GenericContainer${ARTIFACTS_STATIC_SUFFIX}")
-  add_subdirectory(./submodules/GenericContainer)
-  include_directories(./submodules/GenericContainer/include)
-  set( GC utils_GenericContainer_Static )
-  set( DEPEND_TARGETS ${DEPEND_TARGETS} ${GC} )
-endif()
+utils_add_library_or_submodule( "quarticRootsFlocke" ROOTS )
+utils_add_library_or_submodule( "UtilsLite" UTILS )
+utils_add_library_or_submodule( "GenericContainer" GC "GC" )
 
 #   _____                  _
 #  |_   _|_ _ _ _ __ _ ___| |_ ___
@@ -229,6 +192,6 @@ install(
 #                       |___/
 #
 
-include( ./cmake_utils/CMakeLists-cpack.txt )
+include( "${HOME}/CMakeLists-cpack.txt" )
 
 utils_final_messages()

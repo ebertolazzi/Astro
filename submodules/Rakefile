@@ -21,7 +21,7 @@ end
 
 desc "build for OSX"
 task :build_osx do
-  FileUtils.cd "Utils"
+  FileUtils.cd "UtilsLite"
   sh "rake clean_osx"
   sh "rake build_osx"
   #FileUtils.cd "../quarticRootsFlocke"
@@ -36,7 +36,7 @@ end
 
 desc "build for LINUX"
 task :build_linux do
-  FileUtils.cd "Utils"
+  FileUtils.cd "UtilsLite"
   sh "rake clean_linux"
   sh "rake build_linux"
   #FileUtils.cd "../quarticRootsFlocke"
@@ -51,7 +51,7 @@ end
 
 desc "build for Visual Studio"
 task :build_win do
-  FileUtils.cd "Utils"
+  FileUtils.cd "UtilsLite"
   sh "rake clean_win"
   sh "rake build_win"
   #FileUtils.cd "../quarticRootsFlocke"
@@ -66,7 +66,7 @@ end
 
 desc "clean for OSX"
 task :clean_osx do
-  FileUtils.cd "Utils"
+  FileUtils.cd "UtilsLite"
   sh "rake clean_osx"
   #FileUtils.cd "../quarticRootsFlocke"
   #sh "rake clean_osx"
@@ -77,7 +77,7 @@ end
 
 desc "clean for LINUX"
 task :clean_linux do
-  FileUtils.cd "Utils"
+  FileUtils.cd "UtilsLite"
   sh "rake clean_linux"
   #FileUtils.cd "../quarticRootsFlocke"
   #sh "rake clean_linux"
@@ -88,7 +88,7 @@ end
 
 desc "clean for WINDOWS"
 task :clean_win do |t, args|
-  FileUtils.cd "Utils"
+  FileUtils.cd "UtilsLite"
   sh "rake clean_win"
   #FileUtils.cd "../quarticRootsFlocke"
   #sh "rake clean_win"
