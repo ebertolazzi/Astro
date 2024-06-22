@@ -27,9 +27,15 @@
   #include "GenericContainer/GenericContainer.hh"
 #endif
 
-#include "Utils.hh"
-#include "Utils_eigen.hh"
-#include "Utils_Poly.hh"
+#ifdef NO_SYSTEM_UTILS
+  #include "Utils.hh"
+  #include "Utils_eigen.hh"
+  #include "Utils_Poly.hh"
+#else
+  #include <Utils.hh>
+  #include <Utils_eigen.hh>
+  #include <Utils_Poly.hh>
+#endif
 
 namespace AstroLib {
   using GC_namespace::GenericContainer;

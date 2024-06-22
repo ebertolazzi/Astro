@@ -19,7 +19,6 @@
 \*--------------------------------------------------------------------------*/
 
 #include "Astro.hh"
-//#include "Utils_NelderMead.hh"
 #include "Utils_HJPatternSearch.hh"
 #include "PolynomialRoots.hh"
 
