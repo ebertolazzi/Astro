@@ -1,0 +1,6 @@
+# git submodule status --recursive
+cmake_utils: main
+submodules/GenericContainer: main
+submodules/UtilsLite: main
+submodules/quarticRootsFlocke: main
+...
