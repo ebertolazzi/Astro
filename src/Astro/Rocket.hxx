@@ -19,8 +19,8 @@
 
 #pragma once
 
-#ifndef MECHATRONIX_ASTRO_LOCAL_ROCKET_dot_HH
-#define MECHATRONIX_ASTRO_LOCAL_ROCKET_dot_HH
+#ifndef ASTRO_LOCAL_ROCKET_dot_HH
+#define ASTRO_LOCAL_ROCKET_dot_HH
 
 #ifndef ASTRO_dot_HH
   #include "Astro.hh"
