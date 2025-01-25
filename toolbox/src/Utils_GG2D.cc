@@ -17,11 +17,18 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-///
-/// file: Utils_GG2D.cc
-///
+//
+// file: Utils_GG2D.cc
+//
+
+#if defined(__llvm__) || defined(__clang__)
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+#pragma clang diagnostic ignored "-Wduplicate-enum"
+#endif
 
 #include "Utils_GG2D.hh"
+#include "Utils_fmt.hh"
+
 #include <cmath>
 
 namespace Utils {
@@ -189,6 +196,6 @@ namespace Utils {
 
 }
 
-///
-/// eof: Utils_GG2D.cc
-///
+//
+// eof: Utils_GG2D.cc
+//

@@ -17,11 +17,21 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-///
-/// eof: ThreadUtils.hxx
-///
+//
+// file: ThreadUtils.hxx
+//
+
+#include <functional>
+#include <iostream>
+#include <type_traits>
+#include <utility>
 
 namespace Utils {
+
+  /*!
+   * \addtogroup THREAD
+   * @{
+   */
 
   #ifdef UTILS_OS_WINDOWS
     #define UTILS_SEMAPHORE Utils::WinSemaphore
@@ -42,31 +52,11 @@ namespace Utils {
 
   public:
 
-    WinMutex() : m_mutex(NULL) {
-      m_mutex = CreateMutex(
-        NULL,  // no security descriptor
-        FALSE, // mutex not owned
-        NULL   // object name
-      );
-      UTILS_ASSERT(
-        m_mutex != NULL,
-        "WinMutex(): error: {}.\n", GetLastError()
-      );
-    }
-
+    WinMutex();
     ~WinMutex() { CloseHandle(m_mutex); }
 
-    void
-    lock() {
-    	DWORD res = WaitForSingleObject(m_mutex, INFINITE);
-      UTILS_ASSERT0( res == WAIT_OBJECT_0, "WinMutex::lock, WAIT_TIMEOUT" );
-    }
-
-    void
-    unlock() {
-    	DWORD res = ReleaseMutex(m_mutex);
-      UTILS_ASSERT0( res == WAIT_OBJECT_0, "WinMutex::lock, WAIT_TIMEOUT" );
-    }
+    void lock();
+    void unlock();
 
   };
 
@@ -78,7 +68,7 @@ namespace Utils {
     ~WinCriticalSection() { DeleteCriticalSection(&m_critical); }
     void lock() {	EnterCriticalSection(&m_critical); }
     void unlock() {	LeaveCriticalSection(&m_critical); }
-    bool try_lock() {	return TRUE == TryEnterCriticalSection(&m_critical); }
+    bool try_lock() {	return TryEnterCriticalSection(&m_critical) ? true : false; }
     void wait() {	lock(); unlock(); }
     CRITICAL_SECTION const & data() const { return m_critical; }
     CRITICAL_SECTION       & data()       { return m_critical; }
@@ -214,7 +204,7 @@ namespace Utils {
   public:
     SpinLock() : m_lock(false) { }
     SpinLock( SpinLock const & ) = delete;
-    ~SpinLock() UTILS_DEFAULT;
+    ~SpinLock() = default;
 
     void
     wait() {
@@ -367,9 +357,8 @@ namespace Utils {
     //!
     void
     green() noexcept {
-      m_mutex.lock();
+      std::unique_lock<std::mutex> lock( m_mutex );
       m_is_red = false;
-      m_mutex.unlock();
       if      ( m_waiting_green > 1 ) m_cv_green.notify_all();
       else if ( m_waiting_green > 0 ) m_cv_green.notify_one();
     }
@@ -379,9 +368,8 @@ namespace Utils {
     //!
     void
     red() noexcept {
-      m_mutex.lock();
+      std::unique_lock<std::mutex> lock( m_mutex );
       m_is_red = true;
-      m_mutex.unlock();
       if      ( m_waiting_red > 1 ) m_cv_red.notify_all();
       else if ( m_waiting_red > 0 ) m_cv_red.notify_one();
     }
@@ -391,11 +379,10 @@ namespace Utils {
     //!
     void
     wait() noexcept {
-      m_mutex.lock();
+      std::unique_lock<std::mutex> lock( m_mutex );
       ++m_waiting_green;
-      m_cv_green.wait( m_mutex, [&]()->bool { return !m_is_red; } );
+      while ( m_is_red ) m_cv_green.wait( m_mutex );
       --m_waiting_green;
-      m_mutex.unlock();
     }
 
     //!
@@ -403,11 +390,10 @@ namespace Utils {
     //!
     void
     wait_red() noexcept {
-      m_mutex.lock();
+      std::unique_lock<std::mutex> lock( m_mutex );
       ++m_waiting_red;
-      m_cv_red.wait( m_mutex, [&]()->bool { return m_is_red; } );
+      while ( !m_is_red ) m_cv_red.wait( m_mutex );
       --m_waiting_red;
-      m_mutex.unlock();
     }
 
   };
@@ -478,7 +464,7 @@ namespace Utils {
     #ifdef UTILS_OS_WINDOWS
     WaitWorker() { n_worker = 0; }
     #else
-    WaitWorker() UTILS_DEFAULT;
+    WaitWorker() = default;
     #endif
 
     void
@@ -633,7 +619,7 @@ namespace Utils {
     ~at_scope_exit_impl() { if (m_active) m_destructor(); }
   };
 
-  /**
+  /*!
    * Create a variable that when destructed at the end of the scope
    * executes a destructor function.
    *
@@ -658,8 +644,104 @@ namespace Utils {
   auto at_scope_exit(Function const & fun) -> at_scope_exit_impl<Function const &>
   { return at_scope_exit_impl<Function const &>(fun); }
 
+  /*!
+   * Create a class that wrap std::function<T> into a non copyable object
+   *
+   */
+
+  // from https://coliru.stacked-crooked.com/a/933248d6a9f07094
+  template<typename T>
+  class unique_function : public std::function<T> {
+    template<typename Fn, typename En = void> struct wrapper;
+
+    // specialization for CopyConstructible Fn
+    template<typename Fn>
+    struct wrapper<Fn, std::enable_if_t< std::is_copy_constructible<Fn>::value >>
+    {
+      Fn fn;
+      template<typename... Args>
+      auto operator()(Args&&... args) { return fn(std::forward<Args>(args)...); }
+    };
+
+    // specialization for MoveConstructible-only Fn
+    template<typename Fn>
+    struct wrapper<Fn, std::enable_if_t< !std::is_copy_constructible<Fn>::value && std::is_move_constructible<Fn>::value >>
+    {
+      Fn fn;
+
+      wrapper(Fn&& fn) : fn(std::forward<Fn>(fn)) { }
+
+      wrapper(wrapper&&) = default;
+      wrapper& operator=(wrapper&&) = default;
+
+      // these two functions are instantiated by std::function
+      // and are never called
+      wrapper(const wrapper& rhs) : fn(const_cast<Fn&&>(rhs.fn)) { throw 0; } // hack to initialize fn for non-DefaultContructible types
+      
+      wrapper& operator=(wrapper&) { throw 0; }
+
+      template<typename... Args> auto operator()(Args&&... args) { return fn(std::forward<Args>(args)...); }
+    };
+
+    using base = std::function<T>;
+
+  public:
+    unique_function() noexcept = default;
+    unique_function(std::nullptr_t) noexcept : base(nullptr) { }
+
+    template<typename Fn>
+    unique_function(Fn&& f) : base(wrapper<Fn>{ std::forward<Fn>(f) }) { }
+
+    unique_function(unique_function&&) = default;
+    unique_function& operator=(unique_function&&) = default;
+
+    unique_function& operator=(std::nullptr_t) { base::operator=(nullptr); return *this; }
+
+    template<typename Fn>
+    unique_function& operator=(Fn&& f)
+    { base::operator=(wrapper<Fn>{ std::forward<Fn>(f) }); return *this; }
+
+    using base::operator();
+  };
+  
+  /*
+  using std::cout; using std::endl;
+
+  struct move_only {
+    move_only(std::size_t) { }
+
+    move_only(move_only&&) = default;
+    move_only& operator=(move_only&&) = default;
+
+    move_only(move_only const&) = delete;
+    move_only& operator=(move_only const&) = delete;
+
+    void operator()() { cout << "move_only" << endl; }
+  };
+
+  int main()
+  {
+    using fn = unique_function<void()>;
+
+    fn f0;
+    fn f1 { nullptr };
+    fn f2 { [](){ cout << "f2" << endl; } }; f2();
+    fn f3 { move_only(42) }; f3();
+    fn f4 { std::move(f2) }; f4();
+
+    f0 = std::move(f3); f0();
+    f0 = nullptr;
+    f2 = [](){ cout << "new f2" << endl; }; f2();
+    f3 = move_only(69); f3();
+
+    return 0;
+  }
+  */
+
+  /*! @} */
+
 }
 
-///
-/// eof: ThreadUtils.hxx
-///
+//
+// eof: ThreadUtils.hxx
+//

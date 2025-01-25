@@ -1,90 +1,112 @@
-/**
- */
+/*--------------------------------------------------------------------------*\
+ |                                                                          |
+ |  Copyright (C) 2025                                                      |
+ |                                                                          |
+ |         , __                 , __                                        |
+ |        /|/  \               /|/  \                                       |
+ |         | __/ _   ,_         | __/ _   ,_                                |
+ |         |   \|/  /  |  |   | |   \|/  /  |  |   |                        |
+ |         |(__/|__/   |_/ \_/|/|(__/|__/   |_/ \_/|/                       |
+ |                           /|                   /|                        |
+ |                           \|                   \|                        |
+ |                                                                          |
+ |      Enrico Bertolazzi                                                   |
+ |      Dipartimento di Ingegneria Industriale                              |
+ |      Universita` degli Studi di Trento                                   |
+ |      email: enrico.bertolazzi@unitn.it                                   |
+ |                                                                          |
+\*--------------------------------------------------------------------------*/
 
-///
-/// file: ThreadPool4.hxx
-///
+//
+// file: ThreadPool4.hxx
+//
+
+#include "3rd/task_thread_pool.hpp"
 
 namespace Utils {
 
+  /*!
+   * \addtogroup THREAD
+   * @{
+   */
+
+  /*\
+   |   _____ _                        _ ____             _
+   |  |_   _| |__  _ __ ___  __ _  __| |  _ \ ___   ___ | |
+   |    | | | '_ \| '__/ _ \/ _` |/ _` | |_) / _ \ / _ \| |
+   |    | | | | | | | |  __/ (_| | (_| |  __/ (_) | (_) | |
+   |    |_| |_| |_|_|  \___|\__,_|\__,_|_|   \___/ \___/|_|
+  \*/
+  //!
+  //! \brief A thread pool for concurrent task execution with worker management.
+  //!
+  //! The `ThreadPool4` class provides an implementation of a thread pool that
+  //! allows for efficient concurrent execution of tasks. This class manages a
+  //! collection of worker threads that can be dynamically resized, and utilizes
+  //! a semaphore-based mechanism for worker synchronization.
+  //!
+  //! This class extends `ThreadPoolBase` and supports task execution, joining,
+  //! and resizing of worker threads.
+  //!
   class ThreadPool4 : public ThreadPoolBase {
 
-    using real_type = double;
-    using TaskData  = tp::Queue::TaskData;
-
-    std::atomic<bool>        m_done;
-    std::atomic<unsigned>    m_running_task;
-    std::atomic<unsigned>    m_running_thread;
-    std::vector<std::thread> m_worker_threads;
-    tp::Queue                m_work_queue; // not thread safe
-    SpinLock                 m_work_on_queue_mutex;
-
-    // -----------------------------------------
-    std::condition_variable_any m_queue_pop_cv;
-    std::atomic<unsigned>       m_pop_waiting;
-    // -----------------------------------------
-    std::condition_variable_any m_queue_push_cv;
-    std::atomic<unsigned>       m_push_waiting;
-    // -----------------------------------------
-
-    TicToc                   m_tm;
-    std::vector<real_type>   m_job_ms;
-    std::vector<real_type>   m_pop_ms;
-    std::vector<unsigned>    m_n_job;
-    real_type                m_push_ms;
-
-    inline
-    void
-    nano_sleep() const
-    #ifdef UTILS_OS_WINDOWS
-    { Sleep(0); }
-    #else
-    { sleep_for_nanoseconds(1); }
-    //{ std::this_thread::yield(); }
-    #endif
-
-    TaskData * pop_task();
-    void push_task( TaskData * task );
-
-    void
-    worker_thread(
-      real_type & pop_ms,
-      real_type & job_ms,
-      unsigned  & n_job
-    );
-
-    void create_workers( unsigned thread_count );
+    task_thread_pool::task_thread_pool m_pool;
 
   public:
 
-    explicit
+    //!
+    //! \brief Constructs a new ThreadPool5 instance with a specified number of threads.
+    //!
+    //! \param nthread The number of threads to create in the pool. Defaults to the maximum hardware threads available.
+    //!
     ThreadPool4(
-      unsigned thread_count   = std::thread::hardware_concurrency(),
-      unsigned queue_capacity = 0
-    );
+      unsigned nthread = std::max(
+        unsigned(1),
+        unsigned(std::thread::hardware_concurrency()-1)
+      )
+    ) : m_pool( nthread ) {}
 
-    virtual ~ThreadPool4() { join(); }
+    //!
+    //! \brief Destructor for the ThreadPool5 class.
+    //!
+    //! Ensures all workers are stopped and joined before destruction.
+    //!
+    virtual ~ThreadPool4() {}
 
-    void resize( unsigned thread_count ) override { resize( thread_count, 0 ); }
-    void resize( unsigned thread_count, unsigned queue_capacity );
+    //!
+    //! \brief Executes a task and assigns it to an available worker.
+    //!
+    //! \param fun The function to be executed as a task.
+    //!
+    void exec( FUN && fun ) override { m_pool.submit_detach( std::move(fun) ); }
 
-    void
-    exec( std::function<void()> && fun ) override
-    { push_task( new TaskData(std::move(fun)) ); }
+    //!
+    //! \brief Waits for all tasks to be completed.
+    //!
+    void wait() override { m_pool.wait_for_tasks(); }
 
-    void wait() override;
+    //!
+    //! \brief Gets the current number of threads in the pool.
+    //!
+    //! \return The number of threads in the pool.
+    //!
+    unsigned thread_count() const override { return unsigned( m_pool.get_num_threads() ); }
 
-    void join() override;
-    void info( ostream_type & s ) const override;
+    //!
+    //! \brief Gets the name of the thread pool implementation.
+    //!
+    //! \return A constant character pointer to the name of the thread pool.
+    //!
+    static char const * Name() { return "ThreadPool4 [task-tp]"; }
 
-    unsigned thread_count()   const override { return unsigned(m_worker_threads.size()); }
-    unsigned queue_capacity() const          { return m_work_queue.capacity(); }
+    char const * name() const override { return Name(); }
 
-    char const * name() const override { return "ThreadPool4"; }
   };
+
+  /*! @} */
 
 }
 
-///
-/// eof: ThreadPool4.hxx
-///
+//
+// eof: ThreadPool4.hxx
+//

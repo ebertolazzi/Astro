@@ -16,19 +16,25 @@
  |      email: enrico.bertolazzi@unitn.it                                   |
  |                                                                          |
 \*--------------------------------------------------------------------------*/
+//
+// file: Malloc.cc
+//
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #if defined(__llvm__) || defined(__clang__)
 #pragma clang diagnostic ignored "-Wexit-time-destructors"
+#pragma clang diagnostic ignored "-Wduplicate-enum"
 #endif
 
 #include "Utils.hh"
+#include "Utils_fmt.hh"
+#include "Utils_trace.hh"
+
 #include <iostream>
 
 namespace Utils {
 
-  using std::string;
   using std::mutex;
   using std::lock_guard;
   using std::exception;
@@ -271,6 +277,6 @@ namespace Utils {
 
 #endif
 
-///
-/// eof: Malloc.cc
-///
+//
+// eof: Malloc.cc
+//

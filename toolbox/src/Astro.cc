@@ -56,7 +56,7 @@ namespace AstroLib {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  Astro::Astro( string const & __name )
+  Astro::Astro( string_view __name )
   : m_name(__name)
   {}
 
@@ -239,7 +239,7 @@ namespace AstroLib {
 
   Astro const &
   Astro::setup_Keplerian(
-    string const & n,
+    string_view n,
     real_type t0,
     real_type a,
     real_type e,
@@ -282,16 +282,16 @@ namespace AstroLib {
 
   Astro const &
   Astro::setup_Equinoctial(
-    string const & n,
-    real_type      t0,
-    real_type      p,
-    real_type      f,
-    real_type      g,
-    real_type      h,
-    real_type      k,
-    bool           retrograde,
-    real_type      L0,
-    real_type      muS
+    string_view n,
+    real_type   t0,
+    real_type   p,
+    real_type   f,
+    real_type   g,
+    real_type   h,
+    real_type   k,
+    bool        retrograde,
+    real_type   L0,
+    real_type   muS
   ) {
 
     UTILS_ASSERT(
@@ -331,7 +331,7 @@ namespace AstroLib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   Astro const &
-  Astro::setup_Keplerian( string const & n, GenericContainer const & vars ) {
+  Astro::setup_Keplerian( string_view n, GenericContainer const & vars ) {
     return setup_Keplerian(
       n,
       vars("t0")    . get_number(),
@@ -348,7 +348,7 @@ namespace AstroLib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   Astro const &
-  Astro::setup_Equinoctial( string const & n, GenericContainer const & vars ) {
+  Astro::setup_Equinoctial( string_view n, GenericContainer const & vars ) {
     GenericContainer const & R = vars("retrograde");
     bool retrograde = false;
     if ( R.get_type() == GC_namespace::GC_type::BOOL ) {

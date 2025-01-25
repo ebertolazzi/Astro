@@ -17,9 +17,9 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-///
-/// file: Utils_mex.hh
-///
+//
+// file: Utils_mex.hh
+//
 #pragma once
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -51,6 +51,7 @@
 #endif
 
 #include "Utils.hh"
+#include "Utils_fmt.hh"
 #include "Utils/mex_utils.hxx"
 
 #ifdef __clang__
@@ -61,6 +62,6 @@
 
 #endif
 
-///
-/// eof: Utils_mex.hh
-///
+//
+// eof: Utils_mex.hh
+//

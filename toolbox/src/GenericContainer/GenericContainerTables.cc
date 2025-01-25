@@ -31,7 +31,7 @@ namespace GC_namespace {
   using namespace std;
 
   void
-  writeTable(
+  write_table(
     vec_string_type const & headers,
     vector_type     const & data,
     ostream_type          & stream,
@@ -55,15 +55,15 @@ namespace GC_namespace {
   }
 
   void
-  writeTable(
+  write_table(
     vec_string_type const & headers,
     mat_real_type   const & data,
     ostream_type          & stream,
     char                    delimiter
   ) {
 
-    unsigned ncol = unsigned(data.numCols());
-    unsigned nrow = unsigned(data.numRows());
+    unsigned ncol = unsigned(data.num_cols());
+    unsigned nrow = unsigned(data.num_rows());
 
     stream << headers[0];
     for ( unsigned icol = 1; icol < ncol; ++icol )
@@ -79,7 +79,7 @@ namespace GC_namespace {
   }
 
   void
-  writeTableFormatted(
+  write_table_formatted(
     vec_string_type const & headers,
     vector_type     const & data,
     ostream_type          & stream
@@ -91,8 +91,8 @@ namespace GC_namespace {
     if ( ncol == 0 ) return;
 
     // calcolo lunghezza massima stringhe headers
-    unsigned ml = 0;
-    vec_string_type::const_iterator is = headers.begin();
+    unsigned ml{0};
+    vec_string_type::const_iterator is{ headers.begin() };
     for (; is != headers.end(); ++is )
       if ( ml < is->length() ) ml = unsigned(is->length());
     // taglio a lunghezza min/max
@@ -117,14 +117,14 @@ namespace GC_namespace {
   }
 
   void
-  writeTableFormatted(
+  write_table_formatted(
     vec_string_type const & headers,
     mat_real_type   const & data,
     ostream_type          & stream
   ) {
 
-    unsigned ncol = unsigned(data.numCols());
-    unsigned nrow = unsigned(data.numRows());
+    unsigned ncol = unsigned(data.num_cols());
+    unsigned nrow = unsigned(data.num_rows());
 
     if ( ncol == 0 ) return;
 
@@ -145,9 +145,9 @@ namespace GC_namespace {
       stream << " " << std::setw(int(ml)) << is->c_str();
     stream << '\n' << line << '\n';
 
-    for ( unsigned row = 0; row < nrow; ++row ) {
+    for ( unsigned row{0}; row < nrow; ++row ) {
       stream << std::setw(int(ml)) << data(row,0);
-      for ( unsigned icol = 1; icol < ncol; ++icol )
+      for ( unsigned icol{1}; icol < ncol; ++icol )
         stream << " " << std::setw(int(ml)) << data(row,icol);
       stream << '\n';
     }

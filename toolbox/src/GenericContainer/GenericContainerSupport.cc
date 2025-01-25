@@ -23,6 +23,7 @@
 
 #include "GenericContainer/GenericContainer.hh"
 #include <iomanip>
+#include <fstream>
 #include <cstdlib>
 
 namespace GC_namespace {
@@ -48,9 +49,9 @@ namespace GC_namespace {
   static
   void
   tokenizeString(
-    string_type const & str,
-    vec_string_type   & tokens,
-    string_type const & delimiters
+    string_view       str,
+    vec_string_type & tokens,
+    string_view       delimiters
   ) {
 
     tokens.clear();
@@ -62,7 +63,7 @@ namespace GC_namespace {
 
     while ( string_type::npos != pos || string_type::npos != lastPos ) {
       // Found a token, add it to the vector.
-      tokens.push_back(str.substr(lastPos, pos - lastPos));
+      tokens.emplace_back(str.substr(lastPos, pos - lastPos));
       // Skip delimiters.  Note the "not_of"
       lastPos = str.find_first_not_of(delimiters, pos);
       // Find next "non-delimiter"
@@ -85,9 +86,9 @@ namespace GC_namespace {
   static
   unsigned
   get_line_and_skip_comments(
-    istream_type      & stream,
-    string_type       & line,
-    string_type const & commentchars
+    istream_type & stream,
+    string_type  & line,
+    string_view    commentchars
   ) {
     unsigned nl = 0;
     do {
@@ -101,10 +102,10 @@ namespace GC_namespace {
   static
   unsigned
   get_line_and_skip_comments2(
-    istream_type      & stream,
-    string_type       & line,
-    string_type const & commentchars,
-    GenericContainer  * ptr_pars
+    istream_type     & stream,
+    string_type      & line,
+    string_view        commentchars,
+    GenericContainer * ptr_pars
   ) {
     unsigned nl      = 0;
     bool     comment = true;
@@ -148,34 +149,34 @@ namespace GC_namespace {
   // -------------------------------------------------------
   // original code by Francesco Biral (francesco.biral@unitn.it)
   GenericContainer const &
-  GenericContainer::writeFormattedData(
+  GenericContainer::write_formatted_data(
     ostream_type & stream,
     char const     delimiter
   ) const {
     GC_ASSERT(
-      exists("headers"),
-      "writeFormattedData, missing field `headers` in container"
+      this->exists("headers"),
+      "write_formatted_data, missing field `headers` in container"
     );
     GC_ASSERT(
-      exists("data"),
-      "writeFormattedData, missing field `data` in container"
+      this->exists("data"),
+      "write_formatted_data, missing field `data` in container"
     );
     GenericContainer const & data    = (*this)("data");
-    vec_string_type  const & headers = (*this)("headers").get_vec_string(" writeFormattedData, `header` field must be `vec_string_type`");
+    vec_string_type  const & headers = (*this)("headers").get_vec_string("write_formatted_data, `header` field must be `vec_string_type`");
     if ( (*this)("data").get_type() == GC_type::MAT_REAL )
-      writeTable( headers, data.get_mat_real(), stream, delimiter );
+      write_table( headers, data.get_mat_real(), stream, delimiter );
     else
-      writeTable( headers, data.get_vector(), stream, delimiter );
+      write_table( headers, data.get_vector(), stream, delimiter );
     return *this;
   }
 
   // -------------------------------------------------------
   // original code by Francesco Biral (francesco.biral@unitn.it)
   GenericContainer &
-  GenericContainer::readFormattedData(
+  GenericContainer::read_formatted_data(
     istream_type & stream,
-    char const   * commentChars,
-    char const   * delimiters
+    char const     commentChars[],
+    char const     delimiters[]
   ) {
     //read a line
     string_type line;
@@ -204,7 +205,7 @@ namespace GC_namespace {
 
       GC_ASSERT(
         unsigned(tokens.size()) == ncol,
-        "readFormattedData, in reading line: " << nline <<
+        "read_formatted_data, in reading line: " << nline <<
         " expected " << ncol << " found: " << tokens.size()
       );
 
@@ -218,11 +219,11 @@ namespace GC_namespace {
   // -------------------------------------------------------
   // original code by Francesco Biral (francesco.biral@unitn.it)
   GenericContainer &
-  GenericContainer::readFormattedData2(
-    istream_type     & stream,
-    char const       * commentChars,
-    char const       * delimiters,
-    GenericContainer * ptr_pars
+  GenericContainer::read_formatted_data2(
+    istream_type   & stream,
+    char const       commentChars[],
+    char const       delimiters[],
+    GenericContainer ptr_pars[]
   ) {
     //read a line
     string_type line;
@@ -257,7 +258,7 @@ namespace GC_namespace {
 
       GC_ASSERT(
         unsigned(tokens.size()) == ncol,
-        "readFormattedData2, in reading line: " << nline <<
+        "read_formatted_data2, in reading line: " << nline <<
         " expected " << ncol << " found: " << tokens.size()
       );
 
@@ -267,6 +268,36 @@ namespace GC_namespace {
     }
     return *this;
   }
+
+  GenericContainer &
+  GenericContainer::read_formatted_data(
+    char const fname[],
+    char const commentChars[],
+    char const delimiters[]
+  ) {
+    std::ifstream file( fname );
+    GC_ASSERT(
+      file.good(),
+      "read_formatted_data, failed to open file: ``" << fname << "''"
+    )
+    return read_formatted_data( file, commentChars, delimiters );
+  }
+
+  GenericContainer &
+  GenericContainer::read_formatted_data2(
+    char const       fname[],
+    char const       commentChars[],
+    char const       delimiters[],
+    GenericContainer ptr_pars[]
+  ) {
+    std::ifstream file( fname );
+    GC_ASSERT(
+      file.good(),
+      "read_formatted_data2, failed to open file: ``" << fname << "''"
+    )
+    return read_formatted_data2( file, commentChars, delimiters, ptr_pars );
+  }
+
 }
 
 //

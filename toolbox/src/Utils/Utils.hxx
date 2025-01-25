@@ -17,9 +17,9 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-///
-/// file: Utils.hxx
-///
+//
+// file: Utils.hxx
+//
 
 // select computer architecture
 #if defined(__APPLE__) && defined(__MACH__)
@@ -90,19 +90,6 @@
   #define UTILS_CONSTEXPR
 #endif
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-#ifndef FMT_DEPRECATED_OSTREAM
-#define FMT_DEPRECATED_OSTREAM
-#endif
-
-#include "fmt/printf.h"
-#include "fmt/chrono.h"
-#include "fmt/ostream.h"
-#include "fmt/color.h"
-#include "fmt/std.h"
-#endif
-
 // STL
 #include <cassert>
 #include <iterator>
@@ -112,7 +99,9 @@
 #include <functional>		// For std::bind()
 
 #include <string>
+#include <string_view>
 #include <vector>
+#include <list>
 #include <map>
 #include <limits>
 
@@ -152,9 +141,9 @@
   #include "mingw-std-threads/mingw.thread.h"
   #include "mingw-std-threads/mingw.condition_variable.h"
 #else
-  //#include <future>
+  #include <future>
   #include <mutex>
-  //#include <shared_mutex>
+  #include <shared_mutex>
   #include <thread>
   #include <condition_variable>
   #include <atomic>
@@ -170,8 +159,16 @@
   #endif
 #endif
 
+namespace Utils {
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  using string       = std::string;
+  using string_view  = std::string_view;
+  using ostream_type = std::basic_ostream<char>;
+  using istream_type = std::basic_istream<char>;
+  #endif
+}
+
 #include "rang.hxx"
-#include "Trace.hxx"
 #include "Console.hxx"
 #include "Malloc.hxx"
 #include "Numbers.hxx"
@@ -192,10 +189,6 @@
 // -----------------------
 
 namespace Utils {
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  using std::string;
-  #endif
 
   string basename( char const filename[] );
 
@@ -222,7 +215,7 @@ namespace Utils {
     T_int        npts,
     T_real const X[],
     T_real     & x,
-    T_int      & lastInterval,
+    T_int      & last_interval,
     bool         closed,
     bool         can_extend
   );
@@ -232,7 +225,7 @@ namespace Utils {
     int32_t     npts,
     float const X[],
     float     & x,
-    int32_t   & lastInterval,
+    int32_t   & last_interval,
     bool        closed,
     bool        can_extend
   );
@@ -241,7 +234,7 @@ namespace Utils {
     int32_t      npts,
     double const X[],
     double     & x,
-    int32_t    & lastInterval,
+    int32_t    & last_interval,
     bool         closed,
     bool         can_extend
   );
@@ -250,7 +243,7 @@ namespace Utils {
     int64_t     npts,
     float const X[],
     float     & x,
-    int64_t   & lastInterval,
+    int64_t   & last_interval,
     bool        closed,
     bool        can_extend
   );
@@ -259,7 +252,7 @@ namespace Utils {
     int64_t      npts,
     double const X[],
     double     & x,
-    int64_t    & lastInterval,
+    int64_t    & last_interval,
     bool         closed,
     bool         can_extend
   );
@@ -272,11 +265,11 @@ namespace Utils {
     T_int        npts,
     T_real const X[],
     T_real     & x,
-    T_int      & lastInterval,
+    T_int      & last_interval,
     bool         closed,
     bool         can_extend
   ) {
-    search_interval( npts, X, x, lastInterval, closed, can_extend );
+    search_interval( npts, X, x, last_interval, closed, can_extend );
   }
 
   static
@@ -296,42 +289,42 @@ namespace Utils {
   static
   inline
   bool
-  is_lower( string const & s ) {
+  is_lower( string_view s ) {
     return std::all_of( s.begin(), s.end(), islower );
   }
 
   static
   inline
   bool
-  is_upper( string const & s ) {
+  is_upper( string_view s ) {
     return std::all_of( s.begin(), s.end(), isupper );
   }
 
   static
   inline
   bool
-  is_alpha( string const & s ) {
+  is_alpha( string_view s ) {
     return std::all_of( s.begin(), s.end(), isalpha );
   }
 
   static
   inline
   bool
-  is_alphanum( string const & s ) {
+  is_alphanum( string_view s ) {
     return std::all_of( s.begin(), s.end(), isalnum );
   }
 
   static
   inline
   bool
-  is_digits( string const & s ) {
+  is_digits( string_view s ) {
     return std::all_of( s.begin(), s.end(), isdigit );
   }
 
   static
   inline
   bool
-  is_xdigits( string const & s ) {
+  is_xdigits( string_view s ) {
     return std::all_of( s.begin(), s.end(), isxdigit );
   }
 
@@ -378,9 +371,11 @@ namespace Utils {
   }
 
   string progress_bar( double progress, int width );
+  void   progress_bar( ostream &, double progress, int width, char const * msg );
+  void   progress_bar2( ostream &, double progress, int width, char const * msg );
 
 }
 
-///
-/// eof: Utils.hxx
-///
+//
+// eof: Utils.hxx
+//

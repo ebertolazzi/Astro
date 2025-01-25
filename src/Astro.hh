@@ -45,6 +45,8 @@ namespace AstroLib {
   using integer = GC_namespace::int_type;
 
   using std::string;
+  using std::string_view;
+
   using Utils::m_pi;
   using Utils::m_2pi;
   using Utils::m_pi_2;
@@ -148,14 +150,14 @@ namespace AstroLib {
   public:
 
     Astro( );
-    Astro( string const & );
+    Astro( string_view );
     Astro( Astro const & );
 
     Astro & operator = ( Astro const & ast );
 
     ~Astro();
 
-    string const & name() const { return m_name; }
+    string_view name() const { return m_name; }
 
     bool check_for_consistency() const;
 
@@ -169,34 +171,34 @@ namespace AstroLib {
 
     Astro const &
     setup_Keplerian(
-      string const & n,
-      real_type      t0,
-      real_type      a,
-      real_type      e,
-      real_type      Omega,
-      real_type      omega,
-      real_type      i,
-      real_type      M0,
-      real_type      muS
+      string_view n,
+      real_type   t0,
+      real_type   a,
+      real_type   e,
+      real_type   Omega,
+      real_type   omega,
+      real_type   i,
+      real_type   M0,
+      real_type   muS
     );
 
     Astro const &
     setup_Equinoctial(
-      string const & n,
-      real_type      t0,
-      real_type      p,
-      real_type      f,
-      real_type      g,
-      real_type      h,
-      real_type      k,
-      bool           retrograde,
-      real_type      L0,
-      real_type      muS
+      string_view n,
+      real_type   t0,
+      real_type   p,
+      real_type   f,
+      real_type   g,
+      real_type   h,
+      real_type   k,
+      bool        retrograde,
+      real_type   L0,
+      real_type   muS
     );
 
     Astro const &
     setup(
-      string const &    n,
+      string_view       n,
       real_type         t0,
       Keplerian const & K,
       real_type         M0,
@@ -207,7 +209,7 @@ namespace AstroLib {
 
     Astro const &
     setup(
-      string const &      n,
+      string_view         n,
       real_type           t0,
       Equinoctial const & EQ,
       real_type           L,
@@ -218,7 +220,7 @@ namespace AstroLib {
 
     bool
     setup_using_point_and_velocity(
-      string  const & n,
+      string_view     n,
       dvec3_t const & P,
       dvec3_t const & V,
       real_type       muS,
@@ -251,8 +253,8 @@ namespace AstroLib {
       return *this;
     }
 
-    Astro const & setup_Keplerian   ( string const & n, GenericContainer const & vars );
-    Astro const & setup_Equinoctial ( string const & n, GenericContainer const & vars );
+    Astro const & setup_Keplerian   ( string_view n, GenericContainer const & vars );
+    Astro const & setup_Equinoctial ( string_view n, GenericContainer const & vars );
 
     Equinoctial const & get_EQ() const { return m_EQ; }
     Keplerian   const & get_K()  const { return m_K;  }

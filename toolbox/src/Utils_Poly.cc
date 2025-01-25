@@ -17,9 +17,9 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-///
-/// file: Utils_Poly.cc
-///
+//
+// file: Utils_Poly.cc
+//
 
 #if defined(__llvm__) || defined(__clang__)
 #pragma clang diagnostic ignored "-Wdeprecated-copy-with-dtor"
@@ -46,7 +46,6 @@ namespace Utils { \
   template void divide( Poly<REAL> const & p, Poly<REAL> const & q, Poly<REAL> & M, Poly<REAL> & R ); \
   template void GCD( Poly<REAL> const & p, Poly<REAL> const & q, Poly<REAL> & g, REAL epsi ); \
 }
-#endif
 
 namespace Utils {
 
@@ -670,7 +669,7 @@ namespace Utils {
         I1.a_on_root = I1.b_on_root = true;
         m_intervals.push_back(I1);
       }
-      return m_intervals.size();
+      return Integer(m_intervals.size());
     }
 
     // search intervals
@@ -705,7 +704,7 @@ namespace Utils {
         Integer vc = sign_variations( c, c_on_root );
         // check interval [a,c]
         if ( I0.va != vc || c_on_root || I0.a_on_root ) {
-          if ( c < I1.b ) { // check if it is a true reduction
+          if ( c < I0.b ) { // check if it is a true reduction
             I1.a = I0.a; I1.va = I0.va; I1.a_on_root = I0.a_on_root;
             I1.b = c;    I1.vb = vc;    I1.b_on_root = c_on_root;
             I_stack.push_back(I1);
@@ -742,7 +741,7 @@ namespace Utils {
       m_intervals.end(),
       []( Interval const & Sa, Interval const & Sb ) { return Sa.a < Sb.a; }
     );
-    return m_intervals.size();
+    return Integer(m_intervals.size());
   }
 
   /*
@@ -783,7 +782,11 @@ namespace Utils {
   */
 }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 UTILS_POLY_INTANTIATE( double );
 UTILS_POLY_INTANTIATE( float );
+
 #endif
+
+//
+// eof: Utils_Poly.cc
+//

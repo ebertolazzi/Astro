@@ -17,9 +17,9 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-///
-/// eof: Table.hxx
-///
+//
+// eof: Table.hxx
+//
 
 /*\
 
@@ -45,17 +45,30 @@
 
 namespace Utils {
 
-  namespace Table {
+  using std::string;
+  using std::string_view;
+  using std::vector;
 
-    using std::string;
-    using std::vector;
+  namespace Table {
 
     class Table;
 
     using integer = int;
 
+    //!
+    //! \brief Enum class defining alignment types for table cells.
+    //!
+    //! Provides options for aligning content inside table cells to the LEFT,
+    //! RIGHT, or CENTER.
+    //!
     using Alignment = enum class Table_align : integer { LEFT, RIGHT, CENTER };
 
+    //!
+    //! \brief Defines the style and structure of table borders, padding, and alignment.
+    //!
+    //! The `Style` class configures visual properties of the table, including border
+    //! characters (for all edges and dividers), cell padding, and alignment of text.
+    //!
     class Style {
     private:
 
@@ -89,7 +102,10 @@ namespace Utils {
 
     public:
 
-      Style() UTILS_DEFAULT;
+      //!
+      //! \brief Default constructor initializing the table style with default borders.
+      //!
+      Style() = default;
 
       char border_top() const { return m_border_top; }
       void border_top( char borderStyle ) { m_border_top = borderStyle; }
@@ -149,27 +165,43 @@ namespace Utils {
       void    width( integer width ) { m_Width = width; }
     };
 
+    //!
+    //! \brief Represents a cell in a table with alignment, content, and optional column span.
+    //!
+    //! The `Cell` class manages the content of a single cell in the table. It allows
+    //! specification of alignment, column span, and other properties.
+    //!
     class Cell {
     private:
-      Table *     m_Table    = nullptr;
-      std::string m_Value    = "";
-      Alignment   m_Align    = Alignment::LEFT;
-      integer     m_col_span = 1;
-      integer     m_Width    = 0;
+      Table *   m_Table    = nullptr;
+      string    m_Value    = "";
+      Alignment m_Align    = Alignment::LEFT;
+      integer   m_col_span = 1;
+      integer   m_Width    = 0;
 
     public:
 
-      Cell() UTILS_DEFAULT;
+      //!
+      //! \brief Default constructor for an empty cell.
+      //!
+      Cell() = default;
 
+      //!
+      //! \brief Constructs a cell with a value and optional column span.
+      //!
+      //! \param table Pointer to the table containing the cell.
+      //! \param val The string value to be displayed in the cell.
+      //! \param col_span The number of columns the cell should span.
+      //!
       explicit
       Cell(
-        Table*              table,
-        std::string const & val      = "",
-        integer             col_span = 1
+        Table*      table,
+        string_view val      = "",
+        integer     col_span = 1
       );
 
-      std::string const & value() const { return m_Value; }
-      void value( std::string const & val ) { m_Value = val; }
+      string_view value() const { return m_Value; }
+      void value( string_view val ) { m_Value = val; }
 
       Alignment alignment() const { return m_Align; }
       void alignment( Alignment align ) { m_Align = align; }
@@ -182,24 +214,39 @@ namespace Utils {
 
       integer maximum_line_width() const;
 
-      std::string line( integer idx ) const;
+      string line( integer idx ) const;
       void trim_line( std::string & line ) const;
 
-      std::string render( integer line, integer col ) const;
+      string render( integer line, integer col ) const;
     };
 
+    //!
+    //! \brief Represents a row in a table consisting of multiple cells.
+    //!
+    //! The `Row` class manages a collection of cells that form a single row in the table.
+    //! Each cell in the row can be accessed, modified, and rendered individually.
+    //!
     class Row {
     protected:
-      using vecCell = std::vector<Cell>;
-      using vecstr  = std::vector<std::string>;
+      using vecCell = vector<Cell>;
+      using vecstr  = vector<string>;
 
       Table * m_Table = nullptr;
       vecCell m_Cells;
 
     public:
 
-      Row() UTILS_DEFAULT;
+      //!
+      //! \brief Default constructor for an empty row.
+      //!
+      Row() = default;
 
+      //!
+      //! \brief Constructs a row with a set of initial cell values.
+      //!
+      //! \param table Pointer to the table containing the row.
+      //! \param cells A vector of strings representing initial cell values.
+      //!
       explicit
       Row(
         Table *        table,
@@ -215,7 +262,7 @@ namespace Utils {
       integer cell_width( integer idx ) const;
       void cell_col_span( integer idx, integer span );
 
-      void cell( std::string const & value );
+      void cell( string_view value );
       //Cell& cell( integer idx ) { return m_Cells[idx]; }
 
       Cell const & operator [] ( integer idx ) const { return m_Cells[idx]; }
@@ -223,9 +270,16 @@ namespace Utils {
 
       integer height() const;
 
-      std::string render() const;
+      string render() const;
     };
 
+   //!
+   //! \brief The main class for creating and managing a table.
+   //!
+   //! The `Table` class represents a 2D table structure that supports rows, cells,
+   //! and table styles. It provides methods for rendering, alignment, and other
+   //! table-related operations.
+   //!
     class Table {
     public:
       using vecRow    = std::vector<Row>;
@@ -235,15 +289,23 @@ namespace Utils {
       using integer   = int;
 
     private:
-      Style       m_Style;
-      std::string m_Title;
-      Row         m_Headings;
-      vecRow      m_Rows;
+      Style  m_Style;
+      string m_Title;
+      Row    m_Headings;
+      vecRow m_Rows;
 
     public:
+      //!
+      //! \brief Default constructor for an empty table.
+      //!
+      Table() = default;
 
-      Table() UTILS_DEFAULT;
-
+      //!
+      //! \brief Constructs a table with a given style and initial rows.
+      //!
+      //! \param style The style object to customize the table's borders and alignment.
+      //! \param rows A 2D vector of strings representing the table's content.
+      //!
       explicit
       Table(
         Style     const & style,
@@ -276,9 +338,9 @@ namespace Utils {
 
       void style( Style const & style ) { m_Style = style; }
 
-      std::string const & title() const { return m_Title; }
+      string_view title() const { return m_Title; }
 
-      void title( std::string const & title ) { m_Title = title; }
+      void title( string_view title ) { m_Title = title; }
 
       Row const & headings() const { return m_Headings; }
 
@@ -309,18 +371,24 @@ namespace Utils {
   }
 }
 
+//!
+//! \brief Stream insertion operator for rendering a table row to an output stream.
+//!
 inline
 Utils::ostream_type&
 operator << ( Utils::ostream_type& stream, Utils::Table::Row const & row ) {
   return stream << row.render();
 }
 
+//!
+//! \brief Stream insertion operator for rendering a table to an output stream.
+//!
 inline
 Utils::ostream_type&
 operator << ( Utils::ostream_type& stream, Utils::Table::Table const & table ) {
   return stream << table.render();
 }
 
-///
-/// eof: Table.hxx
-///
+//
+// eof: Table.hxx
+//

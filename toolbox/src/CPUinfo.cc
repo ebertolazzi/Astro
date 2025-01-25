@@ -30,8 +30,15 @@ http://www.codeproject.com/info/cpol10.aspx
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#if defined(__llvm__) || defined(__clang__)
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+#pragma clang diagnostic ignored "-Wduplicate-enum"
+#endif
+
 #include "Utils.hh"
+#include "Utils_fmt.hh"
 #include "Utils_CPU_info.hh"
+
 #include <map>
 
 

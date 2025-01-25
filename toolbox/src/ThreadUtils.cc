@@ -17,11 +17,19 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-///
-/// file: ThreadUtils.cc
-///
+//
+// file: ThreadUtils.cc
+//
+
+#if defined(__llvm__) || defined(__clang__)
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+#pragma clang diagnostic ignored "-Wduplicate-enum"
+#endif
 
 #include "Utils.hh"
+#include "Utils_fmt.hh"
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 namespace Utils {
 
@@ -82,8 +90,36 @@ namespace Utils {
     m_cv.notify_one();
   }
 
+  #ifdef UTILS_OS_WINDOWS
+  WinMutex::WinMutex() : m_mutex(NULL) {
+    m_mutex = CreateMutex(
+      NULL,  // no security descriptor
+      FALSE, // mutex not owned
+      NULL   // object name
+    );
+    UTILS_ASSERT(
+      m_mutex != NULL,
+      "WinMutex(): error: {}.\n", GetLastError()
+    );
+  }
+
+  void
+  WinMutex::lock() {
+  	DWORD res = WaitForSingleObject(m_mutex, INFINITE);
+    UTILS_ASSERT0( res == WAIT_OBJECT_0, "WinMutex::lock, WAIT_TIMEOUT" );
+  }
+
+  void
+  WinMutex::unlock() {
+  	DWORD res = ReleaseMutex(m_mutex);
+    UTILS_ASSERT0( res == WAIT_OBJECT_0, "WinMutex::lock, WAIT_TIMEOUT" );
+  }
+  #endif
+
 }
 
-///
-/// eof: ThreadUtils.cc
-///
+#endif
+
+//
+// eof: ThreadUtils.cc
+//

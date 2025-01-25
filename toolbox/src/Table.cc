@@ -41,13 +41,14 @@
 \*/
 
 
-///
-/// file: Table.cc
-///
+//
+// file: Table.cc
+//
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include "Utils.hh"
+#include "Utils_fmt.hh"
 
 #include <string>
 #include <iostream>
@@ -78,9 +79,9 @@ namespace Utils {
     using std::transform;
 
     Cell::Cell(
-      Table*         table,
-      string const & val,
-      integer        col_span
+      Table*      table,
+      string_view val,
+      integer     col_span
     )
     : m_Table(table)
     , m_Value(val)
@@ -172,7 +173,7 @@ namespace Utils {
       for_each(
         cells.begin(), cells.end(),
         bind(
-          static_cast<void(Row::*)(string const &)>(&Row::cell),
+          static_cast<void(Row::*)(string_view)>(&Row::cell),
           this,
           std::placeholders::_1
         )
@@ -184,7 +185,7 @@ namespace Utils {
       for_each(
         cells.begin(), cells.end(),
         bind(
-          static_cast<void(Row::*)(string const &)>(&Row::cell),
+          static_cast<void(Row::*)(string_view)>(&Row::cell),
           this,
           std::placeholders::_1
         )
@@ -203,7 +204,7 @@ namespace Utils {
     }
 
     void
-    Row::cell( string const & value ) {
+    Row::cell( string_view value ) {
       m_Cells.emplace_back( m_Table, value );
     }
 
@@ -438,6 +439,6 @@ namespace Utils {
 
 #endif
 
-///
-/// eof: Table.cc
-///
+//
+// eof: Table.cc
+//

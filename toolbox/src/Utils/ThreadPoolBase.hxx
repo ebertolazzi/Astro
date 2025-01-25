@@ -17,11 +17,16 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-///
-/// eof: ThreadPoolBase.hxx
-///
+//
+// eof: ThreadPoolBase.hxx
+//
 
 namespace Utils {
+
+  /*!
+   * \addtogroup THREAD
+   * @{
+   */
 
   /*\
    |   _____ _                    _ ___          _ ___
@@ -31,6 +36,24 @@ namespace Utils {
   \*/
 
   class ThreadPoolBase {
+  protected:
+    // Interfaccia per Task
+    class Task {
+    public:
+       virtual ~Task() = default;
+       virtual void execute() = 0;
+    };
+    // Implementazione concreta di Task
+    template <typename Callable>
+    class ConcreteTask : public Task {
+      Callable callable;
+    public:
+      explicit ConcreteTask(Callable&& callable) : callable(std::move(callable)) {}
+      void execute() override { callable(); }
+    };
+
+    typedef std::function<void(void)> FUN;
+    //typedef std::unique_ptr<FUN>      PFUN;
 
   public:
 
@@ -40,11 +63,10 @@ namespace Utils {
     ThreadPoolBase & operator = ( ThreadPoolBase const & ) = delete;
     ThreadPoolBase & operator = ( ThreadPoolBase && )      = delete;
 
-    ThreadPoolBase() UTILS_DEFAULT;
+    ThreadPoolBase() = default;
 
-    virtual
-    void
-    exec( std::function<void()> && ) = 0;
+    //virtual void exec( std::function<void()> && ) = 0;
+    virtual void exec( FUN && ) = 0;
 
     template <typename Func, typename... Args>
     void
@@ -58,93 +80,11 @@ namespace Utils {
     }
 
     virtual void         wait() = 0;
-    virtual void         join() = 0;
     virtual unsigned     thread_count() const = 0;
-    virtual void         resize( unsigned numThreads ) = 0;
     virtual char const * name() const = 0;
-    virtual void         info( ostream_type & ) const { }
   };
 
   namespace tp {
-
-    /*\
-     |   ___ _            _  ___                    _ _         ___
-     |  | __(_)_ _____ __| |/ __|__ _ _ __  __ _ __(_) |_ _  _ / _ \ _  _ ___ _  _ ___
-     |  | _|| \ \ / -_) _` | (__/ _` | '_ \/ _` / _| |  _| || | (_) | || / -_) || / -_)
-     |  |_| |_/_\_\___\__,_|\___\__,_| .__/\__,_\__|_|\__|\_, |\__\_\\_,_\___|\_,_\___|
-     |                               |_|                  |__/
-    \*/
-    /*\
-        If we would use a deque, we would have to protect
-        against overlapping accesses to the front and the
-        back. The standard containers do not allow this. Use a
-        vector instead.  With a vector it is possible to access
-        both ends of the queue at the same time, as push()ing
-        and pop()ing does not modify the container itself but
-        only its elements.
-    \*/
-    template <class Function>
-    class FixedCapacityQueue {
-
-      union Fun {
-        Function m_fun; // Only used between pop_ptr and push_ptr
-        Fun() noexcept { }
-        Fun( Fun const & ) noexcept { }
-        Fun( Fun && ) noexcept { }
-        ~Fun() noexcept { }
-      };
-
-      std::vector<Fun> m_fun_vec;
-      unsigned m_size     = 0;
-      unsigned m_capacity = 0;
-      unsigned m_push_ptr = 0;
-      unsigned m_pop_ptr  = 0;
-
-    public:
-
-      FixedCapacityQueue( FixedCapacityQueue const & )              = delete;
-      FixedCapacityQueue( FixedCapacityQueue && )                   = delete;
-      FixedCapacityQueue& operator = ( FixedCapacityQueue const & ) = delete;
-      FixedCapacityQueue& operator = ( FixedCapacityQueue && )      = delete;
-
-      explicit
-      FixedCapacityQueue( unsigned capacity )
-      : m_fun_vec( size_t( capacity+1 ) )
-      , m_size( capacity+1 )
-      , m_capacity( capacity )
-      { }
-
-      void
-      push( Function && f ) {
-        new (&m_fun_vec[m_push_ptr].m_fun) Function(std::forward<Function>(f));
-        if ( ++m_push_ptr == m_size ) m_push_ptr = 0;
-      }
-
-      Function
-      pop() {
-        Function r = std::move(m_fun_vec[m_pop_ptr].m_fun);
-        m_fun_vec[m_pop_ptr].m_fun.~Function();
-        if ( ++m_pop_ptr == m_size ) m_pop_ptr = 0;
-        return r;
-      }
-
-      unsigned size()     const { return ((m_push_ptr + m_size) - m_pop_ptr) % m_size; }
-      bool     empty()    const { return m_push_ptr == m_pop_ptr; }
-      bool     is_full()  const { return this->size() >= m_capacity; }
-      unsigned capacity() const { return m_capacity; }
-
-      void
-      reserve( unsigned capacity ) {
-        assert(empty()); // Copying / moving of Fun not supported.
-        if ( capacity != m_capacity ) {
-          m_size     = capacity+1;
-          m_capacity = capacity;
-          m_fun_vec.resize( m_size );
-        }
-      }
-
-      ~FixedCapacityQueue() { while (!empty()) pop(); }
-    };
 
     /*\
      |    ___
@@ -163,14 +103,17 @@ namespace Utils {
         TaskData( std::function<void()> && f ) : m_fun(std::move(f)) { }
         TaskData( std::function<void()> & f ) : m_fun(f) { }
         void operator()() { m_fun(); delete this; }
-        ~TaskData() UTILS_DEFAULT;
+        ~TaskData() = default;
       };
 
     private:
 
+      mutable std::mutex     m_mutex;
       std::vector<TaskData*> m_queue_data;
 
-      unsigned m_size, m_capacity, m_push_ptr, m_pop_ptr;
+      unsigned m_size, m_capacity;
+      unsigned m_push_ptr{0};
+      unsigned m_pop_ptr{0};
 
     public:
 
@@ -184,44 +127,67 @@ namespace Utils {
       : m_queue_data( std::size_t( capacity+1 ) )
       , m_size( capacity+1 )
       , m_capacity( capacity )
-      , m_push_ptr( 0 )
-      , m_pop_ptr( 0 )
       { }
 
       void
       push( TaskData * task ) {
+        std::lock_guard<std::mutex> lock(m_mutex);
         m_queue_data[m_push_ptr] = task;
         if ( ++m_push_ptr == m_size ) m_push_ptr = 0;
       }
 
       TaskData *
       pop() {
-        unsigned ipos = m_pop_ptr;
+        std::lock_guard<std::mutex> lock(m_mutex);
+        unsigned ipos{m_pop_ptr};
         if ( ++m_pop_ptr == m_size ) m_pop_ptr = 0;
         return m_queue_data[ipos];
       }
 
-      unsigned size()     const { return ((m_push_ptr + m_size) - m_pop_ptr) % m_size; }
-      bool     empty()    const { return m_push_ptr == m_pop_ptr; }
-      bool     is_full()  const { return this->size() >= m_capacity; }
+      unsigned
+      size() const {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        return ((m_push_ptr + m_size) - m_pop_ptr) % m_size;
+      }
+
+      bool
+      empty() const {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        return m_push_ptr == m_pop_ptr;
+      }
+      
+      bool is_full() const {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        unsigned sz = ((m_push_ptr + m_size) - m_pop_ptr) % m_size;
+        return sz >= m_capacity;
+      }
+
       unsigned capacity() const { return m_capacity; }
 
       //! clear queue and delete tasks
-      void clear() { while( !empty() ) delete pop(); }
+      void
+      clear() {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        while( m_push_ptr != m_pop_ptr ) delete pop();
+      }
 
       void
       resize( unsigned capacity ) {
-        this->clear();
+        std::lock_guard<std::mutex> lock(m_mutex);
+        while( m_push_ptr != m_pop_ptr ) delete pop();
         m_size     = capacity+1;
         m_capacity = capacity;
         m_queue_data.resize( m_size );
       }
 
-      ~Queue() UTILS_DEFAULT;
+      ~Queue() = default;
     };
   }
+
+  /*! @} */
+
 }
 
-///
-/// eof: ThreadPoolBase.hxx
-///
+//
+// eof: ThreadPoolBase.hxx
+//

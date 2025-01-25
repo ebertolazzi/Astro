@@ -17,9 +17,9 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-///
-/// file: Utils_HJPatternSearch.cc
-///
+//
+// file: Utils_HJPatternSearch.cc
+//
 
 #include "Utils_HJPatternSearch.hh"
 
@@ -301,6 +301,6 @@ namespace Utils {
   template class HJPatternSearch<float>;
 }
 
-///
-/// eof: Utils_HJPatternSearch.c
-///
+//
+// eof: Utils_HJPatternSearch.c
+//
