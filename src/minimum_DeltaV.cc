@@ -12,7 +12,7 @@
  |                                                                          |
  |      Enrico Bertolazzi                                                   |
  |      Dipartimento di Ingegneria Industriale                              |
- |      Universita` degli Studi di Trento                                   |
+ |      Università degli Studi di Trento                                    |
  |      Via Mesiano 77, I-38050 Trento, Italy                               |
  |      email: enrico.bertolazzi@unitn.it                                   |
  |                                                                          |
@@ -491,7 +491,7 @@ namespace AstroLib {
       v_DV.begin(), v_DV.end(),
       [L_equal]( DV_collect const & A, DV_collect const & B ) -> bool {
         real_type dL = B.L_from-A.L_from;
-        if ( abs(dL) < L_equal ) return B.L_to-A.L_to;
+        if ( abs(dL) < L_equal ) return B.L_to > A.L_to;
         else                     return dL > 0;
       }
     );
@@ -760,7 +760,7 @@ namespace AstroLib {
       v_DV.begin(), v_DV.end(),
       [L_equal]( DV_collect const & A, DV_collect const & B ) -> bool {
         real_type dL = B.L_from-A.L_from;
-        if ( abs(dL) < L_equal ) return B.L_to-A.L_to;
+        if ( abs(dL) < L_equal ) return B.L_to > A.L_to;
         else                     return dL > 0;
       }
     );
@@ -1072,7 +1072,7 @@ namespace AstroLib {
       trips.begin(), trips.end(),
       [day_equal]( minimum_DeltaV_trip const & A, minimum_DeltaV_trip const & B ) -> bool {
         real_type dt = B.t_end-A.t_end;
-        if ( abs(dt) < day_equal ) return B.t_begin-A.t_begin;
+        if ( abs(dt) < day_equal ) return B.t_begin > A.t_begin;
         else                       return dt > 0;
       }
     );

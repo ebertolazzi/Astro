@@ -4,13 +4,16 @@
 #  Copyright (C) 2016                                                      #
 #      Enrico Bertolazzi                                                   #
 #      Dipartimento di Ingegneria Industriale                              #
-#      Universita` degli Studi di Trento                                   #
+#      Università degli Studi di Trento                                    #
 #      email: enrico.bertolazzi@unitn.it                                   #
 #                                                                          #
 ############################################################################
 
 cmake_minimum_required(VERSION 3.16)
-cmake_policy(SET CMP0177 NEW)
+
+if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.31)
+  cmake_policy(SET CMP0177 NEW)
+endif()
 
 project( Astro )
 
@@ -32,6 +35,12 @@ project(
   ${PROJECT_NAME}
   VERSION ${UTILS_PROJECT_VERSION}
 )
+
+if( CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang" )
+  add_compile_options( "$<$<COMPILE_LANGUAGE:C,CXX>:-Wno-poison-system-directories>" )
+  add_compile_options( "$<$<COMPILE_LANGUAGE:C,CXX>:-Wno-switch-default>" )
+  add_compile_options( "$<$<COMPILE_LANGUAGE:C,CXX>:-Wno-exit-time-destructors>" )
+endif()
 
 include( "${HOME}/CMakeLists-cflags.txt" )
 include( "${HOME}/CMakeLists-utilities.txt" )
