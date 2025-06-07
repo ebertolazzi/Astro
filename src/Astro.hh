@@ -27,14 +27,22 @@
   #include "GenericContainer/GenericContainer.hh"
 #endif
 
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Wsign-compare"
+#elif defined(__llvm__) || defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#endif
+
 #ifdef NO_SYSTEM_UTILS
   #include "Utils.hh"
   #include "Utils_eigen.hh"
   #include "Utils_Poly.hh"
+  #include "Utils_autodiff.hh"
 #else
   #include <Utils.hh>
   #include <Utils_eigen.hh>
   #include <Utils_Poly.hh>
+  #include <Utils_autodiff.hh>
 #endif
 
 namespace AstroLib {
@@ -50,40 +58,53 @@ namespace AstroLib {
   using Utils::m_pi;
   using Utils::m_2pi;
   using Utils::m_pi_2;
+  using Utils::power2;
+  using Utils::power3;
+
   using dvec3_t = Eigen::Matrix<real_type,3,1>;
   using dvec_t  = Eigen::Matrix<real_type,Eigen::Dynamic,1>;
   using dmat_t  = Eigen::Matrix<real_type,Eigen::Dynamic,Eigen::Dynamic>;
+ 
+  /*
+  //               _            _ _  __  __
+  //    __ _ _   _| |_ ___   __| (_)/ _|/ _|
+  //   / _` | | | | __/ _ \ / _` | | |_| |_
+  //  | (_| | |_| | || (_) | (_| | |  _|  _|
+  //   \__,_|\__,_|\__\___/ \__,_|_|_| |_|
+  */
+
+  using autodiff::detail::DualOrder;
+  template <size_t N>      using DualN = autodiff::detail::HigherOrderDual<N,real_type>;
+  template <typename... T> using DualT = DualN<DualOrder<T...>::value>;
+
+  template <size_t N> constexpr void static_check_N() { static_assert(N <= 2, "DualOrder exceeded allowed limit"); }
+
+  #define PINS_MAP_AUTODIFF_TO_REAL1(PINS_FUN) \
+  template <typename T> inline \
+  DualT<T> PINS_FUN( T const & x ) { \
+    constexpr size_t N{ DualOrder<T>::value }; \
+    static_check_N<N>(); \
+    return PINS_FUN<N>( DualT<T>(x) ); \
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  inline
-  real_type
-  power2( real_type a )
-  { return a*a; }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  inline
-  real_type
-  power3( real_type a )
-  { return a*a*a; }
 
   //!
   //! Convert angle in degrees to radiants.
   //!
-  static
+  template <typename T>
   inline
-  real_type
-  degrees_to_radiants( real_type deg )
+  auto 
+  degrees_to_radiants( T const & deg )
   { return 0.01745329251994329576923690768488612713443*deg; } // Pi/180*deg
 
   //!
   //! Convert angle in radiants to degrees.
   //!
-  static
+  template <typename T>
   inline
-  real_type
-  radiants_to_degrees( real_type rad )
+  auto
+  radiants_to_degrees( T const & rad )
   { return 57.29577951308232087679815481410517033240*rad; } // (180/Pi)*rad
 
   /*  _             __  _              __     _
@@ -91,22 +112,24 @@ namespace AstroLib {
   // | \ /--\ | \| \_| |_   /--\ | \| \_| |_ |_
   */
   //! Add or remove multiple of \f$ 2\pi \f$ to an angle in order to put it in the range \f$ [0,2\pi] \f$.
+  template <typename T>
   inline
   void
-  angle_in_range( real_type & ang ) {
+  angle_in_range( T & ang ) {
     using Utils::m_2pi;
-    ang = fmod( ang, m_2pi );
+    ang -= m_2pi * floor(ang/m_2pi);
     while ( ang < 0     ) ang += m_2pi;
     while ( ang > m_2pi ) ang -= m_2pi;
   }
 
   //! Add or remove multiple of \f$ 2\pi \f$ to an angle  in order to put it in the range \f$ [-\pi,\pi]\f$.
+  template <typename T>
   inline
   void
-  angle_in_range_symm( real_type & ang ) {
+  angle_in_range_symm( T & ang ) {
     using Utils::m_2pi;
     using Utils::m_pi;
-    ang = fmod( ang, m_2pi );
+    ang -= m_2pi * floor(ang/m_2pi);
     while ( ang < -m_pi ) ang += m_2pi;
     while ( ang >  m_pi ) ang -= m_2pi;
   }
@@ -310,13 +333,21 @@ namespace AstroLib {
     void acceleration ( real_type t, real_type & ax, real_type & ay, real_type & az ) const;
     void jerk         ( real_type t, real_type & jx, real_type & jy, real_type & jz ) const;
 
-    real_type x_position( real_type t ) const;
-    real_type y_position( real_type t ) const;
-    real_type z_position( real_type t ) const;
+    template <size_t N> DualN<N> x_position( DualN<N> const & t ) const;
+    template <size_t N> DualN<N> y_position( DualN<N> const & t ) const;
+    template <size_t N> DualN<N> z_position( DualN<N> const & t ) const;
 
-    real_type x_velocity( real_type t ) const;
-    real_type y_velocity( real_type t ) const;
-    real_type z_velocity( real_type t ) const;
+    template <size_t N> DualN<N> x_velocity( DualN<N> const & t ) const;
+    template <size_t N> DualN<N> y_velocity( DualN<N> const & t ) const;
+    template <size_t N> DualN<N> z_velocity( DualN<N> const & t ) const;
+
+    //real_type x_position( real_type t ) const;
+    //real_type y_position( real_type t ) const;
+    //real_type z_position( real_type t ) const;
+
+    //real_type x_velocity( real_type t ) const;
+    //real_type y_velocity( real_type t ) const;
+    //real_type z_velocity( real_type t ) const;
 
     real_type x_acceleration( real_type t ) const;
     real_type y_acceleration( real_type t ) const;
@@ -419,6 +450,8 @@ namespace AstroLib {
       if ( m_EQ.retrograde ) return nu - m_K.Omega + m_K.omega;
       else                   return nu + m_K.Omega + m_K.omega;
     }
+
+    template <size_t N> DualN<N> radius_by_L( DualN<N> const & L ) const;
 
     real_type radius_by_L   ( real_type L ) const;
     real_type radius_by_L_D ( real_type L ) const;

@@ -21,6 +21,7 @@
 
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wglobal-constructors"
+#pragma clang diagnostic ignored "-Wunused-variable"
 #endif
 
 using Utils::m_pi;

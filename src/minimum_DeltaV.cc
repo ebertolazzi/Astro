@@ -22,6 +22,10 @@
 #include "Utils_HJPatternSearch.hh"
 #include "PolynomialRoots.hh"
 
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif
+
 namespace AstroLib {
 
   using std::acos;
@@ -933,7 +937,7 @@ namespace AstroLib {
     trips.clear();
     trips.reserve(10);
 
-    integer N_TABLE = ceil((t_end-t_begin)/delta_t);
+    integer N_TABLE{ static_cast<integer>( ceil((t_end-t_begin)/delta_t ) ) };
 
     dvec_t t_table;
     dmat_t DV_table;

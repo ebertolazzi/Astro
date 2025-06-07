@@ -890,6 +890,8 @@ namespace AstroLib {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  #if 0
+
   real_type
   Astro::x_position( real_type t ) const {
     real_type L[4];
@@ -1029,6 +1031,8 @@ namespace AstroLib {
 
     return 2 * ( h*cosLf + I*k*sinLg );
   }
+
+  #endif
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
