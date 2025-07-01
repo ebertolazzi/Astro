@@ -73,6 +73,8 @@ namespace AstroLib {
   //   \__,_|\__,_|\__\___/ \__,_|_|_| |_|
   */
 
+  using autodiff::dual1st;
+  using autodiff::dual2nd;
   using autodiff::detail::DualOrder;
   template <size_t N>      using DualN = autodiff::detail::HigherOrderDual<N,real_type>;
   template <typename... T> using DualT = DualN<DualOrder<T...>::value>;
@@ -340,6 +342,14 @@ namespace AstroLib {
     template <size_t N> DualN<N> x_velocity( DualN<N> const & t ) const;
     template <size_t N> DualN<N> y_velocity( DualN<N> const & t ) const;
     template <size_t N> DualN<N> z_velocity( DualN<N> const & t ) const;
+
+    template <typename T> DualT<T> x_position( T const & t ) const { constexpr size_t N{ DualOrder<T>::value }; return x_position<N>( DualN<N>(t) ); }
+    template <typename T> DualT<T> y_position( T const & t ) const { constexpr size_t N{ DualOrder<T>::value }; return y_position<N>( DualN<N>(t) ); }
+    template <typename T> DualT<T> z_position( T const & t ) const { constexpr size_t N{ DualOrder<T>::value }; return z_position<N>( DualN<N>(t) ); }
+
+    template <typename T> DualT<T> x_velocity( T const & t ) const { constexpr size_t N{ DualOrder<T>::value }; return x_velocity<N>( DualN<N>(t) ); }
+    template <typename T> DualT<T> y_velocity( T const & t ) const { constexpr size_t N{ DualOrder<T>::value }; return y_velocity<N>( DualN<N>(t) ); }
+    template <typename T> DualT<T> z_velocity( T const & t ) const { constexpr size_t N{ DualOrder<T>::value }; return z_velocity<N>( DualN<N>(t) ); }
 
     //real_type x_position( real_type t ) const;
     //real_type y_position( real_type t ) const;
@@ -771,7 +781,206 @@ namespace AstroLib {
   real_type
   D_SH_similarity( Astro const & a, Astro const & b );
 
-  real_type astro_x_position__xo       ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
+  template <typename T>
+  inline
+  T
+  astro_x_position__xo_def( T p, T f, T g, T h, T k, T L, real_type retrograde ) {
+    auto t1 = h * h;
+    auto t2 = k * k;
+    auto t4 = cos(L);
+    auto t7 = sin(L);
+    return 1.0 / (t1 + t2 + 1) / (t4 * f + t7 * g + 1) * (t4 * (t1 - t2 + 1) + 2 * t7 * k * retrograde * h) * p;
+  }
+
+  template <typename T>
+  inline
+  T
+  astro_y_position__xo_def( T p, T f, T g, T h, T k, T L, real_type retrograde ) {
+    auto t1   = h * h;
+    auto t2   = k * k;
+    auto t5   = sin(L);
+    auto t8   = cos(L);
+    return -1.0 / (t1 + t2 + 1) / (t5 * g + t8 * f + 1) * (t5 * (t1 - t2 - 1) * retrograde - 2 * t8 * k * h) * p;
+  }
+
+  template <typename T>
+  inline
+  T
+  astro_z_position__xo_def( T p, T f, T g, T h, T k, T L, real_type retrograde ) {
+    auto t2   = cos(L);
+    auto t4   = sin(L);
+    auto t12  = h * h;
+    auto t13  = k * k;
+    return 2 / (t12 + t13 + 1) / (t2 * f + t4 * g + 1) * (-t2 * k * retrograde + t4 * h) * p;
+  }
+
+  template <typename T>
+  inline
+  T
+  astro_x_velocity__xo_def( T p, T f, T g, T h, T k, T L, real_type muS, real_type retrograde ) {
+    auto t1   = h * h;
+    auto t2   = k * k;
+    auto t4   = sin(L);
+    auto t7   = cos(L);
+    auto t18  = sqrt(p);
+    auto t21  = sqrt(muS);
+    return -1.0 / (t1 + t2 + 1) * t21 / t18 * (t4 * (t1 - t2 + 1) - 2 * t7 * k * retrograde * h - 2 * f * h * k * retrograde + t1 * g - t2 * g + g);
+  }
+
+  template <typename T>
+  inline
+  T
+  astro_y_velocity__xo_def( T p, T f, T g, T h, T k, T L, real_type muS, real_type retrograde ) {
+    auto t1   = sqrt(p);
+    auto t3   = sqrt(muS);
+    auto t5   = h * h;
+    auto t6   = k * k;
+    auto t7   = t5 - t6 - 1;
+    auto t9   = cos(L);
+    auto t13  = sin(L);
+    return -2 / (t5 + t6 + 1) * (t9 * t7 * retrograde / 2 + t13 * k * h + retrograde * t7 * f / 2 + g * h * k) * t3 / t1;
+  }
+
+  template <typename T>
+  inline
+  T
+  astro_z_velocity__xo_def( T p, T f, T g, T h, T k, T L, real_type muS, real_type retrograde ) {
+    auto t1   = sqrt(muS);
+    auto t3   = sin(L);
+    auto t7   = cos(L);
+    auto t12  = sqrt(p);
+    auto t14  = h * h;
+    auto t15  = k * k;
+    return 2 / (t14 + t15 + 1) / t12 * (t3 * k * retrograde + g * k * retrograde + t7 * h + f * h) * t1;
+  }
+
+  template <typename T>
+  inline
+  T
+  astro_ray__xo_def( T p, T f, T g, T L ) {
+    auto t1   = cos(L);
+    auto t3   = sin(L);
+    return 1.0 / (t1 * f + t3 * g + 1) * p;
+  }
+
+  template <typename T>
+  inline
+  T
+  astro_vel__xo_def( T p, T f, T g, T L, real_type muS ) {
+    auto t1   = cos(L);
+    auto t5   = sin(L);
+    return sqrt(1.0 / p * ((2 * t1 + f) * f + (2 * t5 + g) * g + 1) * muS);
+  }
+
+  inline
+  real_type
+  astro_x_position__xo( real_type const p, real_type const f, real_type const g, real_type const h, real_type const k, real_type const L, real_type const retrograde ) {
+    return astro_x_position__xo_def<real_type>( p, f, g, h, k, L, retrograde );
+  }
+
+  inline
+  dual1st
+  astro_x_position__xo( dual1st const & p, dual1st const & f, dual1st const & g, dual1st const & h, dual1st const & k, dual1st const & L, real_type const retrograde ) {
+    return astro_x_position__xo_def<dual1st>( p, f, g, h, k, L, retrograde );
+  }
+
+  inline
+  dual2nd
+  astro_x_position__xo( dual2nd const & p, dual2nd const & f, dual2nd const & g, dual2nd const & h, dual2nd const & k, dual2nd const & L, real_type const retrograde ) {
+    return astro_x_position__xo_def<dual2nd>( p, f, g, h, k, L, retrograde );
+  }
+
+  inline
+  real_type
+  astro_y_position__xo( real_type const p, real_type const f, real_type const g, real_type const h, real_type const k, real_type const L, real_type const retrograde ) {
+    return astro_y_position__xo_def<real_type>( p, f, g, h, k, L, retrograde );
+  }
+
+  inline
+  dual1st
+  astro_y_position__xo( dual1st const & p, dual1st const & f, dual1st const & g, dual1st const & h, dual1st const & k, dual1st const & L, real_type const retrograde ) {
+    return astro_y_position__xo_def<dual1st>( p, f, g, h, k, L, retrograde );
+  }
+
+  inline
+  dual2nd
+  astro_y_position__xo( dual2nd const & p, dual2nd const & f, dual2nd const & g, dual2nd const & h, dual2nd const & k, dual2nd const & L, real_type const retrograde ) {
+    return astro_y_position__xo_def<dual2nd>( p, f, g, h, k, L, retrograde );
+  }
+
+  inline
+  real_type
+  astro_z_position__xo( real_type const p, real_type const f, real_type const g, real_type const h, real_type const k, real_type const L, real_type const retrograde ) {
+    return astro_z_position__xo_def<real_type>( p, f, g, h, k, L, retrograde );
+  }
+
+  inline
+  dual1st
+  astro_z_position__xo( dual1st const & p, dual1st const & f, dual1st const & g, dual1st const & h, dual1st const & k, dual1st const & L, real_type const retrograde ) {
+    return astro_z_position__xo_def<dual1st>( p, f, g, h, k, L, retrograde );
+  }
+
+  inline
+  dual2nd
+  astro_z_position__xo( dual2nd const & p, dual2nd const & f, dual2nd const & g, dual2nd const & h, dual2nd const & k, dual2nd const & L, real_type const retrograde ) {
+    return astro_z_position__xo_def<dual2nd>( p, f, g, h, k, L, retrograde );
+  }
+
+  inline
+  real_type
+  astro_x_velocity__xo( real_type const p, real_type const f, real_type const g, real_type const h, real_type const k, real_type const L, real_type muS, real_type const retrograde ) {
+    return astro_x_velocity__xo_def<real_type>( p, f, g, h, k, L, muS, retrograde );
+  }
+
+  inline
+  dual1st
+  astro_x_velocity__xo( dual1st const & p, dual1st const & f, dual1st const & g, dual1st const & h, dual1st const & k, dual1st const & L, real_type muS, real_type const retrograde ) {
+    return astro_x_velocity__xo_def<dual1st>( p, f, g, h, k, L, muS, retrograde );
+  }
+
+  inline
+  dual2nd
+  astro_x_velocity__xo( dual2nd const & p, dual2nd const & f, dual2nd const & g, dual2nd const & h, dual2nd const & k, dual2nd const & L, real_type muS, real_type const retrograde ) {
+    return astro_x_velocity__xo_def<dual2nd>( p, f, g, h, k, L, muS, retrograde );
+  }
+
+  inline
+  real_type
+  astro_y_velocity__xo( real_type const p, real_type const f, real_type const g, real_type const h, real_type const k, real_type const L, real_type muS, real_type const retrograde ) {
+    return astro_y_velocity__xo_def<real_type>( p, f, g, h, k, L, muS, retrograde );
+  }
+
+  inline
+  dual1st
+  astro_y_velocity__xo( dual1st const & p, dual1st const & f, dual1st const & g, dual1st const & h, dual1st const & k, dual1st const & L, real_type muS, real_type const retrograde ) {
+    return astro_y_velocity__xo_def<dual1st>( p, f, g, h, k, L, muS, retrograde );
+  }
+
+  inline
+  dual2nd
+  astro_y_velocity__xo( dual2nd const & p, dual2nd const & f, dual2nd const & g, dual2nd const & h, dual2nd const & k, dual2nd const & L, real_type muS, real_type const retrograde ) {
+    return astro_y_velocity__xo_def<dual2nd>( p, f, g, h, k, L, muS, retrograde );
+  }
+
+  inline
+  real_type
+  astro_z_velocity__xo( real_type const p, real_type const f, real_type const g, real_type const h, real_type const k, real_type const L, real_type muS, real_type const retrograde ) {
+    return astro_z_velocity__xo_def<real_type>( p, f, g, h, k, L, muS, retrograde );
+  }
+
+  inline
+  dual1st
+  astro_z_velocity__xo( dual1st const & p, dual1st const & f, dual1st const & g, dual1st const & h, dual1st const & k, dual1st const & L, real_type muS, real_type const retrograde ) {
+    return astro_z_velocity__xo_def<dual1st>( p, f, g, h, k, L, muS, retrograde );
+  }
+
+  inline
+  dual2nd
+  astro_z_velocity__xo( dual2nd const & p, dual2nd const & f, dual2nd const & g, dual2nd const & h, dual2nd const & k, dual2nd const & L, real_type muS, real_type const retrograde ) {
+    return astro_z_velocity__xo_def<dual2nd>( p, f, g, h, k, L, muS, retrograde );
+  }
+
+  //real_type astro_x_position__xo       ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
   real_type astro_x_position__xo_D_1   ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
   real_type astro_x_position__xo_D_1_1 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
   real_type astro_x_position__xo_D_1_2 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
@@ -808,7 +1017,7 @@ namespace AstroLib {
   real_type astro_x_position__xo_D_7   ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
   real_type astro_x_position__xo_D_7_7 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
 
-  real_type astro_y_position__xo       ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
+  //real_type astro_y_position__xo       ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
   real_type astro_y_position__xo_D_1   ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
   real_type astro_y_position__xo_D_1_1 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
   real_type astro_y_position__xo_D_1_2 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
@@ -845,7 +1054,7 @@ namespace AstroLib {
   real_type astro_y_position__xo_D_7   ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
   real_type astro_y_position__xo_D_7_7 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
 
-  real_type astro_z_position__xo       ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
+  //real_type astro_z_position__xo       ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
   real_type astro_z_position__xo_D_1   ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
   real_type astro_z_position__xo_D_1_1 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
   real_type astro_z_position__xo_D_1_2 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
@@ -882,7 +1091,7 @@ namespace AstroLib {
   real_type astro_z_position__xo_D_7   ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
   real_type astro_z_position__xo_D_7_7 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
 
-  real_type astro_x_velocity__xo       ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
+  //real_type astro_x_velocity__xo       ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
   real_type astro_x_velocity__xo_D_1   ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
   real_type astro_x_velocity__xo_D_1_1 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
   real_type astro_x_velocity__xo_D_1_2 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
@@ -928,7 +1137,7 @@ namespace AstroLib {
   real_type astro_x_velocity__xo_D_8   ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
   real_type astro_x_velocity__xo_D_8_8 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
 
-  real_type astro_y_velocity__xo       ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
+  //real_type astro_y_velocity__xo       ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
   real_type astro_y_velocity__xo_D_1   ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
   real_type astro_y_velocity__xo_D_1_1 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
   real_type astro_y_velocity__xo_D_1_2 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
@@ -974,7 +1183,7 @@ namespace AstroLib {
   real_type astro_y_velocity__xo_D_8   ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
   real_type astro_y_velocity__xo_D_8_8 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
 
-  real_type astro_z_velocity__xo       ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
+  //real_type astro_z_velocity__xo       ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
   real_type astro_z_velocity__xo_D_1   ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
   real_type astro_z_velocity__xo_D_1_1 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
   real_type astro_z_velocity__xo_D_1_2 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
@@ -1020,7 +1229,7 @@ namespace AstroLib {
   real_type astro_z_velocity__xo_D_8   ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
   real_type astro_z_velocity__xo_D_8_8 ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde );
 
-  real_type astro_ray__xo              ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L );
+  //real_type astro_ray__xo              ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L );
   real_type astro_ray__xo_D_1          ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L );
   real_type astro_ray__xo_D_2          ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L );
   real_type astro_ray__xo_D_3          ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L );
@@ -1036,7 +1245,7 @@ namespace AstroLib {
   real_type astro_ray__xo_D_3_4        ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L );
   real_type astro_ray__xo_D_4_4        ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L );
 
-  real_type astro_vel__xo              ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L, real_type xo__muS );
+  //real_type astro_vel__xo              ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L, real_type xo__muS );
   real_type astro_vel__xo_D_1          ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L, real_type xo__muS );
   real_type astro_vel__xo_D_2          ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L, real_type xo__muS );
   real_type astro_vel__xo_D_3          ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L, real_type xo__muS );
