@@ -12,3 +12,5 @@ bin
 vs_2017_x64/
 .idea
 cmake-build-debug
+src/.vscode
+.DS_Store
