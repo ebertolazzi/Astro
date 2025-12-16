@@ -95,6 +95,7 @@ namespace AstroLib {
     return delta_e*delta_e + delta_a*delta_a + sin2_I_ba + power2(ave_e*D_SH_sin(pi_ba));
   }
 
+#if 0
   real_type
   astro_x_position__xo( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
@@ -111,6 +112,7 @@ namespace AstroLib {
     }
     return result__;
   }
+#endif
 
   real_type
   astro_x_position__xo_D_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
@@ -834,6 +836,7 @@ namespace AstroLib {
     return result__;
   }
 
+#if 0
   real_type
   astro_y_position__xo( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
@@ -850,6 +853,7 @@ namespace AstroLib {
     }
     return result__;
   }
+#endif
 
   real_type
   astro_y_position__xo_D_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
@@ -1565,6 +1569,7 @@ namespace AstroLib {
     return result__;
   }
 
+#if 0
   real_type
   astro_z_position__xo( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
     real_type t2   = cos(xo__L);
@@ -1581,6 +1586,7 @@ namespace AstroLib {
     }
     return result__;
   }
+#endif
 
   real_type
   astro_z_position__xo_D_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde ) {
@@ -2288,6 +2294,7 @@ namespace AstroLib {
     return result__;
   }
 
+#if 0
   real_type
   astro_x_velocity__xo( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
     real_type t1   = xo__h * xo__h;
@@ -2306,6 +2313,7 @@ namespace AstroLib {
     }
     return result__;
   }
+#endif
 
   real_type
   astro_x_velocity__xo_D_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
@@ -3149,6 +3157,7 @@ namespace AstroLib {
     return result__;
   }
 
+#if 0
   real_type
   astro_y_velocity__xo( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
     real_type t1   = sqrt(xo__p);
@@ -3168,6 +3177,7 @@ namespace AstroLib {
     }
     return result__;
   }
+#endif
 
   real_type
   astro_y_velocity__xo_D_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
@@ -4016,6 +4026,7 @@ namespace AstroLib {
     return result__;
   }
 
+#if 0
   real_type
   astro_z_velocity__xo( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
     real_type t1   = sqrt(xo__muS);
@@ -4034,6 +4045,7 @@ namespace AstroLib {
     }
     return result__;
   }
+#endif
 
   real_type
   astro_z_velocity__xo_D_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__muS, real_type xo__retrograde ) {
@@ -4854,6 +4866,7 @@ namespace AstroLib {
     return result__;
   }
 
+#if 0
   real_type
   astro_ray__xo( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L ) {
     real_type t1   = cos(xo__L);
@@ -4868,6 +4881,7 @@ namespace AstroLib {
     }
     return result__;
   }
+#endif
 
   real_type
   astro_ray__xo_D_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L ) {
@@ -5100,6 +5114,7 @@ namespace AstroLib {
     return result__;
   }
 
+#if 0
   real_type
   astro_vel__xo( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L, real_type xo__muS ) {
     real_type t1   = cos(xo__L);
@@ -5114,6 +5129,7 @@ namespace AstroLib {
     }
     return result__;
   }
+#endif
 
   real_type
   astro_vel__xo_D_1( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__L, real_type xo__muS ) {

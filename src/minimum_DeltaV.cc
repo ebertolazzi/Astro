@@ -19,7 +19,7 @@
 \*--------------------------------------------------------------------------*/
 
 #include "Astro.hh"
-#include "Utils_HJPatternSearch.hh"
+#include "Utils_minimize_HJPatternSearch.hh"
 #include "PolynomialRoots.hh"
 
 #ifdef __clang__

@@ -53,7 +53,7 @@
   #define GC_DO_ERROR(MSG) {                          \
     ostringstream ost;                                \
     ost << "in GenericContainer: " << MSG << '\n';    \
-    GenericContainer::exception( ost.str().c_str() ); \
+    GenericContainer::exception( ost.str().data() ); \
   }
 #endif
 
@@ -160,7 +160,7 @@ namespace GC_namespace {
   //! \brief Generic matrix storage type.
   //!
   //! This template class defines a matrix type that extends vector<TYPE>
-  //! to store and manipulate a 2D matrix of elements of type TYPE.
+  //! to store and manipulate a 2D matrix of elements of type `TYPE`.
   //! The matrix is stored internally as a 1D vector in row-major order.
   //!
   //! @tparam TYPE The type of elements stored in the matrix.
@@ -189,7 +189,7 @@ namespace GC_namespace {
     mat_type( unsigned nr, unsigned nc )
     : m_num_rows(nr)
     , m_num_cols(nc)
-    { vector<TYPE>::resize(size_type(nr*nc)); }
+    { vector<TYPE>::resize(size_type(nr*nc)); }    
 
     //!
     //! Resizes the matrix to the specified dimensions.
@@ -204,14 +204,22 @@ namespace GC_namespace {
     //! \endcode
     //!
     void
-    resize( unsigned nr, unsigned nc ) {
+    resize( unsigned const nr, unsigned const nc ) {
       m_num_rows = nr;
       m_num_cols = nc;
       vector<TYPE>::resize(size_type(nr*nc));
     }
 
+    template <typename T1, typename T2>
+    void
+    resize( T1 const nr, T2 const nc ) {
+      static_assert(std::is_integral_v<T1>, "resize() accepts only integral types!");
+      static_assert(std::is_integral_v<T1>, "resize() accepts only integral types!");
+      resize( static_cast<unsigned>(nr), static_cast<unsigned>(nc) );
+    }
+
     //!
-    //! Copies the specified column of the matrix to a vector.
+    //! Copy the specified column of the matrix to a vector.
     //!
     //! \param nc The index of the column to be copied (0-based).
     //! \param C The vector that will be filled with the column elements.
@@ -225,6 +233,13 @@ namespace GC_namespace {
     //!
     void get_column( unsigned nc, vector<TYPE> & C ) const;
 
+    template <typename T>
+    void
+    get_column( T const nc, vector<TYPE> & C ) const {
+      static_assert(std::is_integral_v<T>, "get_column() accepts only integral types as first argument!");
+      get_column( static_cast<unsigned>(nc), C );
+    }
+
     //!
     //! \deprecated
     //!
@@ -233,7 +248,7 @@ namespace GC_namespace {
     { this->get_column( nc, C ); }
 
     //!
-    //! Copies the specified row of the matrix to a vector.
+    //! Copy the specified row of the matrix to a vector.
     //!
     //! \param nr The index of the row to be copied (0-based).
     //! \param R The vector that will be filled with the row elements.
@@ -246,6 +261,13 @@ namespace GC_namespace {
     //! \endcode
     //!
     void get_row( unsigned nr, vector<TYPE> & R ) const;
+
+    template <typename T>
+    void
+    get_row( T const nr, vector<TYPE> & R ) const {
+      static_assert(std::is_integral_v<T>, "get_row() accepts only integral types as first argument!");
+      get_row( static_cast<unsigned>(nr), R );
+    }
 
     //!
     //! \deprecated
@@ -269,6 +291,13 @@ namespace GC_namespace {
     //!
     void get_column( unsigned nc, TYPE * C ) const;
 
+    template <typename T>
+    void
+    get_column( T const nc, TYPE * C ) const {
+      static_assert(std::is_integral_v<T>, "get_column() accepts only integral types as first argument!");
+      get_column( static_cast<unsigned>(nc), C );
+    }
+
     //!
     //! \deprecated
     //!
@@ -291,6 +320,13 @@ namespace GC_namespace {
     //!
     void get_row( unsigned nr, TYPE * R ) const;
 
+    template <typename T>
+    void
+    get_row( T const nr, TYPE * R ) const {
+      static_assert(std::is_integral_v<T>, "get_row() accepts only integral types as first argument!");
+      get_row( static_cast<unsigned>(nr), R );
+    }
+
     //!
     //! \deprecated
     //!
@@ -309,12 +345,12 @@ namespace GC_namespace {
     //! unsigned rows = matrix.num_rows();  // Returns 3
     //! \endcode
     //!
-    unsigned num_rows() const { return m_num_rows; }
+    [[nodiscard]] unsigned num_rows() const { return m_num_rows; }
 
     //!
     //! \deprecated
     //!
-    unsigned numRows() const { return m_num_rows; }
+    [[nodiscard]] unsigned numRows() const { return m_num_rows; }
 
     //!
     //! Returns the number of columns in the matrix.
@@ -327,12 +363,12 @@ namespace GC_namespace {
     //! unsigned cols = matrix.num_cols();  // Returns 3
     //! \endcode
     //!
-    unsigned num_cols() const { return m_num_cols; }
+    [[nodiscard]] unsigned num_cols() const { return m_num_cols; }
 
     //!
     //! \deprecated
     //!
-    unsigned numCols() const { return m_num_cols; }
+    [[nodiscard]] unsigned numCols() const { return m_num_cols; }
 
     //!
     //! Provides constant access to the element at position (i, j).
@@ -567,7 +603,7 @@ namespace GC_namespace {
   //! ### Example:
   //! \code
   //! GenericContainer gc;
-  //! gc.set_integer(42);  // Store an integer
+  //! gc.set_int(42);  // Store an integer
   //! gc.set_string("Hello, World!");  // Store a string
   //!
   //! GenericContainer vec_gc;
@@ -689,7 +725,7 @@ namespace GC_namespace {
     void ck( string_view, TypeAllowed) const;
 
     //! \brief Checks the type of data stored, returns an error code for type mismatch.
-    int ck(TypeAllowed) const;
+    [[nodiscard]] int ck(TypeAllowed) const;
 
     //! \brief Checks or sets the type of data stored.
     void ck_or_set(string_view, TypeAllowed);
@@ -698,14 +734,14 @@ namespace GC_namespace {
     #ifdef GENERIC_CONTAINER_ON_WINDOWS
     bool simple_data() const;
     #else
-    bool simple_data() const { return m_data_type <= GC_type::STRING; }
+    [[nodiscard]] bool simple_data() const { return m_data_type <= GC_type::STRING; }
     #endif
 
     //! \brief Returns true if the data type is a simple vector type.
     #ifdef GENERIC_CONTAINER_ON_WINDOWS
     bool simple_vec_data() const;
     #else
-    bool simple_vec_data() const { return m_data_type < GC_type::VEC_STRING; }
+    [[nodiscard]] bool simple_vec_data() const { return m_data_type < GC_type::VEC_STRING; }
     #endif
 
   public:
@@ -778,7 +814,28 @@ namespace GC_namespace {
     //! gc.erase("key1");  // Remove the entry with key "key1"
     //! \endcode
     //!
-    void erase( string_view name );
+    void erase( string_view name ) const;
+
+    //!
+    //! \brief Checks whether the `GenericContainer` is empty.
+    //!
+    //! Returns `true` if the container does not hold any data (i.e. its type is `NOTYPE`),
+    //! and `false` otherwise.
+    //!
+    //! This method is useful to quickly verify if the container has been cleared or not
+    //! initialized yet.
+    //!
+    //! ### Example:
+    //! \code
+    //! gc.set_integer(42);    // Store an integer
+    //! if (!gc.empty()) {     // Check if container is not empty
+    //!     std::cout << "Container holds data.\n";
+    //! }
+    //! gc.clear();            // Clear the container
+    //! assert(gc.empty());    // Now it's empty
+    //! \endcode
+    //!
+    bool empty() const { return this->m_data_type == GC_type::NOTYPE; }
 
     //!
     //! \name Methods for Initializing Simple Data Types
@@ -956,9 +1013,9 @@ namespace GC_namespace {
     //! (representing the real and imaginary components), stores the complex number, and returns a reference
     //! to the stored complex value.
     //!
-    //! \param r The real part of the complex number.
-    //! \param i The imaginary part of the complex number.
-    //! \return A reference to the stored complex value.
+    //! \param re The real part of the complex number.
+    //! \param im The imaginary part of the complex number.
+    //! \return   A reference to the stored complex value.
     //!
     //! ### Example:
     //! \code
@@ -966,7 +1023,7 @@ namespace GC_namespace {
     //! gc.set_complex(1.0, 2.0);  // Store a complex number (1.0 + 2.0i)
     //! \endcode
     //!
-    complex_type & set_complex( real_type r, real_type i );
+    complex_type & set_complex( real_type re, real_type im );
 
     //!
     //! \brief Set the data type to `string_type`, allocate memory, and assign a string value.
@@ -1014,6 +1071,13 @@ namespace GC_namespace {
     //!
     vec_pointer_type & set_vec_pointer( unsigned sz = 0 );
 
+    template <typename T>
+    vec_pointer_type &
+    set_vec_pointer( T sz ) {
+      static_assert(std::is_integral_v<T>, "set_vec_pointers() accepts only integral types!");
+      return set_vec_pointer(static_cast<unsigned>(sz));
+    }
+
     //! \brief Set the data to `vec_pointer_type` by copying from another vector.
     //!
     //! This method initializes the vector of pointers by copying data from the provided vector `v`.
@@ -1045,6 +1109,13 @@ namespace GC_namespace {
     //! \endcode
     //!
     vec_bool_type & set_vec_bool( unsigned sz = 0 );
+
+    template <typename T>
+    vec_bool_type &
+    set_vec_bool( T sz ) {
+      static_assert(std::is_integral_v<T>, "set_vec_bool() accepts only integral types!");
+      return set_vec_bool(static_cast<unsigned>(sz));
+    }
 
     //! \brief Set the data to `vec_bool_type` by copying from another vector.
     //!
@@ -1078,6 +1149,13 @@ namespace GC_namespace {
     //!
     vec_int_type & set_vec_int( unsigned sz = 0 );
 
+    template <typename T>
+    vec_int_type &
+    set_vec_int( T sz ) {
+      static_assert(std::is_integral_v<T>, "set_vec_ints() accepts only integral types!");
+      return set_vec_int(static_cast<unsigned>(sz));
+    }
+
     //! \brief Set the data to `vec_int_type` by copying from another vector.
     //!
     //! This method initializes the vector of integers by copying data from the provided vector `v`.
@@ -1109,6 +1187,13 @@ namespace GC_namespace {
     //! \endcode
     //!
     vec_long_type & set_vec_long( unsigned sz = 0 );
+
+    template <typename T>
+    vec_long_type &
+    set_vec_long( T sz ) {
+      static_assert(std::is_integral_v<T>, "set_vec_long() accepts only integral types!");
+      return set_vec_long(static_cast<unsigned>(sz));
+    }
 
     //! \brief Set the data to `vec_long_type` by copying from another vector.
     //!
@@ -1142,6 +1227,13 @@ namespace GC_namespace {
     //!
     vec_real_type & set_vec_real( unsigned sz = 0 );
 
+    template <typename T>
+    vec_real_type &
+    set_vec_real( T sz ) {
+      static_assert(std::is_integral_v<T>, "set_vec_real() accepts only integral types!");
+      return set_vec_real(static_cast<unsigned>(sz));
+    }
+
     //! \brief Set the data to `vec_real_type` by copying from another vector.
     //!
     //! This method initializes the vector of `real_type` numbers by copying data from the provided vector `v`.
@@ -1174,6 +1266,13 @@ namespace GC_namespace {
     //!
     vec_complex_type & set_vec_complex( unsigned sz = 0 );
 
+    template <typename T>
+    vec_complex_type &
+    set_vec_complex( T sz ) {
+      static_assert(std::is_integral_v<T>, "set_vec_complex() accepts only integral types!");
+      return set_vec_complex(static_cast<unsigned>(sz));
+    }
+
     //! \brief Set the data to `vec_complex_type` by copying from another vector.
     //!
     //! This method initializes the vector of complex numbers by copying data from the provided vector `v`.
@@ -1205,6 +1304,13 @@ namespace GC_namespace {
     //! \endcode
     //!
     vec_string_type & set_vec_string( unsigned sz = 0 );
+
+    template <typename T>
+    vec_string_type &
+    set_vec_string( T sz ) {
+      static_assert(std::is_integral_v<T>, "set_vec_string() accepts only integral types!");
+      return set_vec_string(static_cast<unsigned>(sz));
+    }
 
     //! \brief Set the data to `vec_string_type` by copying from another vector.
     //!
@@ -1360,7 +1466,7 @@ namespace GC_namespace {
     //!
     //! \param[in] b value The boolean value to push.
     //!
-    void push_bool( bool b );
+    void push_bool( bool b ) const;
 
     //! \brief Push an integer value into the vector or matrix.
     //!
@@ -1570,7 +1676,7 @@ namespace GC_namespace {
     //! \param[in] where Optional parameter to provide context for error messages.
     //! \return The numeric value, or `0` if the data is of an unsupported type.
     //!
-    real_type get_number( string_view where = "" ) const;
+    real_type get_number( string_view const where = "" ) const;
 
     //!
     //! \brief Get a stored complex number if the data is boolean, integer, real, or complex type.
@@ -1578,7 +1684,7 @@ namespace GC_namespace {
     //! \param[in] where Optional parameter to provide context for error messages.
     //! \return The complex number, or `0` if the data is of an unsupported type.
     //!
-    complex_type get_complex_number( string_view where = "" ) const;
+    complex_type get_complex_number( string_view const where = "" ) const;
 
     //!
     //! \brief Get the real and imaginary parts of a stored complex number.
@@ -1597,7 +1703,7 @@ namespace GC_namespace {
     //! \param[in] where Optional parameter to provide context for error messages.
     //! \return A void pointer to the stored data.
     //!
-    void * get_pvoid( string_view where = "" ) const;
+    void * get_pvoid( string_view const where = "" ) const;
 
     //!
     //! \brief Return the stored data as a double pointer.
@@ -1605,7 +1711,7 @@ namespace GC_namespace {
     //! \param[in] where Optional parameter to provide context for error messages.
     //! \return A double pointer to the stored data.
     //!
-    void ** get_ppvoid( string_view where = "" ) const;
+    void ** get_ppvoid( string_view const where = "" ) const;
 
     //!
     //! Return the stored data as a pointer to const integer
@@ -1672,7 +1778,7 @@ namespace GC_namespace {
     //!
     template <typename T>
     void
-    get_value( T & v, string_view where = "" ) const;
+    get_value( T & v, string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value as a pointer.
@@ -1693,7 +1799,7 @@ namespace GC_namespace {
     #else
     template <typename T>
     T& get_pointer()
-    { ck("get_pointer",GC_type::POINTER); return *reinterpret_cast<T*>(&(m_data.p)); }
+    { ck("get_pointer", GC_type::POINTER); return *static_cast<T*>(m_data.p); }
 
     //!
     //! \brief Get the stored value as a pointer (const version).
@@ -1714,7 +1820,7 @@ namespace GC_namespace {
     //! \param[in] where Optional parameter to provide context for error messages.
     //! \return The boolean value stored in the container.
     //!
-    bool_type get_map_bool( string_view key, string_view where = "" ) const;
+    bool_type get_map_bool( string_view const key, string_view const where = "" ) const;
 
     //!
     //! Get the stored value in the map as boolean.
@@ -1733,7 +1839,7 @@ namespace GC_namespace {
     //! \param[in] where position added to the error message
     //! \return the boolean stored in the container
     //!
-    bool_type get_map_bool( vec_string_type const & keys, string_view where = "" ) const;
+    bool_type get_map_bool( vec_string_type const & keys, string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value in the map as an integer.
@@ -1744,7 +1850,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return The integer value stored in the container.
     //!
-    int_type get_map_int( string_view key, string_view where = "" ) const;
+    int_type get_map_int( string_view const key, string_view const where = "" ) const;
 
     //!
     //! Get the stored value in the map as an integer.
@@ -1764,7 +1870,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return The integer value stored in the container for the first found key.
     //!
-    int_type get_map_int( vec_string_type const & keys, string_view where = "" ) const;
+    int_type get_map_int( vec_string_type const & keys, string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value in the map as a real number.
@@ -1775,7 +1881,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return The real number stored in the container.
     //!
-    real_type get_map_number( string_view key, string_view where = "" ) const;
+    real_type get_map_number( string_view const key, string_view const where = "" ) const;
 
     //!
     //! Get the stored value in the map as a real number.
@@ -1795,7 +1901,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return The real number stored in the container for the first found key.
     //!
-    real_type get_map_number( vec_string_type const & keys, string_view where = "" ) const;
+    real_type get_map_number( vec_string_type const & keys, string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value in the map as a string.
@@ -1806,7 +1912,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the string stored in the container.
     //!
-    string_view get_map_string( string_view key, string_view where = "" ) const;
+    string const & get_map_string( string_view const key, string_view const where = "" ) const;
 
     //!
     //! Get the stored value in the map as a string.
@@ -1814,7 +1920,7 @@ namespace GC_namespace {
     //! \param[in] args  keys lists sequence
     //! \return the string stored in the container
     //!
-    string_view get_map_string( std::initializer_list<string> args ) const;
+    string const & get_map_string( std::initializer_list<string> args ) const;
 
     //!
     //! \brief Get the stored value in the map as a string from a list of keys.
@@ -1826,7 +1932,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the string stored in the container for the first found key.
     //!
-    string_view get_map_string( vec_string_type const & keys, string_view where = "" ) const;
+    string const & get_map_string( vec_string_type const & keys, string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value in the map as a vector of real numbers.
@@ -1837,7 +1943,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the vector of real numbers stored in the container.
     //!
-    vec_real_type const & get_map_vec_real( string_view key, string_view where = "" ) const;
+    vec_real_type const & get_map_vec_real( string_view const key, string_view const where = "" ) const;
 
     //!
     //! Get the stored value in the map as a  vector of real numbers.
@@ -1857,7 +1963,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the vector of real numbers stored in the container for the first found key.
     //!
-    vec_real_type const & get_map_vec_real( vec_string_type const & keys, string_view where = "" ) const;
+    vec_real_type const & get_map_vec_real( vec_string_type const & keys, string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value in the map as a vector of complex numbers.
@@ -1868,7 +1974,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the vector of complex numbers stored in the container.
     //!
-    vec_complex_type const & get_map_vec_complex( string_view key, string_view where = "" ) const;
+    vec_complex_type const & get_map_vec_complex( string_view const key, string_view const where = "" ) const;
 
     //!
     //! Get the stored value in the map as a  vector of complex numbers.
@@ -1888,7 +1994,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the vector of complex numbers stored in the container for the first found key.
     //!
-    vec_complex_type const & get_map_vec_complex( vec_string_type const & keys, string_view where = "" ) const;
+    vec_complex_type const & get_map_vec_complex( vec_string_type const & keys, string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value in the map as a vector of strings.
@@ -1899,7 +2005,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the vector of strings stored in the container.
     //!
-    vec_string_type const & get_map_vec_string( string_view key, string_view where = "" ) const;
+    vec_string_type const & get_map_vec_string( string_view const key, string_view const where = "" ) const;
 
     //!
     //! Get the stored value in the map as a  vector of strings.
@@ -1919,7 +2025,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the vector of strings stored in the container for the first found key.
     //!
-    vec_string_type const & get_map_vec_string( vec_string_type const & keys, string_view where = "" ) const;
+    vec_string_type const & get_map_vec_string( vec_string_type const & keys, string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value as a boolean.
@@ -1929,7 +2035,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the boolean stored in the container.
     //!
-    bool_type & get_bool( string_view where = "" );
+    bool_type & get_bool( string_view const where = "" );
 
     //!
     //! \brief Get the stored value as a const boolean.
@@ -1939,7 +2045,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the const boolean stored in the container.
     //!
-    bool_type const & get_bool( string_view where = "" ) const;
+    bool_type const & get_bool( string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value as an integer.
@@ -1949,7 +2055,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the integer stored in the container.
     //!
-    int_type & get_int( string_view where = "" );
+    int_type & get_int( string_view const where = "" );
 
     //!
     //! \brief Get the stored value as a const integer.
@@ -1959,7 +2065,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the const integer stored in the container.
     //!
-    int_type const & get_int( string_view where = "" ) const;
+    int_type const & get_int( string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value as a long integer.
@@ -1969,7 +2075,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the long integer stored in the container.
     //!
-    long_type & get_long( string_view where = "" );
+    long_type & get_long( string_view const where = "" );
 
     //!
     //! \brief Get the stored value as a const long integer.
@@ -1979,7 +2085,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the const long integer stored in the container.
     //!
-    long_type const & get_long( string_view where = "" ) const;
+    long_type const & get_long( string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value as an integer.
@@ -1989,7 +2095,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return The data stored in the container as an integer.
     //!
-    int_type get_as_int( string_view where = "" ) const;
+    int_type get_as_int( string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value as an unsigned integer.
@@ -1999,7 +2105,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return The data stored in the container as an unsigned integer.
     //!
-    uint_type get_as_uint( string_view where = "" ) const;
+    uint_type get_as_uint( string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value as a long integer.
@@ -2009,7 +2115,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return The data stored in the container as a long integer.
     //!
-    long_type get_as_long( string_view where = "" ) const;
+    long_type get_as_long( string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value as an unsigned long integer.
@@ -2019,7 +2125,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return The data stored in the container as an unsigned long integer.
     //!
-    ulong_type get_as_ulong( string_view where = "" ) const;
+    ulong_type get_as_ulong( string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value as a real number.
@@ -2029,7 +2135,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the real number stored in the container.
     //!
-    real_type & get_real( string_view where = "" );
+    real_type & get_real( string_view const where = "" );
 
     //!
     //! \brief Get the stored value as a const real number.
@@ -2039,7 +2145,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the const real number stored in the container.
     //!
-    real_type const & get_real( string_view where = "" ) const;
+    real_type const & get_real( string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value as a complex number.
@@ -2049,7 +2155,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the complex number stored in the container.
     //!
-    complex_type & get_complex( string_view where = "" );
+    complex_type & get_complex( string_view const where = "" );
 
     //!
     //! \brief Get the stored value as a const complex number.
@@ -2059,7 +2165,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the const complex number stored in the container.
     //!
-    complex_type const & get_complex( string_view where = "" ) const;
+    complex_type const & get_complex( string_view const where = "" ) const;
 
     //!
     //! \brief Get the stored value as a string.
@@ -2069,7 +2175,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the string stored in the container.
     //!
-    string_type & get_string( string_view where = "" );
+    string_type & get_string( string_view const where = "" );
 
     //!
     //! \brief Get the stored value as a const string.
@@ -2079,7 +2185,7 @@ namespace GC_namespace {
     //! \param[in] where Optional context for error messages, indicating the position of the call.
     //! \return A reference to the const string stored in the container.
     //!
-    string_view get_string( string_view where = "" ) const;
+    string_type const & get_string( string_view const where = "" ) const;
 
     ///@}
 
@@ -2108,7 +2214,7 @@ namespace GC_namespace {
     //! // Use data...
     //! \endcode
     //!
-    vector_type & get_vector( string_view where = "" );
+    vector_type & get_vector( string_view const where = "" );
 
     //!
     //! Get the stored value as a const vector of `GenericoContainer`
@@ -2122,7 +2228,7 @@ namespace GC_namespace {
     //! // Use data...
     //! \endcode
     //!
-    vector_type const & get_vector( string_view where = "" ) const;
+    vector_type const & get_vector( string_view const where = "" ) const;
 
     //!
     //! Get the stored value as a vector of pointers
@@ -2136,7 +2242,7 @@ namespace GC_namespace {
     //! // Use ptr_data...
     //! \endcode
     //!
-    vec_pointer_type & get_vec_pointer( string_view where = "" );
+    vec_pointer_type & get_vec_pointer( string_view const where = "" );
 
     //!
     //! Get the stored value as a const vector of pointers
@@ -2150,7 +2256,7 @@ namespace GC_namespace {
     //! // Use ptr_data...
     //! \endcode
     //!
-    vec_pointer_type const & get_vec_pointer( string_view where = "" ) const;
+    vec_pointer_type const & get_vec_pointer( string_view const where = "" ) const;
 
     //!
     //! Get the stored value as a vector of booleans
@@ -2164,7 +2270,7 @@ namespace GC_namespace {
     //! // Use bool_data...
     //! \endcode
     //!
-    vec_bool_type & get_vec_bool( string_view where = "" );
+    vec_bool_type & get_vec_bool( string_view const where = "" );
 
     //!
     //! Get the stored value as a const vector of booleans
@@ -2178,7 +2284,7 @@ namespace GC_namespace {
     //! // Use bool_data...
     //! \endcode
     //!
-    vec_bool_type const & get_vec_bool( string_view where = "" ) const;
+    vec_bool_type const & get_vec_bool( string_view const where = "" ) const;
 
     //!
     //! Get the stored value as a vector of integers
@@ -2730,6 +2836,13 @@ namespace GC_namespace {
     //!
     bool_type get_bool_at( unsigned i );
 
+    template <typename T>
+    bool_type
+    get_bool_at( T i ) {
+      static_assert(std::is_integral_v<T>, "get_bool_at() accepts only integral types!");
+      return get_bool_at(static_cast<unsigned>(i));
+    }
+
     //!
     //! Get the `i`-th boolean of the stored data.
     //!
@@ -2743,7 +2856,7 @@ namespace GC_namespace {
     //! // Use value...
     //! \endcode
     //!
-    bool_type get_bool_at( unsigned i, string_view where ) const;
+    bool_type get_bool_at( unsigned i, string_view const where ) const;
 
     //!
     //! Get the `i`-th integer of the stored data.
@@ -2759,6 +2872,13 @@ namespace GC_namespace {
     //!
     int_type & get_int_at( unsigned i );
 
+    template <typename T>
+    int_type &
+    get_int_at( T i ) {
+      static_assert(std::is_integral_v<T>, "get_int_at() accepts only integral types!");
+      return get_int_at(static_cast<unsigned>(i));
+    }
+
     //!
     //! Get the `i`-th const integer of the stored data.
     //!
@@ -2772,7 +2892,7 @@ namespace GC_namespace {
     //! // Use value...
     //! \endcode
     //!
-    int_type const & get_int_at( unsigned i, string_view where ) const;
+    int_type const & get_int_at( unsigned i, string_view const where ) const;
 
     //!
     //! Get the `i`-th long integer of the stored data.
@@ -2788,6 +2908,13 @@ namespace GC_namespace {
     //!
     long_type & get_long_at( unsigned i );
 
+    template <typename T>
+    long_type &
+    get_long_at( T i ) {
+      static_assert(std::is_integral_v<T>, "get_long_at() accepts only integral types!");
+      return get_long_at(static_cast<unsigned>(i));
+    }
+
     //!
     //! Get the `i`-th const long integer of the stored data.
     //!
@@ -2801,7 +2928,7 @@ namespace GC_namespace {
     //! // Use value...
     //! \endcode
     //!
-    long_type const & get_long_at( unsigned i, string_view where ) const;
+    long_type const & get_long_at( unsigned i, string_view const where ) const;
 
     //!
     //! Get the `i`-th `real_type` of the stored data.
@@ -2817,6 +2944,12 @@ namespace GC_namespace {
     //!
     real_type & get_real_at( unsigned i );
 
+    template <typename T>
+    real_type & get_real_at( T i ) {
+      static_assert(std::is_integral_v<T>, "get_real_at() accepts only integral types!");
+      return get_real_at(static_cast<unsigned>(i));
+    }
+
     //!
     //! Get the `i`-th const `real_type` of the stored data.
     //!
@@ -2830,7 +2963,7 @@ namespace GC_namespace {
     //! // Use value...
     //! \endcode
     //!
-    real_type const & get_real_at( unsigned i, string_view where ) const;
+    real_type const & get_real_at( unsigned i, string_view const where ) const;
 
     //!
     //! Get the `i`-th `complex_type` of the stored data.
@@ -2846,6 +2979,12 @@ namespace GC_namespace {
     //!
     complex_type & get_complex_at( unsigned i );
 
+    template <typename T>
+    complex_type & get_complex_at( T i ) {
+      static_assert(std::is_integral_v<T>, "get_complex_at() accepts only integral types!");
+      return get_complex_at(static_cast<unsigned>(i));
+    }
+
     //!
     //! Get the `i`-th const `complex_type` of the stored data.
     //!
@@ -2859,7 +2998,7 @@ namespace GC_namespace {
     //! // Use value...
     //! \endcode
     //!
-    complex_type const & get_complex_at( unsigned i, string_view where ) const;
+    complex_type const & get_complex_at( unsigned i, string_view const where ) const;
 
     //!
     //! Get the `i`-th integer of the stored data in a matrix.
@@ -2890,7 +3029,7 @@ namespace GC_namespace {
     //! // Use value...
     //! \endcode
     //!
-    int_type const & get_int_at( unsigned i, unsigned j, string_view where ) const;
+    int_type const & get_int_at( unsigned i, unsigned j, string_view const where ) const;
 
     //!
     //! Get the `i`-th long integer of the stored data in a matrix.
@@ -2921,7 +3060,7 @@ namespace GC_namespace {
     //! // Use value...
     //! \endcode
     //!
-    long_type const & get_long_at( unsigned i, unsigned j, string_view where ) const;
+    long_type const & get_long_at( unsigned i, unsigned j, string_view const where ) const;
 
     //!
     //! Get the `i`-th `real_type` of the stored data in a matrix.
@@ -2952,7 +3091,7 @@ namespace GC_namespace {
     //! // Use value...
     //! \endcode
     //!
-    real_type const & get_real_at( unsigned i, unsigned j, string_view where ) const;
+    real_type const & get_real_at( unsigned i, unsigned j, string_view const where ) const;
 
     //!
     //! Get the `i`-th `complex_type` of the stored data in a matrix.
@@ -2983,7 +3122,7 @@ namespace GC_namespace {
     //! // Use value...
     //! \endcode
     //!
-    complex_type const & get_complex_at( unsigned i, unsigned j, string_view where ) const;
+    complex_type const & get_complex_at( unsigned i, unsigned j, string_view const where ) const;
 
     //!
     //! Get the `i`-th string of the stored data.
@@ -2999,6 +3138,13 @@ namespace GC_namespace {
     //!
     string_type & get_string_at( unsigned i );
 
+    template <typename T>
+    string_type &
+    get_string_at( T i ) {
+      static_assert(std::is_integral_v<T>, "get_string_at() accepts only integral types!");
+      return get_string_at(static_cast<unsigned>(i));
+    }
+
     //!
     //! Get the `i`-th const string of the stored data.
     //!
@@ -3012,7 +3158,7 @@ namespace GC_namespace {
     //! // Use value...
     //! \endcode
     //!
-    string_view get_string_at( unsigned i, string_view where ) const;
+    string_type const & get_string_at( unsigned i, string_view const where ) const;
 
     //!
     //! Get the `i`-th const `GenericContainer` of the stored data.
@@ -3028,6 +3174,12 @@ namespace GC_namespace {
     //!
     GenericContainer & get_gc_at( unsigned i );
 
+    template <typename T>
+    GenericContainer & get_gc_at( T i ) {
+      static_assert(std::is_integral_v<T>, "get_gc_at() accepts only integral types!");
+      return get_gc_at(static_cast<unsigned>(i));
+    }
+
     //!
     //! Get the `i`-th const `GenericContainer` of the stored data.
     //!
@@ -3041,7 +3193,7 @@ namespace GC_namespace {
     //! // Use value...
     //! \endcode
     //!
-    GenericContainer const & get_gc_at( unsigned i, string_view where ) const;
+    GenericContainer const & get_gc_at( unsigned i, string_view const where ) const;
 
     ///@}
 
@@ -3600,6 +3752,22 @@ namespace GC_namespace {
     //!
     //! \param[in] a string to be stored
     //!
+    GenericContainer & operator = ( const char * a )
+    { this->set_string(a); return * this; }
+
+    //!
+    //! Assign a string to the generic container.
+    //!
+    //! \param[in] a string to be stored
+    //!
+    GenericContainer & operator = ( string const & a )
+    { this->set_string(a); return * this; }
+
+    //!
+    //! Assign a string to the generic container.
+    //!
+    //! \param[in] a string to be stored
+    //!
     GenericContainer & operator = ( string_view a )
     { this->set_string(a); return * this; }
 
@@ -3617,7 +3785,7 @@ namespace GC_namespace {
     //! \param[in] a `GenericContainer` to be stored
     //!
     GenericContainer const & operator = ( GenericContainer const & a )
-    { this->from_gc( a ); return * this; }
+    { this->clear(); this->from_gc( a ); return * this; }
 
     //!
     //! Load a `GenericContainer` to the generic container (deep copy).
@@ -3778,6 +3946,20 @@ namespace GC_namespace {
     //! Construct a generic container storing a string or pointer
     //! \param[in] a initializer data
     //!
+    GenericContainer( char const * a )
+    : m_data_type(GC_type::NOTYPE) { this->operator=(a); }
+
+    //!
+    //! Construct a generic container storing a string or pointer
+    //! \param[in] a initializer data
+    //!
+    GenericContainer( string const & a )
+    : m_data_type(GC_type::NOTYPE) { this->operator=(a); }
+
+    //!
+    //! Construct a generic container storing a string or pointer
+    //! \param[in] a initializer data
+    //!
     GenericContainer( string_view a )
     : m_data_type(GC_type::NOTYPE) { this->operator=(a); }
 
@@ -3819,9 +4001,9 @@ namespace GC_namespace {
     //! The data stored musty be a `map`.
     //! Search the
     //! \param[in] `vs` vector of string with the keys to be searched
-    //! \param[in]  where position added to the error message
+    //! \param[in]  where error message if fails
     //!
-    string must_exists( vec_string_type const & vs, string_view where ) const;
+    string must_exists( vec_string_type const & vs, string_view const where ) const;
 
     //!
     //! Check if string `field` is a key of the stored map and extract value if exists
@@ -3922,11 +4104,31 @@ namespace GC_namespace {
     ///@{
 
     //!
-    //! Print the contents of the object in a human readable way (without data)
+    //! \brief Prints the structure of the `GenericContainer` in a human-readable form.
     //!
-    //! \param[in] stream output stream
-    //! \param[in] prefix strig to be prepended to any field of the `GenericContainer`
-    //! \param[in] indent indentation
+    //! This function outputs the container’s content types (schema/structure) without
+    //! printing the actual stored data values. It is useful for debugging or inspecting
+    //! the layout of the container in a concise way.
+    //!
+    //! \param[in] stream  Output stream where the formatted description will be written.
+    //! \param[in] prefix  Optional string prepended to each field (e.g., for labeling or nesting).
+    //! \param[in] indent  Indentation string used to format nested structures (default: four spaces).
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer gc;
+    //! gc.set_map();
+    //! gc["id"].set_integer(42);
+    //! gc["name"].set_string("Alice");
+    //! gc.print_content_types(std::cout, ">> ", "  ");
+    //! \endcode
+    //!
+    //! ### Output:
+    //!
+    //! \verbatim
+    //! >> id: int
+    //! >> name: string
+    //! \endverbatim
     //!
     void
     print_content_types(
@@ -3936,20 +4138,59 @@ namespace GC_namespace {
     ) const;
 
     //!
-    //! Compare the contents of the object with `gc`
+    //! \brief Compares the contents of this `GenericContainer` with another.
     //!
-    //! \param[in] gc to object to compare
-    //! \return a string with the first difference found
+    //! This method performs a deep comparison between the current container and
+    //! the one provided as argument. If a difference is found, a descriptive
+    //! string indicating the mismatch is returned; otherwise, an empty string
+    //! is returned to indicate that the two containers are identical.
+    //!
+    //! \param[in] gc   The container to compare against.
+    //! \param[in] from An optional prefix or context message that will be included
+    //!                 in the error description (useful for debugging and tracing).
+    //! \return A string describing the first difference found.
+    //!         Returns an empty string if the two containers are identical.
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer a, b;
+    //! a.set_integer(42);
+    //! b.set_integer(43);
+    //!
+    //! std::string diff = a.compare_content(b, "TestCase1");
+    //! if (!diff.empty()) {
+    //!     std::cerr << "Difference found: " << diff << "\n";
+    //! }
+    //! \endcode
     //!
     string
     compare_content( GenericContainer const & gc, string_view from = "" ) const;
 
     //!
-    //! Dump the contents of the object in a human readable way
+    //! \brief Dumps the full contents of the `GenericContainer` in a human-readable format.
     //!
-    //! \param[in] stream output stream
-    //! \param[in] prefix strig to be prepended to any field of the `GenericContainer`
-    //! \param[in] indent indentation
+    //! This function prints both the structure and the actual data stored in the container.
+    //! It is useful for debugging or inspecting the contents of the container in a readable way.
+    //!
+    //! \param[in] stream  Output stream where the formatted data will be written.
+    //! \param[in] prefix  Optional string to prepend to each field (e.g., for labeling or nesting).
+    //! \param[in] indent  String used for indentation of nested structures (default: four spaces).
+    //!
+    //! ### Example:
+    //!
+    //! \code
+    //! GenericContainer gc;
+    //! gc["id"].set_int(42);
+    //! gc["name"].set_string("Alice");
+    //! gc.dump(std::cout, ">> ", "  ");
+    //! \endcode
+    //!
+    //! ### Output:
+    //!
+    //! \verbatim
+    //! >> id: 42
+    //! >> name: "Alice"
+    //! \endverbatim
     //!
     void
     dump(
@@ -3959,11 +4200,30 @@ namespace GC_namespace {
     ) const;
 
     //!
-    //! Dump the contents of the object in a human readable way (aliad of dump)
+    //! \brief Prints the contents of the `GenericContainer` in a human-readable format.
     //!
-    //! \param[in] stream output stream
-    //! \param[in] prefix strig to be prepended to any field of the `GenericContainer`
-    //! \param[in] indent indentation
+    //! This is an alias for \ref dump(), providing the same functionality. It outputs
+    //! both the structure and the data of the container to the specified stream.
+    //!
+    //! \param[in] stream  Output stream where the formatted content will be written.
+    //! \param[in] prefix  Optional string to prepend to each field (useful for labeling or nesting).
+    //! \param[in] indent  String used for indentation of nested structures (default: four spaces).
+    //!
+    //! ### Example:
+    //!
+    //! \code
+    //! GenericContainer gc;
+    //! gc["id"].set_int(42);
+    //! gc["name"].set_string("Alice");
+    //! gc.print(std::cout, ">> ", "  ");
+    //! \endcode
+    //!
+    //! ### Output:
+    //!
+    //! \verbatim
+    //! >> id: 42
+    //! >> name: "Alice"
+    //! \endverbatim
     //!
     void
     print(
@@ -3975,10 +4235,32 @@ namespace GC_namespace {
     }
 
     //!
-    //! Dump the contents of the object in a human readable way (aliad of dump)
+    //! \brief Returns a human-readable string representation of the `GenericContainer`.
     //!
-    //! \param[in] prefix strig to be prepended to any field of the `GenericContainer`
-    //! \param[in] indent indentation
+    //! This is a convenience overload of \ref print() that captures the output into
+    //! a `string_type` instead of writing to a stream. It includes both the structure
+    //! and the data of the container in a readable format.
+    //!
+    //! \param[in] prefix Optional string to prepend to each field (useful for labeling or nesting).
+    //! \param[in] indent String used for indentation of nested structures (default: four spaces).
+    //! \return A `string_type` containing the formatted content of the container.
+    //!
+    //! ### Example:
+    //!
+    //! \code
+    //! GenericContainer gc;
+    //! gc["id"].set_int(42);
+    //! gc["name"].set_string("Alice");
+    //! std::string output = gc.print(">> ", "  ");
+    //! std::cout << output;
+    //! \endcode
+    //!
+    //! ### Output:
+    //!
+    //! \verbatim
+    //! >> id: 42
+    //! >> name: "Alice"
+    //! \endverbatim
     //!
     string_type
     print(
@@ -3992,75 +4274,342 @@ namespace GC_namespace {
     }
 
     //!
-    //! Copy the contents of the object into another object
+    //! \brief Copies the contents of this `GenericContainer` into another container.
     //!
-    //! \param[out] gc output `GenericContainer`
+    //! This method performs a deep copy of the current container’s data and structure
+    //! into the provided `GenericContainer` object.
+    //!
+    //! \param[out] gc  The target container where the contents will be copied.
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer source, target;
+    //! source.set_int(42);
+    //! source.to_gc(target);
+    //! assert(target.compare_content(source).empty()); // containers are identical
+    //! \endcode
     //!
     void to_gc( GenericContainer & gc ) const;
 
     //!
-    //! Copy the contents of the object into another object
+    //! \brief Copies the contents from another `GenericContainer` into this object.
     //!
-    //! \param[in] gc input `GenericContainer`
+    //! This method performs a deep copy of the provided container’s data and structure
+    //! into the current `GenericContainer` instance.
+    //!
+    //! \param[in] gc  The source container from which to copy the contents.
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer source, target;
+    //! source.set_int(42);
+    //! target.from_gc(source);
+    //! assert(target.compare_content(source).empty()); // containers are identical
+    //! \endcode
     //!
     void from_gc( GenericContainer const & gc );
 
     //!
-    //! Merge two generic container
+    //! \brief Merges the contents of another `GenericContainer` into this one.
     //!
-    //! \param[in] gc    input `GenericContainer`
-    //! \param[in] where position added to the error message
+    //! This method combines the data and structure of the provided container with
+    //! the current container. In case of conflicts or errors during the merge,
+    //! the `where` parameter is used to provide context in the error messages.
     //!
-    void merge( GenericContainer const & gc, string_view where );
+    //! \param[in] gc     The container whose contents will be merged into this one.
+    //! \param[in] where  Context string to indicate the position or source for error reporting.
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer a, b;
+    //! a["id"].set_int(42);
+    //! b["name"].set_string("Alice");
+    //! a.merge(b, "failed to merge a with b");
+    //! // Now 'a' contains both "id" and "name" fields
+    //! \endcode
+    //!
+    void merge( GenericContainer const & gc, string_view const where );
 
     //!
-    //! Print the contents of the object in YAML syntax
+    //! \brief Loads the contents of the `GenericContainer` from a file.
     //!
-    //! \param[in] stream output stream
-    //! \param[in] prefix string to be prepended to any field of the `GenericContainer`
+    //! The file can be in YAML, JSON, or TOML format. This function reads the file,
+    //! parses its content, and populates the container accordingly.
+    //!
+    //! \param[in] file_name  The path to the file to be read.
+    //! \return `true` if the file was successfully read and parsed; `false` otherwise.
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer gc;
+    //! if (gc.from_file("config.yaml")) {
+    //!     std::cout << "File loaded successfully.\n";
+    //! } else {
+    //!     std::cerr << "Failed to load file.\n";
+    //! }
+    //! \endcode
+    //!
+    bool from_file( string_view file_name );
+
+    //!
+    //! \brief Serializes the contents of the `GenericContainer` into YAML format
+    //!        and writes it to the provided output stream.
+    //!
+    //! This function outputs the container’s structure and data in valid YAML syntax.
+    //! It is useful for exporting the container for configuration, debugging, or
+    //! interoperability with other tools that support YAML.
+    //!
+    //! \param[in] stream  Output stream where the YAML content will be written.
+    //! \param[in] prefix  Optional string to prepend to each field (useful for nesting or labeling).
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer gc;
+    //! gc["id"].set_int(42);
+    //! gc["name"].set_string("Alice");
+    //! gc.to_yaml(std::cout);
+    //! \endcode
     //!
     void to_yaml( ostream_type & stream, string_view prefix = "" ) const;
+    
+    //!
+    //! \brief Returns a string containing the contents of the `GenericContainer` in YAML format.
+    //!
+    //! This is a convenience overload that captures the YAML output into a `string`
+    //! instead of writing to a stream.
+    //!
+    //! \param[in] prefix Optional string to prepend to each field (useful for nesting or labeling).
+    //! \return A string containing the YAML representation of the container.
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer gc;
+    //! gc["id"].set_int(42);
+    //! gc["name"].set_string("Alice");
+    //! std::string yaml_str = gc.to_yaml();
+    //! std::cout << yaml_str;
+    //! \endcode
+    //!
+    string
+    to_yaml( string_view prefix = "" ) const
+    { ostringstream ss; this->to_yaml( ss, prefix ); return ss.str(); }
 
     //!
-    //! Read the contents of stream in YAML syntax
+    //! \brief Loads the contents of the `GenericContainer` from a YAML-formatted stream.
     //!
-    //! \param[in] stream input stream
-    //! \return true if conversion successful
+    //! This function parses the YAML data from the provided input stream and populates
+    //! the container with the corresponding structure and values.
+    //!
+    //! \param[in] stream  Input stream containing YAML data.
+    //! \return `true` if the data was successfully parsed and loaded; `false` otherwise.
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer gc;
+    //! std::ifstream file("config.yaml");
+    //! if (gc.from_yaml(file)) {
+    //!     std::cout << "YAML loaded successfully.\n";
+    //! } else {
+    //!     std::cerr << "Failed to load YAML.\n";
+    //! }
+    //! \endcode
     //!
     bool from_yaml( istream_type & stream );
 
     //!
-    //! Print the contents of the object in JSON syntax
+    //! \brief Loads the contents of the `GenericContainer` from a YAML-formatted string.
     //!
-    //! \param[in] stream output stream
-    //! \param[in] prefix strig to be prepended to any field of the `GenericContainer`
+    //! This is a convenience overload that parses YAML data directly from a `std::string`
+    //! by internally using an `istringstream`.
+    //!
+    //! \param[in] data  String containing YAML-formatted data.
+    //! \return `true` if the data was successfully parsed and loaded; `false` otherwise.
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer gc;
+    //! std::string yaml_data = "id: 42\nname: Alice\n";
+    //! if (gc.from_yaml(yaml_data)) {
+    //!     std::cout << "YAML loaded successfully.\n";
+    //! }
+    //! \endcode
+    //!
+    bool from_yaml( string const & data ) { istringstream ss(data); return this->from_yaml( ss ); }
+
+    //!
+    //! \brief Creates a GenericContainer object from a JSON string.
+    //!
+    //! This static function allows you to obtain a GenericContainer object
+    //! populated with the data contained in the provided JSON string.
+    //!
+    //! \param json The string containing the JSON representation of the object.
+    //! \return GenericContainer The GenericContainer object populated with the JSON data.
+    //!
+    //! \note Being static, it can be called without an instance of GenericContainer.
+    //! \code
+    //! GenericContainer gc = GenericContainer::from_json(json_string);
+    //! \endcode
+    //!
+    static
+    GenericContainer gc_from_yaml( string const & yaml ) {
+      GenericContainer gc;
+      gc.from_yaml(yaml);
+      return gc;
+    }
+
+    //!
+    //! \brief Serializes the contents of the `GenericContainer` into JSON format
+    //!        and writes it to the provided output stream.
+    //!
+    //! This function outputs the container’s structure and data in valid JSON syntax.
+    //! It is useful for exporting the container for configuration, debugging, or
+    //! interoperability with other tools that support JSON.
+    //!
+    //! \param[in] stream  Output stream where the JSON content will be written.
+    //! \param[in] prefix  Optional string to prepend to each field (useful for nesting or labeling).
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer gc;
+    //! gc["id"].set_int(42);
+    //! gc["name"].set_string("Alice");
+    //! gc.to_json(std::cout);
+    //! \endcode
     //!
     void to_json( ostream_type & stream, string_view prefix = "" ) const;
 
+    string
+    to_json( string_view prefix = "" ) const
+    { ostringstream ss; this->to_json( ss, prefix ); return ss.str();}
+
     //!
-    //! Read the contents of stream in JSON syntax
+    //! \brief Returns a string containing the contents of the `GenericContainer` in JSON format.
     //!
-    //! \param[in] stream input stream
-    //! \return true if conversion successful
+    //! This is a convenience overload that captures the JSON output into a `string`
+    //! instead of writing to a stream.
+    //!
+    //! \param[in] prefix Optional string to prepend to each field (useful for nesting or labeling).
+    //! \return A string containing the JSON representation of the container.
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer gc;
+    //! gc["id"].set_int(42);
+    //! gc["name"].set_string("Alice");
+    //! std::string json_str = gc.to_json(">> ");
+    //! std::cout << json_str;
+    //! \endcode
     //!
     bool from_json( istream_type & stream );
     bool from_json2( istream_type & stream );
 
+    bool from_json( string const & data ) { istringstream ss(data); return this->from_json( ss ); }
+
     //!
-    //! Print the contents of the object in TOML syntax
+    //! \brief Creates a GenericContainer object from a JSON string.
     //!
-    //! \param[in] stream output stream
-    //! \param[in] prefix strig to be prepended to any field of the `GenericContainer`
+    //! This static function constructs and returns a GenericContainer object
+    //! populated with the data contained in the provided JSON string.
+    //!
+    //! \param json The string containing the JSON representation of the object.
+    //! \return GenericContainer A GenericContainer object populated with the JSON data.
+    //!
+    //! \note This is a static function, so it can be called without an instance
+    //! of GenericContainer.
+    //! \code
+    //! GenericContainer gc = GenericContainer::from_json(json_string);
+    //! \endcode
+    //!
+    static
+    GenericContainer gc_from_json( string const & json ) {
+      GenericContainer gc;
+      gc.from_json(json);
+      return gc;
+    }
+
+    //!
+    //! \brief Serializes the contents of the `GenericContainer` into TOML format
+    //!        and writes it to the provided output stream.
+    //!
+    //! This function outputs the container’s structure and data in valid TOML syntax.
+    //! It is useful for exporting configuration or interoperability with TOML-compatible tools.
+    //!
+    //! \param[in] stream  Output stream where the TOML content will be written.
+    //! \return `true` if the serialization was successful; `false` otherwise.
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer gc;
+    //! gc["id"].set_int(42);
+    //! gc["name"].set_string("Alice");
+    //! gc.to_toml(std::cout);
+    //! \endcode
     //!
     bool to_toml( ostream_type & stream ) const;
 
+    string
+    to_toml() const
+    { ostringstream ss; this->to_toml( ss ); return ss.str();}
+
     //!
-    //! Read the contents of stream in JSON syntax
+    //! \brief Returns a string containing the contents of the `GenericContainer` in TOML format.
     //!
-    //! \param[in] stream input stream
-    //! \return true if conversion successful
+    //! This is a convenience overload that captures the TOML output into a `string`
+    //! instead of writing to a stream.
+    //!
+    //! \return A string containing the TOML representation of the container.
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer gc;
+    //! gc["id"].set_int(42);
+    //! gc["name"].set_string("Alice");
+    //! std::string toml_str = gc.to_toml();
+    //! std::cout << toml_str;
+    //! \endcode
     //!
     bool from_toml( istream_type & stream );
+    
+    //!
+    //! \brief Loads the contents of the `GenericContainer` from a TOML-formatted stream.
+    //!
+    //! This function parses TOML data from the provided input stream and populates
+    //! the container with the corresponding structure and values.
+    //!
+    //! \param[in] stream  Input stream containing TOML data.
+    //! \return `true` if the data was successfully parsed and loaded; `false` otherwise.
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer gc;
+    //! std::ifstream file("config.toml");
+    //! if (gc.from_toml(file)) {
+    //!     std::cout << "TOML loaded successfully.\n";
+    //! }
+    //! \endcode
+    //!
+    bool from_toml( string const & data ) { istringstream ss(data); return this->from_toml( ss ); }
+
+    //!
+    //! \brief Creates a GenericContainer object from a TOML string.
+    //!
+    //! This static function allows you to obtain a GenericContainer object
+    //! populated with the data contained in the provided TOML string.
+    //!
+    //! \param toml The string containing the TOML representation of the object.
+    //! \return GenericContainer The GenericContainer object populated with the TOML data.
+    //!
+    //! \note Being static, it can be called without an instance of GenericContainer.
+    //! \code
+    //! GenericContainer gc = GenericContainer::from_toml(toml_string);
+    //! \endcode
+    //!
+    static
+    GenericContainer gc_from_toml( string const & toml ) {
+      GenericContainer gc;
+      gc.from_toml(toml);
+      return gc;
+    }
 
     //!
     //! Collapse heterogeneous vectors into a unified type.
@@ -4261,40 +4810,110 @@ namespace GC_namespace {
     int32_t mem_size() const;
 
     //!
-    //! Serializes the GenericContainer into the provided buffer.
-    //! The buffer must have enough space to store the serialized data (use \ref mem_size() to determine the required size).
+    //! \brief Serializes the contents of the `GenericContainer` into a raw memory buffer.
     //!
-    //! \param buffer_dim Size of the provided buffer, in bytes.
+    //! This method writes the serialized representation of the container into the
+    //! user-provided buffer. The buffer must be large enough to hold the data;
+    //! use \ref mem_size() to query the exact number of bytes required.
+    //!
+    //! \param buffer_dim The size of the provided buffer, in bytes.
     //! \param buffer Pointer to the buffer where the serialized data will be written.
-    //! \return The number of bytes written into the buffer, or -1 if an error occurs (e.g., insufficient buffer size).
+    //! \return The number of bytes successfully written, or -1 if serialization fails
+    //!         (for example, if the buffer size is insufficient).
+    //!
+    //! ### Example:
+    //! \code
+    //! std::vector<uint8_t> buf(gc.mem_size());
+    //! int32_t written = gc.serialize(buf.size(), buf.data());
+    //! if (written < 0) {
+    //!     std::cerr << "Serialization failed.\n";
+    //! }
+    //! \endcode
     //!
     int32_t serialize( int32_t buffer_dim, uint8_t * buffer ) const;
 
     //!
-    //! Serializes the GenericContainer into the provided vector buffer.
-    //! The buffer will be resized if necessary to accommodate the serialized data.
+    //! \brief Serializes the contents of the `GenericContainer` into a byte vector.
     //!
-    //! \param buffer A vector of bytes that will be filled with the serialized data.
-    //! \return The number of bytes written into the buffer.
+    //! This method produces a serialized representation of the container and writes it
+    //! into the provided `std::vector<uint8_t>`. If the current capacity of the vector
+    //! is insufficient, it will be automatically resized to fit the serialized data.
+    //!
+    //! \param buffer Reference to a vector of bytes that will receive the serialized data.
+    //!               Its contents will be overwritten.
+    //! \return The number of bytes written into the vector.
+    //!
+    //! ### Example:
+    //! \code
+    //! std::vector<uint8_t> buf;
+    //! int32_t written = gc.serialize(buf);
+    //! std::cout << "Serialized size: " << written << " bytes\n";
+    //! \endcode
     //!
     int32_t serialize( vector<uint8_t> & buffer ) const;
 
     //!
-    //! Deserializes the GenericContainer from the provided buffer.
-    //! Reconstructs the container from its serialized version contained within the buffer.
+    //! \brief Serializes the contents of the `GenericContainer` and returns a byte vector.
     //!
-    //! \param buffer_dim Size of the buffer containing the serialized data, in bytes.
-    //! \param buffer Pointer to the buffer containing the serialized data.
-    //! \return The number of bytes readed from the buffer.
+    //! This convenience overload creates a `std::vector<uint8_t>`, resizes it to the exact
+    //! number of bytes required (using \ref mem_size()), and fills it with the serialized data.
+    //!
+    //! \return A `std::vector<uint8_t>` containing the serialized representation of the container.
+    //!
+    //! ### Example:
+    //! \code
+    //! GenericContainer gc;
+    //! gc.set_integer(123);
+    //! std::vector<uint8_t> data = gc.serialize();
+    //! // 'data' now holds the serialized form of 'gc'
+    //! \endcode
+    //!
+    std::vector<uint8_t>
+    serialize() const {
+      std::vector<uint8_t> buffer( static_cast<std::size_t>(mem_size()) ); // allocate required space
+      serialize(static_cast<int32_t>(buffer.size()), buffer.data());
+      return buffer;
+    }
+
+    //!
+    //! \brief Deserializes a `GenericContainer` from a raw memory buffer.
+    //!
+    //! This method reconstructs the contents of the container from its serialized
+    //! binary representation stored in the provided buffer.
+    //!
+    //! \param buffer_dim The size of the buffer containing the serialized data, in bytes.
+    //! \param buffer Pointer to the buffer holding the serialized data.
+    //! \return The number of bytes successfully read from the buffer.
+    //!
+    //! ### Example:
+    //! \code
+    //! std::vector<uint8_t> buf;
+    //! gc.serialize(buf);             // First serialize
+    //! GenericContainer gc2;
+    //! int32_t used = gc2.de_serialize(buf.size(), buf.data());
+    //! assert(used > 0);
+    //! \endcode
     //!
     int32_t de_serialize( int32_t buffer_dim, uint8_t const * buffer );
 
     //!
-    //! Deserializes the GenericContainer from the provided vector buffer.
-    //! Reconstructs the container from its serialized version contained within the vector.
+    //! \brief Deserializes a `GenericContainer` from a byte vector.
+    //!
+    //! This method reconstructs the contents of the container from its serialized
+    //! binary representation stored in the provided `std::vector<uint8_t>`.
     //!
     //! \param buffer A vector of bytes containing the serialized data.
-    //! \return  The number of bytes readed from the buffer.
+    //!               Its content must match the format produced by \ref serialize().
+    //! \return The number of bytes successfully read from the vector.
+    //!
+    //! ### Example:
+    //! \code
+    //! std::vector<uint8_t> buf;
+    //! gc.serialize(buf);             // Serialize into vector
+    //! GenericContainer gc2;
+    //! int32_t used = gc2.de_serialize(buf);
+    //! assert(used > 0);
+    //! \endcode
     //!
     int32_t de_serialize( vector<uint8_t> const & buffer );
 
@@ -4307,7 +4926,7 @@ namespace GC_namespace {
     //!
     static
     void
-    exception( string_view where ) GC_NO_RETURN;
+    exception( string_view const where ) GC_NO_RETURN;
 
   };
 
