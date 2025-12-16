@@ -240,14 +240,14 @@ namespace AstroLib {
   Astro const &
   Astro::setup_Keplerian(
     string_view n,
-    real_type t0,
-    real_type a,
-    real_type e,
-    real_type Omega, // sempre prima Omega "Grande"!!!
-    real_type omega,
-    real_type i,
-    real_type M0,
-    real_type muS
+    real_type   t0,
+    real_type   a,
+    real_type   e,
+    real_type   Omega, // sempre prima Omega "Grande"!!!
+    real_type   omega,
+    real_type   i,
+    real_type   M0,
+    real_type   muS
   ) {
     m_name = n;
 
@@ -890,6 +890,8 @@ namespace AstroLib {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  #if 0
+
   real_type
   Astro::x_position( real_type t ) const {
     real_type L[4];
@@ -1029,6 +1031,8 @@ namespace AstroLib {
 
     return 2 * ( h*cosLf + I*k*sinLg );
   }
+
+  #endif
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
