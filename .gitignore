@@ -14,3 +14,4 @@ vs_2017_x64/
 cmake-build-debug
 src/.vscode
 .DS_Store
+.cache

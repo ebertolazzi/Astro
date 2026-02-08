@@ -879,15 +879,15 @@ namespace AstroLib {
   }
 
   inline
-  dual1st
-  astro_x_position__xo( dual1st const & p, dual1st const & f, dual1st const & g, dual1st const & h, dual1st const & k, dual1st const & L, real_type const retrograde ) {
-    return astro_x_position__xo_def<dual1st>( p, f, g, h, k, L, retrograde );
+  autodiff::dual1st
+  astro_x_position__xo( autodiff::dual1st const & p, autodiff::dual1st const & f, autodiff::dual1st const & g, autodiff::dual1st const & h, autodiff::dual1st const & k, autodiff::dual1st const & L, real_type const retrograde ) {
+    return astro_x_position__xo_def<autodiff::dual1st>( p, f, g, h, k, L, retrograde );
   }
 
   inline
-  dual2nd
-  astro_x_position__xo( dual2nd const & p, dual2nd const & f, dual2nd const & g, dual2nd const & h, dual2nd const & k, dual2nd const & L, real_type const retrograde ) {
-    return astro_x_position__xo_def<dual2nd>( p, f, g, h, k, L, retrograde );
+  autodiff::dual2nd
+  astro_x_position__xo( autodiff::dual2nd const & p, autodiff::dual2nd const & f, autodiff::dual2nd const & g, autodiff::dual2nd const & h, autodiff::dual2nd const & k, autodiff::dual2nd const & L, real_type const retrograde ) {
+    return astro_x_position__xo_def<autodiff::dual2nd>( p, f, g, h, k, L, retrograde );
   }
 
   inline
@@ -897,15 +897,15 @@ namespace AstroLib {
   }
 
   inline
-  dual1st
-  astro_y_position__xo( dual1st const & p, dual1st const & f, dual1st const & g, dual1st const & h, dual1st const & k, dual1st const & L, real_type const retrograde ) {
-    return astro_y_position__xo_def<dual1st>( p, f, g, h, k, L, retrograde );
+  autodiff::dual1st
+  astro_y_position__xo( autodiff::dual1st const & p, autodiff::dual1st const & f, autodiff::dual1st const & g, autodiff::dual1st const & h, autodiff::dual1st const & k, autodiff::dual1st const & L, real_type const retrograde ) {
+    return astro_y_position__xo_def<autodiff::dual1st>( p, f, g, h, k, L, retrograde );
   }
 
   inline
-  dual2nd
-  astro_y_position__xo( dual2nd const & p, dual2nd const & f, dual2nd const & g, dual2nd const & h, dual2nd const & k, dual2nd const & L, real_type const retrograde ) {
-    return astro_y_position__xo_def<dual2nd>( p, f, g, h, k, L, retrograde );
+  autodiff::dual2nd
+  astro_y_position__xo( autodiff::dual2nd const & p, autodiff::dual2nd const & f, autodiff::dual2nd const & g, autodiff::dual2nd const & h, autodiff::dual2nd const & k, autodiff::dual2nd const & L, real_type const retrograde ) {
+    return astro_y_position__xo_def<autodiff::dual2nd>( p, f, g, h, k, L, retrograde );
   }
 
   inline
@@ -915,15 +915,15 @@ namespace AstroLib {
   }
 
   inline
-  dual1st
-  astro_z_position__xo( dual1st const & p, dual1st const & f, dual1st const & g, dual1st const & h, dual1st const & k, dual1st const & L, real_type const retrograde ) {
-    return astro_z_position__xo_def<dual1st>( p, f, g, h, k, L, retrograde );
+  autodiff::dual1st
+  astro_z_position__xo( autodiff::dual1st const & p, autodiff::dual1st const & f, autodiff::dual1st const & g, autodiff::dual1st const & h, autodiff::dual1st const & k, autodiff::dual1st const & L, real_type const retrograde ) {
+    return astro_z_position__xo_def<autodiff::dual1st>( p, f, g, h, k, L, retrograde );
   }
 
   inline
-  dual2nd
-  astro_z_position__xo( dual2nd const & p, dual2nd const & f, dual2nd const & g, dual2nd const & h, dual2nd const & k, dual2nd const & L, real_type const retrograde ) {
-    return astro_z_position__xo_def<dual2nd>( p, f, g, h, k, L, retrograde );
+  autodiff::dual2nd
+  astro_z_position__xo( autodiff::dual2nd const & p, autodiff::dual2nd const & f, autodiff::dual2nd const & g, autodiff::dual2nd const & h, autodiff::dual2nd const & k, autodiff::dual2nd const & L, real_type const retrograde ) {
+    return astro_z_position__xo_def<autodiff::dual2nd>( p, f, g, h, k, L, retrograde );
   }
 
   inline
@@ -933,15 +933,15 @@ namespace AstroLib {
   }
 
   inline
-  dual1st
-  astro_x_velocity__xo( dual1st const & p, dual1st const & f, dual1st const & g, dual1st const & h, dual1st const & k, dual1st const & L, real_type muS, real_type const retrograde ) {
-    return astro_x_velocity__xo_def<dual1st>( p, f, g, h, k, L, muS, retrograde );
+  autodiff::dual1st
+  astro_x_velocity__xo( autodiff::dual1st const & p, autodiff::dual1st const & f, autodiff::dual1st const & g, autodiff::dual1st const & h, autodiff::dual1st const & k, autodiff::dual1st const & L, real_type muS, real_type const retrograde ) {
+    return astro_x_velocity__xo_def<autodiff::dual1st>( p, f, g, h, k, L, muS, retrograde );
   }
 
   inline
-  dual2nd
-  astro_x_velocity__xo( dual2nd const & p, dual2nd const & f, dual2nd const & g, dual2nd const & h, dual2nd const & k, dual2nd const & L, real_type muS, real_type const retrograde ) {
-    return astro_x_velocity__xo_def<dual2nd>( p, f, g, h, k, L, muS, retrograde );
+  autodiff::dual2nd
+  astro_x_velocity__xo( autodiff::dual2nd const & p, autodiff::dual2nd const & f, autodiff::dual2nd const & g, autodiff::dual2nd const & h, autodiff::dual2nd const & k, autodiff::dual2nd const & L, real_type muS, real_type const retrograde ) {
+    return astro_x_velocity__xo_def<autodiff::dual2nd>( p, f, g, h, k, L, muS, retrograde );
   }
 
   inline
@@ -951,15 +951,15 @@ namespace AstroLib {
   }
 
   inline
-  dual1st
-  astro_y_velocity__xo( dual1st const & p, dual1st const & f, dual1st const & g, dual1st const & h, dual1st const & k, dual1st const & L, real_type muS, real_type const retrograde ) {
-    return astro_y_velocity__xo_def<dual1st>( p, f, g, h, k, L, muS, retrograde );
+  autodiff::dual1st
+  astro_y_velocity__xo( autodiff::dual1st const & p, autodiff::dual1st const & f, autodiff::dual1st const & g, autodiff::dual1st const & h, autodiff::dual1st const & k, autodiff::dual1st const & L, real_type muS, real_type const retrograde ) {
+    return astro_y_velocity__xo_def<autodiff::dual1st>( p, f, g, h, k, L, muS, retrograde );
   }
 
   inline
-  dual2nd
-  astro_y_velocity__xo( dual2nd const & p, dual2nd const & f, dual2nd const & g, dual2nd const & h, dual2nd const & k, dual2nd const & L, real_type muS, real_type const retrograde ) {
-    return astro_y_velocity__xo_def<dual2nd>( p, f, g, h, k, L, muS, retrograde );
+  autodiff::dual2nd
+  astro_y_velocity__xo( autodiff::dual2nd const & p, autodiff::dual2nd const & f, autodiff::dual2nd const & g, autodiff::dual2nd const & h, autodiff::dual2nd const & k, autodiff::dual2nd const & L, real_type muS, real_type const retrograde ) {
+    return astro_y_velocity__xo_def<autodiff::dual2nd>( p, f, g, h, k, L, muS, retrograde );
   }
 
   inline
@@ -969,15 +969,15 @@ namespace AstroLib {
   }
 
   inline
-  dual1st
-  astro_z_velocity__xo( dual1st const & p, dual1st const & f, dual1st const & g, dual1st const & h, dual1st const & k, dual1st const & L, real_type muS, real_type const retrograde ) {
-    return astro_z_velocity__xo_def<dual1st>( p, f, g, h, k, L, muS, retrograde );
+  autodiff::dual1st
+  astro_z_velocity__xo( autodiff::dual1st const & p, autodiff::dual1st const & f, autodiff::dual1st const & g, autodiff::dual1st const & h, autodiff::dual1st const & k, autodiff::dual1st const & L, real_type muS, real_type const retrograde ) {
+    return astro_z_velocity__xo_def<autodiff::dual1st>( p, f, g, h, k, L, muS, retrograde );
   }
 
   inline
-  dual2nd
-  astro_z_velocity__xo( dual2nd const & p, dual2nd const & f, dual2nd const & g, dual2nd const & h, dual2nd const & k, dual2nd const & L, real_type muS, real_type const retrograde ) {
-    return astro_z_velocity__xo_def<dual2nd>( p, f, g, h, k, L, muS, retrograde );
+  autodiff::dual2nd
+  astro_z_velocity__xo( autodiff::dual2nd const & p, autodiff::dual2nd const & f, autodiff::dual2nd const & g, autodiff::dual2nd const & h, autodiff::dual2nd const & k, autodiff::dual2nd const & L, real_type muS, real_type const retrograde ) {
+    return astro_z_velocity__xo_def<autodiff::dual2nd>( p, f, g, h, k, L, muS, retrograde );
   }
 
   //real_type astro_x_position__xo       ( real_type xo__p, real_type xo__f, real_type xo__g, real_type xo__h, real_type xo__k, real_type xo__L, real_type xo__retrograde );
