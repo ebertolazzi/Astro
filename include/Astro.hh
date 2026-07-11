@@ -35,11 +35,13 @@
 
 #ifdef NO_SYSTEM_UTILS
   #include "Utils.hh"
+  #include "Utils_Console.hh"
   #include "Utils_eigen.hh"
   #include "Utils_Poly.hh"
   #include "Utils_autodiff.hh"
 #else
   #include <Utils.hh>
+  #include <Utils_Console.hh>
   #include <Utils_eigen.hh>
   #include <Utils_Poly.hh>
   #include <Utils_autodiff.hh>
