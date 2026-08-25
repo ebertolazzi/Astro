@@ -219,6 +219,10 @@ set(ASTRO_QUARTIC_ROOTS_LOCAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../quarticRootsFl
 # install/test/example rules out of Astro so lib/lib remains Astro-only.
 set(GENERIC_CONTAINER_INSTALL OFF CACHE BOOL "Disable GenericContainer install rules inside Astro" FORCE)
 set(GENERIC_CONTAINER_BUILD_EXAMPLES OFF CACHE BOOL "Disable GenericContainer examples inside Astro" FORCE)
+set(GENERIC_CONTAINER_ENABLE_YAML ON CACHE BOOL "Enable the GenericContainer YAML bridge used by Astro" FORCE)
+set(GENERIC_CONTAINER_ENABLE_JSON OFF CACHE BOOL "Disable the unused GenericContainer JSON bridge inside Astro" FORCE)
+set(GENERIC_CONTAINER_ENABLE_TOML OFF CACHE BOOL "Disable the unused GenericContainer TOML bridge inside Astro" FORCE)
+set(GENERIC_CONTAINER_ENABLE_LUA OFF CACHE BOOL "Disable the unused GenericContainer Lua bridge inside Astro" FORCE)
 set(UTILS_INSTALL_LOCAL OFF CACHE BOOL "Disable dependency install rules inside Astro" FORCE)
 set(UTILS_ENABLE_TESTS OFF CACHE BOOL "Disable dependency test suites inside Astro" FORCE)
 
