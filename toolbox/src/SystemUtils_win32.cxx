@@ -198,7 +198,7 @@ namespace Utils
   {
 #ifdef UTILS_OS_MINGW
     char const * USER = getenv( "USER" );
-    UTILS_ASSERT( USER != nullptr, "get_user_name, undefined enviroment `USER`" );
+    Utils::Check( USER != nullptr, "get_user_name, undefined enviroment `USER`" );
     return string{ USER };
 #else
     char buffer[1024];
@@ -216,7 +216,7 @@ namespace Utils
   {
 #ifdef UTILS_OS_MINGW
     char const * HOME = getenv( "HOME" );
-    UTILS_ASSERT( HOME != nullptr, "get_home_directory, undefined enviroment `HOME`" );
+    Utils::Check( HOME != nullptr, "get_home_directory, undefined enviroment `HOME`" );
     return string{ HOME };
 #else
     char buffer[1024];

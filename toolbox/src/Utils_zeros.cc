@@ -52,7 +52,7 @@ namespace Utils
   void
   Zeros<Real>::set_max_iterations( Integer mit )
   {
-    UTILS_ASSERT( mit > 0, "Zeros::set_max_iterations({}) argument must be >0\n", mit );
+    Utils::Check( mit > 0, "Zeros::set_max_iterations({}) argument must be >0\n", mit );
     m_max_iteration = mit;
   }
 
@@ -64,7 +64,7 @@ namespace Utils
   void
   Zeros<Real>::set_max_fun_evaluation( Integer mfev )
   {
-    UTILS_ASSERT( mfev > 0, "Zeros::set_max_fun_evaluation({}) argument must be >0\n", mfev );
+    Utils::Check( mfev > 0, "Zeros::set_max_fun_evaluation({}) argument must be >0\n", mfev );
     m_max_fun_evaluation = mfev;
   }
 
@@ -72,7 +72,7 @@ namespace Utils
   void
   Zeros<Real>::set_tolerance( Real tol )
   {
-    UTILS_ASSERT( tol > 0, "Zeros::set_tolerance({}) argument must be >0\n", tol );
+    Utils::Check( tol > 0, "Zeros::set_tolerance({}) argument must be >0\n", tol );
     m_tolerance = tol;
   }
 

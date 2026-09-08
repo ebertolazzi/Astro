@@ -113,35 +113,35 @@ namespace Utils
     void
     set_tolerance( real_type tol )
     {
-      UTILS_ASSERT( tol > 0, "Tolerance must be positive" );
+      Utils::Check( tol > 0, "Tolerance must be positive" );
       m_tolerance = tol;
     }
 
     void
     set_relative_tolerance( real_type tol )
     {
-      UTILS_ASSERT( tol > 0, "Relative tolerance must be positive" );
+      Utils::Check( tol > 0, "Relative tolerance must be positive" );
       m_relative_tolerance = tol;
     }
 
     void
     set_max_iterations( integer max_iter )
     {
-      UTILS_ASSERT( max_iter > 0, "Max iterations must be positive" );
+      Utils::Check( max_iter > 0, "Max iterations must be positive" );
       m_max_iterations = max_iter;
     }
 
     void
     set_max_function_evals( integer max_feval )
     {
-      UTILS_ASSERT( max_feval > 0, "Max function evaluations must be positive" );
+      Utils::Check( max_feval > 0, "Max function evaluations must be positive" );
       m_max_function_evals = max_feval;
     }
 
     void
     set_relaxation( real_type lambda )
     {
-      UTILS_ASSERT( lambda > 0 && lambda <= MAX_RELAXATION, "Relaxation parameter must be in (0, 2]" );
+      Utils::Check( lambda > 0 && lambda <= MAX_RELAXATION, "Relaxation parameter must be in (0, 2]" );
       m_relaxation = lambda;
     }
 
@@ -160,14 +160,14 @@ namespace Utils
     void
     set_line_search_beta( real_type beta )
     {
-      UTILS_ASSERT( beta > 0 && beta < 1, "Beta must be in (0, 1)" );
+      Utils::Check( beta > 0 && beta < 1, "Beta must be in (0, 1)" );
       m_line_search_beta = beta;
     }
 
     void
     set_line_search_c1( real_type c1 )
     {
-      UTILS_ASSERT( c1 > 0 && c1 < 0.5, "c1 must be in (0, 0.5)" );
+      Utils::Check( c1 > 0 && c1 < 0.5, "c1 must be in (0, 0.5)" );
       m_line_search_c1 = c1;
     }
 
@@ -180,7 +180,7 @@ namespace Utils
     void
     set_verbose_level( integer level )
     {
-      UTILS_ASSERT( level >= 0 && level <= 2, "Verbose level must be 0, 1, or 2" );
+      Utils::Check( level >= 0 && level <= 2, "Verbose level must be 0, 1, or 2" );
       m_verbose_level = level;
     }
 
@@ -425,8 +425,8 @@ namespace Utils
     {
       integer n = system.num_equations();
 
-      UTILS_ASSERT( n > 0, "System must have at least one equation" );
-      UTILS_ASSERT( x.size() == n, "Initial guess size mismatch" );
+      Utils::Check( n > 0, "System must have at least one equation" );
+      Utils::Check( x.size() == n, "Initial guess size mismatch" );
 
       Vector f( n );
       Vector grad( n );
@@ -605,9 +605,9 @@ namespace Utils
     {
       integer n = system.num_equations();
 
-      UTILS_ASSERT( n > 0, "System must have at least one equation" );
-      UTILS_ASSERT( x.size() == n, "Initial guess size mismatch" );
-      UTILS_ASSERT( block_size > 0 && block_size <= n, "Block size must be in [1, n]" );
+      Utils::Check( n > 0, "System must have at least one equation" );
+      Utils::Check( x.size() == n, "Initial guess size mismatch" );
+      Utils::Check( block_size > 0 && block_size <= n, "Block size must be in [1, n]" );
 
       Vector f( n );
       Vector grad( n );

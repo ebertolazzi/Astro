@@ -63,7 +63,7 @@ namespace Utils
   set_environment( string_view ename, string_view newval, bool overwrite )
   {
     int res = setenv( ename.data(), newval.data(), overwrite ? 1 : 0 );
-    UTILS_ASSERT( res == 0, "set_environment({},{},{}) faled\n", ename, newval, overwrite );
+    Utils::Check( res == 0, "set_environment({},{},{}) faled\n", ename, newval, overwrite );
   }
 
   /*
@@ -91,17 +91,17 @@ namespace Utils
 
     // Get a socket handle.
     int sck = socket( PF_INET, SOCK_DGRAM, 0 );
-    UTILS_ASSERT0( sck >= 0, "get_MAC_address call of socket failed\n" );
+    Utils::Check( sck >= 0, "get_MAC_address call of socket failed\n" );
 
     // Query available interfaces.
     ifc.ifc_len = sizeof( buf );
     ifc.ifc_buf = buf;
-    UTILS_ASSERT0( ioctl( sck, SIOCGIFCONF, &ifc ) >= 0, "get_MAC_address call of ioctl failed\n" );
+    Utils::Check( ioctl( sck, SIOCGIFCONF, &ifc ) >= 0, "get_MAC_address call of ioctl failed\n" );
 
     // Iterate through the list of interfaces.
     ifr             = ifc.ifc_req;
     int nInterfaces = ifc.ifc_len / sizeof( struct ifreq );
-    UTILS_ASSERT0( nInterfaces > 0, "get_MAC_address no interface found\n" );
+    Utils::Check( nInterfaces > 0, "get_MAC_address no interface found\n" );
 
     for ( int i = 0; i < nInterfaces; ++i )
     {
@@ -112,13 +112,13 @@ namespace Utils
         char              macp[19];
 
         /* Get the IP address*/
-        UTILS_ASSERT0( ioctl( sck, SIOCGIFADDR, item ) >= 0, "get_MAC_address call of ioctl failed\n" );
+        Utils::Check( ioctl( sck, SIOCGIFADDR, item ) >= 0, "get_MAC_address call of ioctl failed\n" );
 
-        UTILS_ASSERT0( inet_ntop( AF_INET, &( ( (struct sockaddr_in *) addr )->sin_addr ), ip, sizeof ip ) != nullptr,
+        Utils::Check( inet_ntop( AF_INET, &( ( (struct sockaddr_in *) addr )->sin_addr ), ip, sizeof ip ) != nullptr,
                        "get_MAC_address call of inet_ntop failed\n" );
 
         // Get the MAC address
-        UTILS_ASSERT0( ioctl( sck, SIOCGIFHWADDR, item ) >= 0, "get_MAC_address call of ioctl failed\n" );
+        Utils::Check( ioctl( sck, SIOCGIFHWADDR, item ) >= 0, "get_MAC_address call of ioctl failed\n" );
 
         snprintf( macp, 19, "%02x:%02x:%02x:%02x:%02x:%02x", static_cast<unsigned char>( item->ifr_hwaddr.sa_data[0] ),
                   static_cast<unsigned char>( item->ifr_hwaddr.sa_data[1] ),
@@ -170,7 +170,7 @@ namespace Utils
   get_user_name()
   {
     char const * USER = getenv( "USER" );
-    UTILS_ASSERT( USER != nullptr, "get_user_name, undefined enviroment `USER`" );
+    Utils::Check( USER != nullptr, "get_user_name, undefined enviroment `USER`" );
     return string{ USER };
   }
 
@@ -181,7 +181,7 @@ namespace Utils
   get_home_directory()
   {
     char const * HOME = getenv( "HOME" );
-    UTILS_ASSERT( HOME != nullptr, "get_home_directory, undefined enviroment `HOME`" );
+    Utils::Check( HOME != nullptr, "get_home_directory, undefined enviroment `HOME`" );
     return string{ HOME };
   }
 

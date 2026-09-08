@@ -1305,11 +1305,11 @@ namespace Utils
     void
     set_bounds( Vector const & lower, Vector const & upper )
     {
-      UTILS_ASSERT( lower.size() == upper.size(),
+      Utils::Check( lower.size() == upper.size(),
                     "BlockLBFGS::set_bounds: lower and upper bounds must have "
                     "same dimension" );
 
-      UTILS_ASSERT( ( lower.array() <= upper.array() ).all(),
+      Utils::Check( ( lower.array() <= upper.array() ).all(),
                     "BlockLBFGS::set_bounds: lower bounds must be <= upper bounds "
                     "for all coordinates" );
 

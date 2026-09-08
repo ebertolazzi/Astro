@@ -79,13 +79,13 @@ namespace Utils
     {
       if ( is_infinite( pv[i] ) )
       {
-        UTILS_ERROR( "{}\n({}):{}) found Infinity at {}[{}]\n{}\n", LINE_LINE_LINE_LINE, Utils::get_basename( file ),
-                     line, v_name, i, LINE_LINE_LINE_LINE );
+        Utils::Error( "{}\n({}):{}) found Infinity at {}[{}]\n{}\n", LINE_LINE_LINE_LINE, Utils::get_basename( file ),
+                      line, v_name, i, LINE_LINE_LINE_LINE );
       }
       if ( is_NaN( pv[i] ) )
       {
-        UTILS_ERROR( "{}\n({}):{}) found NaN at {}[{}]\n{}\n", LINE_LINE_LINE_LINE, Utils::get_basename( file ), line,
-                     v_name, i, LINE_LINE_LINE_LINE );
+        Utils::Error( "{}\n({}):{}) found NaN at {}[{}]\n{}\n", LINE_LINE_LINE_LINE, Utils::get_basename( file ), line,
+                      v_name, i, LINE_LINE_LINE_LINE );
       }
     }
   }
@@ -97,13 +97,13 @@ namespace Utils
     {
       if ( is_infinite( pv[i] ) )
       {
-        UTILS_ERROR( "{}\n({}):{}) found Infinity at {}[{}]\n{}\n", LINE_LINE_LINE_LINE, Utils::get_basename( file ),
-                     line, v_name, i, LINE_LINE_LINE_LINE );
+        Utils::Error( "{}\n({}):{}) found Infinity at {}[{}]\n{}\n", LINE_LINE_LINE_LINE, Utils::get_basename( file ),
+                      line, v_name, i, LINE_LINE_LINE_LINE );
       }
       if ( is_NaN( pv[i] ) )
       {
-        UTILS_ERROR( "{}\n({}):{}) found NaN at {}[{}]\n{}\n", LINE_LINE_LINE_LINE, Utils::get_basename( file ), line,
-                     v_name, i, LINE_LINE_LINE_LINE );
+        Utils::Error( "{}\n({}):{}) found NaN at {}[{}]\n{}\n", LINE_LINE_LINE_LINE, Utils::get_basename( file ), line,
+                      v_name, i, LINE_LINE_LINE_LINE );
       }
     }
   }

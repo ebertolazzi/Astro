@@ -61,10 +61,10 @@ static scoped_redirect_cout mycout_redirect;
 #endif
 
 #define CHECK_IN(N) \
-  UTILS_ASSERT( nrhs == N, CMD "Expected {} argument(s), nrhs = {}\n", N, nrhs )
+  Utils::Check( nrhs == N, CMD "Expected {} argument(s), nrhs = {}\n", N, nrhs )
 
 #define CHECK_OUT(N) \
-  UTILS_ASSERT( nlhs == N, CMD "Expected {} argument(s), nlhs = {}\n", N, nlhs )
+  Utils::Check( nlhs == N, CMD "Expected {} argument(s), nlhs = {}\n", N, nlhs )
 
 namespace AstroLib {
   // function ok = Check_EQ_for_consistency(p,f,g,h,k,L)
@@ -76,8 +76,8 @@ namespace AstroLib {
   mexFunction( int nlhs, mxArray       *plhs[],
                int nrhs, mxArray const *prhs[] ) {
     try {
-      UTILS_ASSERT0( nrhs == 6, "Check_EQ_for_consistency: Expected 6 arguments" );
-      UTILS_ASSERT0( nlhs == 1, "Check_EQ_for_consistency: Expected 1 outputs" );
+      Utils::Check( nrhs == 6, "Check_EQ_for_consistency: Expected 6 arguments" );
+      Utils::Check( nlhs == 1, "Check_EQ_for_consistency: Expected 1 outputs" );
 
       // Get values of the scalar inputs
       // Check for the proper type of argument

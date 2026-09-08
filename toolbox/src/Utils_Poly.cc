@@ -568,7 +568,7 @@ namespace Utils
       Integer R_degree = R.degree();
       M.set_order( dd + 1 );
 
-      UTILS_ASSERT0( !is_zero( lcQ ), "Poly::divide(p,q,M,R), leading coefficient of q(x) is 0!" );
+      Utils::Check( !is_zero( lcQ ), "Poly::divide(p,q,M,R), leading coefficient of q(x) is 0!" );
 
       while ( dd >= 0 && R_degree >= 0 )
       {

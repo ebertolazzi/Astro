@@ -64,7 +64,7 @@ namespace Utils
   set_environment( string_view ename, string_view newval, bool overwrite )
   {
     int res = setenv( ename.data(), newval.data(), overwrite ? 1 : 0 );
-    UTILS_ASSERT( res == 0, "set_environment({},{},{}) faled\n", ename, newval, overwrite );
+    Utils::Check( res == 0, "set_environment({},{},{}) faled\n", ename, newval, overwrite );
   }
 
   /*
@@ -88,7 +88,7 @@ namespace Utils
     struct ifaddrs *ifap, *ifaptr;
 
     int ier = getifaddrs( &ifap );
-    UTILS_ASSERT( ier >= 0,
+    Utils::Check( ier >= 0,
                   "No network interface found for licence managing, getifaddrs "
                   "return = {}\n",
                   ier );
@@ -146,7 +146,7 @@ namespace Utils
   get_user_name()
   {
     char const * USER = getenv( "USER" );
-    UTILS_ASSERT( USER != nullptr, "get_user_name, undefined enviroment `USER`" );
+    Utils::Check( USER != nullptr, "get_user_name, undefined enviroment `USER`" );
     return string{ USER };
   }
 
@@ -157,7 +157,7 @@ namespace Utils
   get_home_directory()
   {
     char const * HOME = getenv( "HOME" );
-    UTILS_ASSERT( HOME != nullptr, "get_home_directory, undefined enviroment `HOME`" );
+    Utils::Check( HOME != nullptr, "get_home_directory, undefined enviroment `HOME`" );
     return string{ HOME };
   }
 

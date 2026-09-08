@@ -393,14 +393,14 @@ public:
     real_type x10 = x( 9 );
     real_type x22 = x( 21 );
     real_type x28 = x( 27 );
-    UTILS_ASSERT( x1 > 0, "x1" );
-    UTILS_ASSERT( x4 > 0, "x4" );
-    UTILS_ASSERT( x5 > 0, "x5" );
-    UTILS_ASSERT( x6 > 0, "x6" );
-    UTILS_ASSERT( x8 > 0, "x8" );
-    UTILS_ASSERT( x10 > 0, "x10" );
-    UTILS_ASSERT( x22 > 0, "x22" );
-    UTILS_ASSERT( x28 > 0, "x28" );
+    Utils::Check( x1 > 0, "x1" );
+    Utils::Check( x4 > 0, "x4" );
+    Utils::Check( x5 > 0, "x5" );
+    Utils::Check( x6 > 0, "x6" );
+    Utils::Check( x8 > 0, "x8" );
+    Utils::Check( x10 > 0, "x10" );
+    Utils::Check( x22 > 0, "x22" );
+    Utils::Check( x28 > 0, "x28" );
   }
 
   virtual void

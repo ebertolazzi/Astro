@@ -132,7 +132,7 @@ namespace AstroLib {
     real_type absa = m_K.a > 0 ? m_K.a : -m_K.a;
     real_type e    = m_K.e;
 
-    UTILS_ASSERT(
+    Utils::Check(
       m_muS > 0 && absa > 0,
       "Astro::M0_Mdot_grad_eval, mu = {} and |a| = {} must be > 0!\n",
       m_muS, absa
@@ -294,7 +294,7 @@ namespace AstroLib {
     real_type   muS
   ) {
 
-    UTILS_ASSERT(
+    Utils::Check(
       p > 0,
       "Astro::setup_Equinoctial, agument p = {} must be positive!\n", p
     );
@@ -543,7 +543,7 @@ namespace AstroLib {
 
     // 1- e^2 cos^2 = 1-e^2 + e^2(1-cos^2) = 1-e^2+e^2*sin^2;
 
-    UTILS_ASSERT(
+    Utils::Check(
       abs( dE ) < 1E-10,
       "Astro::mean_anomaly_to_E, do not converge:"
       "\nE  = {}"
@@ -601,7 +601,7 @@ namespace AstroLib {
       H -= dH;
       if ( abs( dH ) < 1E-12 ) break;
     }
-    UTILS_ASSERT(
+    Utils::Check(
       abs( dH ) < 1E-10,
       "Astro::mean_anomaly_to_H, do not converge:"
       "\nH  = {}"
@@ -683,7 +683,7 @@ namespace AstroLib {
   //
   real_type
   Astro::time_from_L_angle( real_type tbase, real_type L ) const {
-    UTILS_ASSERT0(
+    Utils::Check(
       m_K.e < 1,
       "Astro::time_from_L_angle(tbase,L), can be used only for elliptic orbits\n"
     );
@@ -703,7 +703,7 @@ namespace AstroLib {
     real_type M    = E-m_K.e*sin(E);
     real_type tres = m_t0 + (M-m_M0)/m_Mdot;
     real_type per  = this->period(); // m_2pi/Mdot
-    UTILS_ASSERT( per > 0, "Bad period = {}\n", per );
+    Utils::Check( per > 0, "Bad period = {}\n", per );
     if ( tres > tbase ) {
       integer numPeriod = integer( (tres-tbase)/per ); // conta i periodi da tbase a tres
       tres -= numPeriod * per;

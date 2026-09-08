@@ -354,7 +354,7 @@ namespace AstroLib {
       if ( abs( dE ) < 1E-12 ) break;
     }
 
-    UTILS_ASSERT(
+    Utils::Check(
       abs( dE ) < 1E-10,
       "mean_anomaly_to_E, do not converge:"
       "\nE  = {}"
@@ -379,7 +379,7 @@ namespace AstroLib {
       H -= dH;
       if ( abs( dH ) < 1E-12 ) break;
     }
-    UTILS_ASSERT(
+    Utils::Check(
       abs( dH ) < 1E-10,
       "mean_anomaly_to_H, do not converge:"
       "\nH  = {}"
@@ -433,7 +433,7 @@ namespace AstroLib {
     } else {
       // 2*arctan( sqrt( (e+1)/(e-1) ) ) = theta ;
       real_type tmp = sqrt( (e-1)/(e+1) ) * tan(th2);
-      UTILS_ASSERT(
+      Utils::Check(
         tmp > -1 && tmp < 1,
         "true_anomaly_to_mean_anomaly( theta = {}, e = {} )\n"
         "sqrt( (e-1)/(e+1) ) * tan(theta/2) = {}\n"
@@ -611,7 +611,7 @@ namespace AstroLib {
 
     dvec3_t n = P.cross(V);
     real_type n2 = n.squaredNorm();
-    UTILS_ASSERT( n2 > 0, "n2 = {}\n", n2 );
+    Utils::Check( n2 > 0, "n2 = {}\n", n2 );
 
     dvec3_t ecc = V.cross(n) / muS;
 

@@ -27,10 +27,10 @@
 "\n"
 
 #define CHECK_IN(N) \
-  UTILS_ASSERT( nrhs == N, CMD "Expected {} argument(s), nrhs = {}\n", N, nrhs )
+  Utils::Check( nrhs == N, CMD "Expected {} argument(s), nrhs = {}\n", N, nrhs )
 
 #define CHECK_OUT(N) \
-  UTILS_ASSERT( nlhs == N, CMD "Expected {} argument(s), nlhs = {}\n", N, nlhs )
+  Utils::Check( nlhs == N, CMD "Expected {} argument(s), nlhs = {}\n", N, nlhs )
 
 namespace AstroLib {
   // function [deltaV,deltaV2] = DeltaV(mu,P0,V0,P1,V1)
@@ -42,8 +42,8 @@ namespace AstroLib {
   mexFunction( int nlhs, mxArray       *plhs[],
                int nrhs, mxArray const *prhs[] ) {
     try {
-      UTILS_ASSERT0( nrhs == 5, "DeltaV: Expected 5 arguments" );
-      UTILS_ASSERT0( nlhs == 2, "DeltaV: Expected 2 outputs" );
+      Utils::Check( nrhs == 5, "DeltaV: Expected 5 arguments" );
+      Utils::Check( nlhs == 2, "DeltaV: Expected 2 outputs" );
 
       real_type mu = Utils::mex_get_scalar_value( arg_in_0, "Lambert first argument (mu) must be a scalar\n" );
 

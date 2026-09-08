@@ -75,7 +75,7 @@ namespace Utils
     if ( m_num_f_eval > m_max_f_eval ) {
       m_status = Status::BOBYQA_TOO_MANY_EVALUATIONS;
       m_reason = fmt::format( "BOBYQA_minimizer::eval( x ) has been called MAXFUN={} times", m_max_f_eval );
-      UTILS_ERROR( m_reason );
+      Utils::Error( m_reason );
     }
     Scalar f = m_fun( x );
     if ( m_print_level == 3 )

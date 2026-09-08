@@ -29,7 +29,7 @@ public:
                        "}\n",
                        n )
   {
-    UTILS_ASSERT( n >= 2 && n <= 20, "GriewankFunction(n={}) must be in range [2..20]", n );
+    Utils::Check( n >= 2 && n <= 20, "GriewankFunction(n={}) must be in range [2..20]", n );
   }
 
   real_type
@@ -117,7 +117,7 @@ public:
   virtual void
   check_if_admissible( Vector const & x ) const override
   {
-    for ( integer i = 0; i < n; ++i ) UTILS_ASSERT( std::abs( x( i ) ) < 1000, "Bad range" );
+    for ( integer i = 0; i < n; ++i ) Utils::Check( std::abs( x( i ) ) < 1000, "Bad range" );
   }
 
   virtual void

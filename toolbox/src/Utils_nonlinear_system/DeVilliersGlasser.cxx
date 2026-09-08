@@ -149,11 +149,11 @@ public:
   virtual void
   check_if_admissible( Vector const & x ) const override
   {
-    UTILS_ASSERT( x( 1 ) > 0, "DeVilliersGlasser01, x(1) = {} <= 0", x( 1 ) );
-    UTILS_ASSERT( -500 <= x( 0 ) && x( 0 ) <= 500, "DeVilliersGlasser#1, x(0) = {} must be in [-500,500]", x( 0 ) );
-    UTILS_ASSERT( 0 <= x( 1 ) && x( 1 ) <= 500, "DeVilliersGlasser#1, x(1) = {} must be in [0,500]", x( 1 ) );
-    UTILS_ASSERT( -500 <= x( 2 ) && x( 2 ) <= 500, "DeVilliersGlasser#1, x(2) = {} must be in [-500,500]", x( 2 ) );
-    UTILS_ASSERT( -500 <= x( 3 ) && x( 3 ) <= 500, "DeVilliersGlasser#1, x(3) = {} must be in [-500,500]", x( 3 ) );
+    Utils::Check( x( 1 ) > 0, "DeVilliersGlasser01, x(1) = {} <= 0", x( 1 ) );
+    Utils::Check( -500 <= x( 0 ) && x( 0 ) <= 500, "DeVilliersGlasser#1, x(0) = {} must be in [-500,500]", x( 0 ) );
+    Utils::Check( 0 <= x( 1 ) && x( 1 ) <= 500, "DeVilliersGlasser#1, x(1) = {} must be in [0,500]", x( 1 ) );
+    Utils::Check( -500 <= x( 2 ) && x( 2 ) <= 500, "DeVilliersGlasser#1, x(2) = {} must be in [-500,500]", x( 2 ) );
+    Utils::Check( -500 <= x( 3 ) && x( 3 ) <= 500, "DeVilliersGlasser#1, x(3) = {} must be in [-500,500]", x( 3 ) );
   }
 
   virtual void
@@ -343,12 +343,12 @@ public:
   virtual void
   check_if_admissible( Vector const & x ) const override
   {
-    UTILS_ASSERT( x( 1 ) > 0, "DeVilliersGlasser02, x(1) = {} <= 0", x( 1 ) );
-    UTILS_ASSERT( -500 <= x( 0 ) && x( 0 ) <= 500, "DeVilliersGlasser#2, x(0) = {} must be in [-500,500]", x( 0 ) );
-    UTILS_ASSERT( -500 <= x( 1 ) && x( 1 ) <= 500, "DeVilliersGlasser#2, x(1) = {} must be in [-500,500]", x( 1 ) );
-    UTILS_ASSERT( -500 <= x( 2 ) && x( 2 ) <= 500, "DeVilliersGlasser#2, x(2) = {} must be in [-500,500]", x( 2 ) );
-    UTILS_ASSERT( -500 <= x( 3 ) && x( 3 ) <= 500, "DeVilliersGlasser#2, x(3) = {} must be in [-500,500]", x( 3 ) );
-    UTILS_ASSERT( -500 <= x( 4 ) && x( 4 ) <= 500, "DeVilliersGlasser#2, x(4) = {} must be in [-500,500]", x( 4 ) );
+    Utils::Check( x( 1 ) > 0, "DeVilliersGlasser02, x(1) = {} <= 0", x( 1 ) );
+    Utils::Check( -500 <= x( 0 ) && x( 0 ) <= 500, "DeVilliersGlasser#2, x(0) = {} must be in [-500,500]", x( 0 ) );
+    Utils::Check( -500 <= x( 1 ) && x( 1 ) <= 500, "DeVilliersGlasser#2, x(1) = {} must be in [-500,500]", x( 1 ) );
+    Utils::Check( -500 <= x( 2 ) && x( 2 ) <= 500, "DeVilliersGlasser#2, x(2) = {} must be in [-500,500]", x( 2 ) );
+    Utils::Check( -500 <= x( 3 ) && x( 3 ) <= 500, "DeVilliersGlasser#2, x(3) = {} must be in [-500,500]", x( 3 ) );
+    Utils::Check( -500 <= x( 4 ) && x( 4 ) <= 500, "DeVilliersGlasser#2, x(4) = {} must be in [-500,500]", x( 4 ) );
   }
 
   virtual void

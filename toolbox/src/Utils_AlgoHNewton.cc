@@ -50,7 +50,7 @@ namespace Utils
   void
   AlgoHNewton<Real>::set_max_iterations( Integer mit )
   {
-    UTILS_ASSERT( mit > 0, "AlgoHNewton::set_max_iterations({}) argument must be >0\n", mit );
+    Utils::Check( mit > 0, "AlgoHNewton::set_max_iterations({}) argument must be >0\n", mit );
     m_max_iteration = mit;
   }
 
@@ -172,7 +172,7 @@ namespace Utils
     Real P1{ P0 + D01 * O1 };
     Real P2{ P1 + D012 * O2 };
 
-    UTILS_ASSERT( is_finite( P2 ),
+    Utils::Check( is_finite( P2 ),
                   "AlgoHNewton<Real>::pzero(), compute NaN or Inf at\n"
                   "a={} f(a)={}\n"
                   "b={} f(b)={}\n"
@@ -223,7 +223,7 @@ namespace Utils
     Real P2{ P1 + D012  * O2 };
     Real P3{ P2 + D0123 * O3 };
 
-    UTILS_ASSERT(
+    Utils::Check(
       is_finite(P3),
       "AlgoHNewton<Real>::pzero(), compute NaN or Inf at\n"
       "a={} f(a)={}\n"
@@ -291,7 +291,7 @@ namespace Utils
         // --> [c,b]
         m_a = m_c; m_fa = m_fc;
       } else {
-        UTILS_ERROR(
+        Utils::Error(
           "AlgoHNewton::eval() cannot determine if to choose left or right segment\n"
           "a={} fa={}\n"
           "b={} fb={}\n"
@@ -340,7 +340,7 @@ namespace Utils
 
       m_fc = evaluate( m_c );
 
-      UTILS_ASSERT(
+      Utils::Check(
         Utils::is_finite(m_fc),
         "AlgoHNewton::eval() fiund NaN in c\n"
         "a={} fa={}\n"
@@ -400,7 +400,7 @@ namespace Utils
       }
       else
       {
-        UTILS_ERROR(
+        Utils::Error(
             "AlgoHNewton::eval() cannot determine if to choose left or right "
             "segment\n"
             "a={} fa={}\n"

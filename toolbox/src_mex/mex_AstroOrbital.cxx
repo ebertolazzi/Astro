@@ -115,7 +115,7 @@ do_L_orbital(
 ) {
   #define MEX_ERROR_MESSAGE_207 "L = AstroMexWrapper('L_orbital',obj,[t0,dt] or [t])"
   #define CMD MEX_ERROR_MESSAGE_207
-  UTILS_ASSERT(
+  Utils::Check(
     nrhs == 3 || nrhs == 4, CMD "Expected 3 or 4 argument(s), nrhs = {}\n", nrhs
   );
   CHECK_OUT(1);
@@ -711,7 +711,7 @@ do_eval_E(
   CHECK_IN(3);
   Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
   GC_namespace::real_type t = Utils::mex_get_scalar_value( arg_in_2, CMD ": param t" );
-  UTILS_ASSERT(
+  Utils::Check(
     nrhs > 0 && nrhs < 4,
     CMD "Expected 1,2,3 or 4  argument(s), nrhs = {}\n", nrhs
   );
@@ -737,7 +737,7 @@ do_eval_L(
   CHECK_IN(3);
   Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
   GC_namespace::real_type t = Utils::mex_get_scalar_value( arg_in_2, CMD ": param t" );
-  UTILS_ASSERT(
+  Utils::Check(
     nrhs > 0 && nrhs < 4,
     CMD "Expected 1,2,3 or 4  argument(s), nrhs = {}\n", nrhs
   );

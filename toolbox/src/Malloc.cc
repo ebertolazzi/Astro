@@ -127,7 +127,7 @@ namespace Utils
   void
   Malloc<T>::allocate( size_t n )
   {
-    UTILS_ASSERT( m_num_allocated == 0,
+    Utils::Check( m_num_allocated == 0,
                   "Malloc[{}]::allocate( {} ), try to allocate already "
                   "allocated memory!\n",
                   m_name, n );
@@ -152,7 +152,7 @@ namespace Utils
   T *
   Malloc<T>::malloc( size_t n )
   {
-    UTILS_ASSERT( m_num_allocated == 0, "Malloc[{}]::malloc( {} ), try to allocate already allocated memory!\n", m_name,
+    Utils::Check( m_num_allocated == 0, "Malloc[{}]::malloc( {} ), try to allocate already allocated memory!\n", m_name,
                   n );
     if ( n > m_num_total_reserved ) allocate_internal( n );
     m_num_total_values = n;

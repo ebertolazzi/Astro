@@ -83,7 +83,7 @@ public:
   check_if_admissible( Vector const & x_in ) const override
   {
     real_type x = x_in[0];
-    UTILS_ASSERT( x > 0 && x < 0.95, "ARGUMENT ERROR" );
+    Utils::Check( x > 0 && x < 0.95, "ARGUMENT ERROR" );
   }
 
   virtual void

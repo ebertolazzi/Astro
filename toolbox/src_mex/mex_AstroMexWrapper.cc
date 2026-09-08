@@ -47,8 +47,8 @@ static scoped_redirect_cout mycout_redirect;
 
 #endif
 
-#define CHECK_IN(N)  UTILS_ASSERT( nrhs == N, CMD ": expected {} argument(s), nrhs = {}\n", N, nrhs )
-#define CHECK_OUT(N) UTILS_ASSERT( nlhs == N, CMD ": expected {} argument(s), nlhs = {}\n", N, nlhs )
+#define CHECK_IN(N)  Utils::Check( nrhs == N, CMD ": expected {} argument(s), nrhs = {}\n", N, nrhs )
+#define CHECK_OUT(N) Utils::Check( nlhs == N, CMD ": expected {} argument(s), nlhs = {}\n", N, nlhs )
 
 namespace AstroLib {
 
@@ -76,13 +76,13 @@ namespace AstroLib {
     #define MEX_ERROR_MESSAGE_001 "AstroMexWrapper('new'[,'name'])"
     #define CMD MEX_ERROR_MESSAGE_001
 
-    UTILS_ASSERT( nlhs == 1, CMD "expected 1 output, nlhs = {}\n", nlhs );
-    UTILS_ASSERT( nrhs == 1 || nrhs == 2, CMD ": expected 1 or 2 input, nrhs = {}\n", nrhs );
+    Utils::Check( nlhs == 1, CMD "expected 1 output, nlhs = {}\n", nlhs );
+    Utils::Check( nrhs == 1 || nrhs == 2, CMD ": expected 1 or 2 input, nrhs = {}\n", nrhs );
     Astro * ptr = nullptr;
     if ( nrhs == 1 ) {
       ptr = new Astro();
     } else {
-      UTILS_ASSERT0( mxIsChar(arg_in_1), CMD ": second argument must be a string" );
+      Utils::Check( mxIsChar(arg_in_1), CMD ": second argument must be a string" );
       string name = mxArrayToString(arg_in_1);
       ptr = new Astro(name);
     }
@@ -178,13 +178,13 @@ namespace AstroLib {
     #define MEX_ERROR_MESSAGE_006 "AstroMexWrapper('setup_Keplerian',obj,[name,t0,a,e,Omega,omega,i,M0,muS]||struct)"
     #define CMD MEX_ERROR_MESSAGE_006
 
-    UTILS_ASSERT( nrhs == 3 || nrhs == 11, CMD ": expected 3 or 11 input, nrhs = {}\n", nrhs );
+    Utils::Check( nrhs == 3 || nrhs == 11, CMD ": expected 3 or 11 input, nrhs = {}\n", nrhs );
     CHECK_OUT(0);
     Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     string name = "no-name";
     GC_namespace::real_type t0(0), a(0), e(0), Omega(0), omega(0), i(0), M0(0), muS(0);
     if ( nrhs == 11 ) {
-      UTILS_ASSERT0( mxIsChar(arg_in_2), CMD ": param 'name' must be a string" );
+      Utils::Check( mxIsChar(arg_in_2), CMD ": param 'name' must be a string" );
       name  = mxArrayToString(arg_in_2);
       t0    = Utils::mex_get_scalar_value( arg_in_3,  CMD ": param t0" );
       a     = Utils::mex_get_scalar_value( arg_in_4,  CMD ": param a" );
@@ -228,14 +228,14 @@ namespace AstroLib {
     #define MEX_ERROR_MESSAGE_007 "AstroMexWrapper('setup_Equinoctial',obj,[name,t0,p,f,g,h,k,retrograde,L0,muS]||struct)"
     #define CMD MEX_ERROR_MESSAGE_007
 
-    UTILS_ASSERT( nrhs == 3 || nrhs == 12, CMD ": expected 3 or 12 input, nrhs = {}\n", nrhs );
+    Utils::Check( nrhs == 3 || nrhs == 12, CMD ": expected 3 or 12 input, nrhs = {}\n", nrhs );
     CHECK_OUT(0);
     Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
     GC_namespace::real_type t0(0), p(0), f(0), g(0), h(0), k(0), L0(0), muS(0);
     bool retrograde = false;
     string name = "";
     if ( nrhs == 12 ) {
-      UTILS_ASSERT0( mxIsChar(arg_in_2), CMD ": param 'name' must be a string" );
+      Utils::Check( mxIsChar(arg_in_2), CMD ": param 'name' must be a string" );
       name       = mxArrayToString(arg_in_2);
       t0         = Utils::mex_get_scalar_value( arg_in_3,  CMD ": param t0" );
       p          = Utils::mex_get_scalar_value( arg_in_4,  CMD ": param p" );
@@ -291,13 +291,13 @@ namespace AstroLib {
     CHECK_IN(7);
     CHECK_OUT(0);
     Astro * ptr = Utils::mex_convert_mx_to_ptr<Astro>( arg_in_1 );
-    UTILS_ASSERT0( mxIsChar(arg_in_2), CMD ": param name must be a string" );
+    Utils::Check( mxIsChar(arg_in_2), CMD ": param name must be a string" );
     string n = mxArrayToString(arg_in_2);
     mwSize szP, szV;
     GC_namespace::real_type const * PP = Utils::mex_vector_pointer( arg_in_3, szP, CMD ": param P" );
-    UTILS_ASSERT( szP == 3, CMD ": size |P| = {} expected 3\n", szP );
+    Utils::Check( szP == 3, CMD ": size |P| = {} expected 3\n", szP );
     GC_namespace::real_type const * VV = Utils::mex_vector_pointer( arg_in_4, szV, CMD ": param V" );
-    UTILS_ASSERT( szV == 3, CMD ": size |V| = {} expected 3\n", szV );
+    Utils::Check( szV == 3, CMD ": size |V| = {} expected 3\n", szV );
     GC_namespace::real_type t0  = Utils::mex_get_scalar_value( arg_in_5, CMD ": param t0" );
     GC_namespace::real_type muS = Utils::mex_get_scalar_value( arg_in_6, CMD ": param muS" );
     dvec3_t P, V;
@@ -582,7 +582,7 @@ MEX_ERROR_MESSAGE_315 "\n" \
     }
 
     try {
-      UTILS_ASSERT0( mxIsChar(arg_in_0), "AstroMexWrapper: first argument must be a string" );
+      Utils::Check( mxIsChar(arg_in_0), "AstroMexWrapper: first argument must be a string" );
       string cmd = mxArrayToString(arg_in_0);
       std::map<std::string,DO_CMD>::const_iterator it = cmd_to_fun.find(cmd);
       if ( it != cmd_to_fun.end() ) {

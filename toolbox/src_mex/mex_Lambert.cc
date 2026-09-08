@@ -27,10 +27,10 @@
 "\n"
 
 #define CHECK_IN(N) \
-  UTILS_ASSERT( nrhs == N, CMD "Expected {} argument(s), nrhs = {}\n", N, nrhs )
+  Utils::Check( nrhs == N, CMD "Expected {} argument(s), nrhs = {}\n", N, nrhs )
 
 #define CHECK_OUT(N) \
-  UTILS_ASSERT( nlhs == N, CMD "Expected {} argument(s), nlhs = {}\n", N, nlhs )
+  Utils::Check( nlhs == N, CMD "Expected {} argument(s), nlhs = {}\n", N, nlhs )
 
 namespace AstroLib {
   // function [V1,V2,ok] = Lambert(t1,P1,t2,P2,m,mu)
@@ -45,8 +45,8 @@ namespace AstroLib {
     #define CMD "[V1,V2,ok] = Lambert(P1,P2,DT,m,mu): "
 
     try {
-      UTILS_ASSERT0( nrhs == 5, CMD "Expected 5 arguments" );
-      UTILS_ASSERT0( nlhs == 3, CMD "Expected 3 outputs" );
+      Utils::Check( nrhs == 5, CMD "Expected 5 arguments" );
+      Utils::Check( nlhs == 3, CMD "Expected 3 outputs" );
 
       mwSize n;
       double const * RR1 = Utils::mex_vector_pointer( arg_in_0, n, CMD "P1 must be a 3d vector\n" );
@@ -60,7 +60,7 @@ namespace AstroLib {
       integer m = Utils::mex_get_int64( arg_in_3, CMD "m must be an integer\n" );
       real_type mu = Utils::mex_get_scalar_value( arg_in_4, CMD "mu must be a scalar\n" );
 
-      UTILS_ASSERT( DT > 0, "lambert, bad DT = {}\n", DT );
+      Utils::Check( DT > 0, "lambert, bad DT = {}\n", DT );
 
       dvec3_t R1, R2, V1, V2;
       std::copy_n( RR1, 3, R1.data() );

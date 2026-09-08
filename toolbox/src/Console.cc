@@ -46,7 +46,7 @@ namespace Utils
   void
   Console::change_level( int new_level )
   {
-    UTILS_ASSERT( new_level >= -1 && new_level <= 4,
+    Utils::Check( new_level >= -1 && new_level <= 4,
                   "Console::change_level( new_level = {})\n"
                   "new_level must be in the range [-1,4]\n",
                   new_level );

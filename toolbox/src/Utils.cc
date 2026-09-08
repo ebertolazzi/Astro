@@ -85,7 +85,7 @@ namespace Utils
   {
     // check points
     T_int n{ npts - 1 };
-    UTILS_ASSERT( npts > 1 && last_interval >= 0 && last_interval < n,
+    Utils::Check( npts > 1 && last_interval >= 0 && last_interval < n,
                   "In search_interval( npts={}, X, x={}, last_interval={}, "
                   "closed={}, can_extend={})\n"
                   "npts must be >= 2 and last_interval must be in [0,npts-2]\n",
@@ -104,7 +104,7 @@ namespace Utils
     }
     else
     {
-      UTILS_ASSERT( can_extend || ( x >= xl && x <= xr ),
+      Utils::Check( can_extend || ( x >= xl && x <= xr ),
                     "In search_interval( npts={}, X, x={}, last_interval={}, "
                     "closed={}, can_extend={})\n"
                     "out of range: [{},{}]\n",
@@ -153,7 +153,7 @@ namespace Utils
       // x in the interval [ XL[0], XL[1] ] nothing to do
     }
     // check computed interval
-    UTILS_ASSERT( last_interval >= 0 && last_interval < n,
+    Utils::Check( last_interval >= 0 && last_interval < n,
                   "In search_interval( npts={}, X, x={}, last_interval={}, "
                   "closed={}, can_extend={})\n"
                   "computed last_interval of range: [{},{}]\n",

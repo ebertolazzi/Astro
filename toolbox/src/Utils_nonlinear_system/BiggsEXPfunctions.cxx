@@ -589,7 +589,7 @@ public:
   virtual void
   check_if_admissible( Vector const & x ) const override
   {
-    UTILS_ASSERT( x( 0 ) > xmin && x( 0 ) < xmax && x( 1 ) > xmin && x( 1 ) < xmax && x( 2 ) > xmin && x( 2 ) < xmax &&
+    Utils::Check( x( 0 ) > xmin && x( 0 ) < xmax && x( 1 ) > xmin && x( 1 ) < xmax && x( 2 ) > xmin && x( 2 ) < xmax &&
                       x( 3 ) > xmin && x( 3 ) < xmax && x( 4 ) > xmin && x( 4 ) < xmax && x( 5 ) > xmin &&
                       x( 5 ) < xmax,
                   "Bad Range" );

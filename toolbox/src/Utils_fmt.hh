@@ -53,7 +53,7 @@
 #endif
 
 #ifndef UTILS_ASSERT0
-#define UTILS_ASSERT0( COND, MSG )                                                                                     \
+#define Utils::Check( COND, MSG )                                                                                     \
   if ( !( COND ) ) UTILS_ERROR0( MSG )
 #endif
 
@@ -67,7 +67,7 @@
 #endif
 
 #ifndef UTILS_ASSERT
-#define UTILS_ASSERT( COND, ... )                                                                                      \
+#define Utils::Check( COND, ... )                                                                                      \
   if ( !( COND ) ) UTILS_ERROR( __VA_ARGS__ )
 #endif
 
@@ -85,10 +85,10 @@
 #endif
 #else
 #ifndef UTILS_ASSERT0_DEBUG
-#define UTILS_ASSERT0_DEBUG( COND, MSG ) UTILS_ASSERT0( COND, MSG )
+#define UTILS_ASSERT0_DEBUG( COND, MSG ) Utils::Debug( COND, MSG )
 #endif
 #ifndef UTILS_ASSERT_DEBUG
-#define UTILS_ASSERT_DEBUG( COND, ... ) UTILS_ASSERT( COND, __VA_ARGS__ )
+#define UTILS_ASSERT_DEBUG( COND, ... ) Utils::Debug( COND, __VA_ARGS__ )
 #endif
 #endif
 

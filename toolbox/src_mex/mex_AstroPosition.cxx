@@ -25,7 +25,7 @@ do_position(
     GC_namespace::to_mxArray(y,arg_out_1);
     GC_namespace::to_mxArray(z,arg_out_2);
   } else {
-    UTILS_ASSERT( false, CMD ": expected 1 or 3 output, nlhs = {}\n", nlhs );
+    Utils::Check( false, CMD ": expected 1 or 3 output, nlhs = {}\n", nlhs );
   }
   #undef CMD
 }
@@ -56,7 +56,7 @@ do_velocity(
     GC_namespace::to_mxArray(vy,arg_out_1);
     GC_namespace::to_mxArray(vz,arg_out_2);
   } else {
-    UTILS_ASSERT( false, CMD ": expected 1 or 3 output, nlhs = {}\n", nlhs );
+    Utils::Check( false, CMD ": expected 1 or 3 output, nlhs = {}\n", nlhs );
   }
   #undef CMD
 }
@@ -87,7 +87,7 @@ do_acceleration(
     GC_namespace::to_mxArray(ay,arg_out_1);
     GC_namespace::to_mxArray(az,arg_out_2);
   } else {
-    UTILS_ASSERT( false, CMD ": expected 1 or 3 output, nlhs = {}\n", nlhs );
+    Utils::Check( false, CMD ": expected 1 or 3 output, nlhs = {}\n", nlhs );
   }
   #undef CMD
 }
@@ -118,7 +118,7 @@ do_jerk(
     GC_namespace::to_mxArray(jy,arg_out_1);
     GC_namespace::to_mxArray(jz,arg_out_2);
   } else {
-    UTILS_ASSERT( false, CMD ": expected 1 or 3 output, nlhs = {}\n", nlhs );
+    Utils::Check( false, CMD ": expected 1 or 3 output, nlhs = {}\n", nlhs );
   }
   #undef CMD
 }

@@ -137,7 +137,7 @@ namespace Utils
      */
     TikhonovSolver( Matrix const & A, Scalar lambda ) : m_A( A ), m_m( A.rows() ), m_n( A.cols() )
     {
-      UTILS_ASSERT( lambda >= 0, "TikhonovSolver( λ={} ) λ must be >= 0", lambda );
+      Utils::Check( lambda >= 0, "TikhonovSolver( λ={} ) λ must be >= 0", lambda );
       m_lambda         = std::sqrt( lambda );
       m_lambda_gt_zero = m_lambda > Scalar( 0 );
       if ( m_lambda_gt_zero )
@@ -315,7 +315,7 @@ namespace Utils
       // Factorize with LU (PartialPivLU is efficient for dense matrices)
       m_lu.compute( m_KKT );
 
-      UTILS_ASSERT( m_lu.info() == Eigen::Success, "TikhonovSolver2: KKT factorization failed" );
+      Utils::Check( m_lu.info() == Eigen::Success, "TikhonovSolver2: KKT factorization failed" );
     }
 
   public:
@@ -328,7 +328,7 @@ namespace Utils
     TikhonovSolver2( Matrix const & A, Scalar lambda )
       : m_A( A ), m_m( A.rows() ), m_n( A.cols() ), m_reg( lambda > Scalar( 0 ) ), m_use_diag( false )
     {
-      UTILS_ASSERT( lambda >= 0, "TikhonovSolver2( λ={} ) λ must be >= 0", lambda );
+      Utils::Check( lambda >= 0, "TikhonovSolver2( λ={} ) λ must be >= 0", lambda );
       m_lambda = lambda;
       build_and_factorize();
     }
@@ -347,8 +347,8 @@ namespace Utils
       , m_use_diag( true )
       , m_D( D )
     {
-      UTILS_ASSERT( D.size() == m_n, "TikhonovSolver2: D size {} must match A cols {}", D.size(), m_n );
-      UTILS_ASSERT( D.minCoeff() >= 0, "TikhonovSolver2: D elements must be >= 0" );
+      Utils::Check( D.size() == m_n, "TikhonovSolver2: D size {} must match A cols {}", D.size(), m_n );
+      Utils::Check( D.minCoeff() >= 0, "TikhonovSolver2: D elements must be >= 0" );
       m_lambda = 0;
       build_and_factorize();
     }
@@ -364,14 +364,14 @@ namespace Utils
     Vector
     solve( Vector const & b ) const
     {
-      UTILS_ASSERT( b.size() == m_m, "TikhonovSolver2::solve: b size mismatch" );
+      Utils::Check( b.size() == m_m, "TikhonovSolver2::solve: b size mismatch" );
 
       // RHS for KKT: [b; 0]
       Vector rhsKKT      = Vector::Zero( m_m + m_n );
       rhsKKT.head( m_m ) = b;
 
       Vector sol = m_lu.solve( rhsKKT );
-      UTILS_ASSERT( m_lu.info() == Eigen::Success, "TikhonovSolver2::solve: solve failed" );
+      Utils::Check( m_lu.info() == Eigen::Success, "TikhonovSolver2::solve: solve failed" );
 
       // Extract x (tail of the solution)
       return sol.segment( m_m, m_n );
@@ -389,14 +389,14 @@ namespace Utils
     Vector
     solve_transpose( Vector const & c ) const
     {
-      UTILS_ASSERT( c.size() == m_n, "TikhonovSolver2::solve_transpose: c size mismatch" );
+      Utils::Check( c.size() == m_n, "TikhonovSolver2::solve_transpose: c size mismatch" );
 
       Vector rhsKKT = Vector::Zero( m_m + m_n );
       // RHS = [0; -c] so that the resulting x satisfies (A^T A + λI) x = c
       rhsKKT.segment( m_m, m_n ) = -c;
 
       Vector sol = m_lu.solve( rhsKKT );
-      UTILS_ASSERT( m_lu.info() == Eigen::Success, "TikhonovSolver2::solve_transpose: solve failed" );
+      Utils::Check( m_lu.info() == Eigen::Success, "TikhonovSolver2::solve_transpose: solve failed" );
 
       Vector x = sol.segment( m_m, m_n );
       return m_A * x;
@@ -522,7 +522,7 @@ namespace Utils
      */
     SP_TikhonovSolver( SparseMatrix const & A, Scalar lambda ) : m_A( A ), m_m( A.rows() ), m_n( A.cols() )
     {
-      UTILS_ASSERT( lambda >= 0, "SP_TikhonovSolver( λ={} ) λ must be >= 0", lambda );
+      Utils::Check( lambda >= 0, "SP_TikhonovSolver( λ={} ) λ must be >= 0", lambda );
       m_lambda         = std::sqrt( lambda );
       m_lambda_gt_zero = lambda > Scalar( 0 );
 
@@ -549,7 +549,7 @@ namespace Utils
         m_qr.compute( m_A );
       }
 
-      UTILS_ASSERT( m_qr.info() == Eigen::Success, "QR decomposition failed" );
+      Utils::Check( m_qr.info() == Eigen::Success, "QR decomposition failed" );
     }
 
     /**
@@ -729,7 +729,7 @@ namespace Utils
       {
         m_lu.analyzePattern( m_KKT );
         m_lu.factorize( m_KKT );
-        UTILS_ASSERT( m_lu.info() == Eigen::Success, "SP_TikhonovSolver2: LU factorization failed" );
+        Utils::Check( m_lu.info() == Eigen::Success, "SP_TikhonovSolver2: LU factorization failed" );
       }
     }
 
@@ -742,7 +742,7 @@ namespace Utils
      */
     SP_TikhonovSolver2( SparseMatrix const & A, Scalar lambda ) : m_A( A ), m_m( A.rows() ), m_n( A.cols() )
     {
-      UTILS_ASSERT( lambda >= 0, "SP_TikhonovSolver2( λ={} ) λ must be >= 0", lambda );
+      Utils::Check( lambda >= 0, "SP_TikhonovSolver2( λ={} ) λ must be >= 0", lambda );
       m_lambda   = lambda;
       m_reg      = lambda > Scalar( 0 );
       m_use_diag = false;
@@ -757,8 +757,8 @@ namespace Utils
      */
     SP_TikhonovSolver2( SparseMatrix const & A, Vector const & D ) : m_A( A ), m_m( A.rows() ), m_n( A.cols() )
     {
-      UTILS_ASSERT( D.size() == m_n, "SP_TikhonovSolver2: D size {} must match A cols {}", D.size(), m_n );
-      UTILS_ASSERT( D.minCoeff() >= 0, "SP_TikhonovSolver2: D elements must be >= 0" );
+      Utils::Check( D.size() == m_n, "SP_TikhonovSolver2: D size {} must match A cols {}", D.size(), m_n );
+      Utils::Check( D.minCoeff() >= 0, "SP_TikhonovSolver2: D elements must be >= 0" );
 
       m_lambda   = 0;
       m_reg      = D.array().abs().maxCoeff() > 0;
@@ -782,13 +782,13 @@ namespace Utils
       if ( m_use_lflt )
       {
         Vector sol = m_ldlt.solve( rhs );
-        UTILS_ASSERT( m_ldlt.info() == Eigen::Success, "SP_TikhonovSolver2::solve (LDLT): solve failed" );
+        Utils::Check( m_ldlt.info() == Eigen::Success, "SP_TikhonovSolver2::solve (LDLT): solve failed" );
         return sol.segment( m_m, m_n );
       }
       else
       {
         Vector sol = m_lu.solve( rhs );
-        UTILS_ASSERT( m_lu.info() == Eigen::Success, "SP_TikhonovSolver2::solve (LU): solve failed" );
+        Utils::Check( m_lu.info() == Eigen::Success, "SP_TikhonovSolver2::solve (LU): solve failed" );
         return sol.segment( m_m, m_n );
       }
     }
@@ -809,13 +809,13 @@ namespace Utils
       if ( m_use_lflt )
       {
         Vector sol = m_ldlt.solve( rhs );
-        UTILS_ASSERT( m_ldlt.info() == Eigen::Success, "SP_TikhonovSolver2::solve_transpose (LDLT): solve failed" );
+        Utils::Check( m_ldlt.info() == Eigen::Success, "SP_TikhonovSolver2::solve_transpose (LDLT): solve failed" );
         return m_A * sol.segment( m_m, m_n );
       }
       else
       {
         Vector sol = m_lu.solve( rhs );
-        UTILS_ASSERT( m_lu.info() == Eigen::Success, "SP_TikhonovSolver2::solve_transpose (LU): solve failed" );
+        Utils::Check( m_lu.info() == Eigen::Success, "SP_TikhonovSolver2::solve_transpose (LU): solve failed" );
         return m_A * sol.segment( m_m, m_n );
       }
     }

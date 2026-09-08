@@ -55,15 +55,15 @@ class ChemicalReactorEquilibriumConversion : public NonlinearSystem
   {
     T = x( 0 );
     y = x( 1 );
-    UTILS_ASSERT( y <= 1, "ChemicalReactorEquilibriumConversion::eval found y > 1, y = {}", y );
-    UTILS_ASSERT( T > 0, "ChemicalReactorEquilibriumConversion::eval found T <= 0, T = {}", T );
+    Utils::Check( y <= 1, "ChemicalReactorEquilibriumConversion::eval found y > 1, y = {}", y );
+    Utils::Check( T > 0, "ChemicalReactorEquilibriumConversion::eval found T <= 0, T = {}", T );
     real_type bf1 = 149750.0 / T;
     real_type bf2 = 192050.0 / T;
 
     real_type k1 = 92.5 - bf1;
     real_type k2 = 116.7 - bf2 - 0.17 * log( T );
-    UTILS_ASSERT( k1 <= 350, "ChemicalReactorEquilibriumConversion::eval found k1 > 350, k1 = {}", k1 );
-    UTILS_ASSERT( k2 <= 350, "ChemicalReactorEquilibriumConversion::eval found k2 > 350, k2 = {}", k2 );
+    Utils::Check( k1 <= 350, "ChemicalReactorEquilibriumConversion::eval found k1 > 350, k1 = {}", k1 );
+    Utils::Check( k2 <= 350, "ChemicalReactorEquilibriumConversion::eval found k2 > 350, k2 = {}", k2 );
     k     = exp( k1 );
     kkp   = exp( k2 );
     k_1   = k * bf1 / T;
@@ -168,11 +168,11 @@ public:
   {
     real_type _T = x( 0 );
     real_type _y = x( 1 );
-    UTILS_ASSERT( _y <= 1,
+    Utils::Check( _y <= 1,
                   "ChemicalReactorEquilibriumConversion::check_if_admissible "
                   "found y > 1, y = {}",
                   y );
-    UTILS_ASSERT( _T > 0,
+    Utils::Check( _T > 0,
                   "ChemicalReactorEquilibriumConversion::check_if_admissible "
                   "found T <= 0, T = {}",
                   T );
@@ -181,11 +181,11 @@ public:
 
     real_type k1 = 92.5 - bf1;
     real_type k2 = 116.7 - bf2 - 0.17 * log( _T );
-    UTILS_ASSERT( k1 <= 350,
+    Utils::Check( k1 <= 350,
                   "ChemicalReactorEquilibriumConversion::check_if_admissible "
                   "found k1 > 350, k1 = {}",
                   k1 );
-    UTILS_ASSERT( k2 <= 350,
+    Utils::Check( k2 <= 350,
                   "ChemicalReactorEquilibriumConversion::check_if_admissible "
                   "found k2 > 350, k2 = {}",
                   k2 );
@@ -249,7 +249,7 @@ public:
   {
     J.resize( n, n );
     J.setZero();
-    UTILS_ASSERT( eval( x ), "bad eval" );
+    Utils::Check( eval( x ), "bad eval" );
     real_type dkdT   = k * ( 12581.0 * 298.0 * T - 12581.0 * ( T - 298.0 ) * 298.0 ) / power2( 298.0 * T );
     J.insert( 0, 0 ) = 120.0 + 75.0 * k;
     J.insert( 0, 1 ) = -75.0 * dkdT * ( 1.0 - y );
@@ -308,8 +308,8 @@ public:
     real_type _y = x( 0 );
     real_type _T = x( 1 );
     // real_type T = x(1);
-    UTILS_ASSERT( _y >= 0, "bad point1" );
-    UTILS_ASSERT( _T >= 298.0, "bad point2" );
+    Utils::Check( _y >= 0, "bad point1" );
+    Utils::Check( _T >= 298.0, "bad point2" );
   }
 
   virtual void
@@ -432,9 +432,9 @@ public:
   virtual void
   check_if_admissible( Vector const & x ) const override
   {
-    UTILS_ASSERT( x( 0 ) > 0, "check_if_admissible: x(0) = {}", x( 0 ) );
+    Utils::Check( x( 0 ) > 0, "check_if_admissible: x(0) = {}", x( 0 ) );
     for ( integer i = 0; i < n; ++i )
-      UTILS_ASSERT( std::abs( x( i ) ) < 20, "check_if_admissible: x[{}] = {} out of [-20,20]", i, x( i ) );
+      Utils::Check( std::abs( x( i ) ) < 20, "check_if_admissible: x[{}] = {} out of [-20,20]", i, x( i ) );
   }
 
   virtual void
@@ -803,13 +803,13 @@ public:
   check_if_admissible( Vector const & x ) const override
   {
     // for (  i = 0; i < n; ++i )
-    //   UTILS_ASSERT( std::abs(x(i)) < 1000, "Bad range" );
+    //   Utils::Check( std::abs(x(i)) < 1000, "Bad range" );
     real_type s = x( 0 ) + x( 1 ) + x( 2 ) + x( 3 ) + x( 4 ) + x( 5 ) + x( 6 ) + x( 7 ) + x( 8 ) + x( 9 );
-    UTILS_ASSERT( x( 0 ) >= 0, "Bad range" );
-    UTILS_ASSERT( x( 1 ) >= 0, "Bad range" );
-    UTILS_ASSERT( x( 2 ) >= 0, "Bad range" );
-    UTILS_ASSERT( x( 3 ) >= 0, "Bad range" );
-    UTILS_ASSERT( s >= 0, "Bad range" );
+    Utils::Check( x( 0 ) >= 0, "Bad range" );
+    Utils::Check( x( 1 ) >= 0, "Bad range" );
+    Utils::Check( x( 2 ) >= 0, "Bad range" );
+    Utils::Check( x( 3 ) >= 0, "Bad range" );
+    Utils::Check( s >= 0, "Bad range" );
   }
 
   virtual void
@@ -902,7 +902,7 @@ public:
   virtual void
   check_if_admissible( Vector const & x ) const override
   {
-    UTILS_ASSERT( x( 0 ) >= 0 && x( 0 ) < 0.8, "x(0) = {} must be in [0,0.8)", x( 0 ) );
+    Utils::Check( x( 0 ) >= 0 && x( 0 ) < 0.8, "x(0) = {} must be in [0,0.8)", x( 0 ) );
   }
 
   virtual void
@@ -991,8 +991,8 @@ public:
   {
     real_type x2 = x( 1 );
     real_type x3 = x( 2 );
-    UTILS_ASSERT( x2 > 0, "FractionalConversionInAchemicalReactor2, x2 = {} must be > 0", x2 );
-    UTILS_ASSERT( x3 > 0, "FractionalConversionInAchemicalReactor2, x3 = {} must be > 0", x3 );
+    Utils::Check( x2 > 0, "FractionalConversionInAchemicalReactor2, x2 = {} must be > 0", x2 );
+    Utils::Check( x3 > 0, "FractionalConversionInAchemicalReactor2, x3 = {} must be > 0", x3 );
   }
 
   virtual void
@@ -1137,7 +1137,7 @@ public:
   virtual void
   check_if_admissible( Vector const & x ) const override
   {
-    UTILS_ASSERT( x( 6 ) > 0, "Bad range" );
+    Utils::Check( x( 6 ) > 0, "Bad range" );
   }
 
   virtual void
@@ -1278,7 +1278,7 @@ public:
   virtual void
   check_if_admissible( Vector const & x ) const override
   {
-    UTILS_ASSERT( x( 6 ) > 0, "Bad range" );
+    Utils::Check( x( 6 ) > 0, "Bad range" );
   }
 
   virtual void
@@ -1546,7 +1546,7 @@ public:
     real_type k1B = x( 12 );
     real_type k2C = x( 13 );
     real_type k3E = x( 14 );
-    UTILS_ASSERT( T > 0 && CA > 0 && CB > 0 && CC > 0 && CD > 0 && CE > 0 && k1B > 0 && k2C > 0 && k3E > 0,
+    Utils::Check( T > 0 && CA > 0 && CB > 0 && CC > 0 && CD > 0 && CE > 0 && k1B > 0 && k2C > 0 && k3E > 0,
                   "non positive" );
     // ASSERT( rA < 0, "T non positive" );
     // ASSERT( rB < 0, "T non positive" );
@@ -1941,11 +1941,11 @@ public:
     // All concentrations must be non-negative
     for ( int i = 0; i < n; ++i )
     {
-      UTILS_ASSERT( x( i ) >= 0, "Variable n{} = {} must be non-negative", i + 1, x( i ) );
+      Utils::Check( x( i ) >= 0, "Variable n{} = {} must be non-negative", i + 1, x( i ) );
     }
 
     // Additional physical constraints
-    UTILS_ASSERT( x.sum() > 0, "Total moles must be positive" );
+    Utils::Check( x.sum() > 0, "Total moles must be positive" );
   }
 
   virtual void

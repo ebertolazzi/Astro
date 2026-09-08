@@ -67,7 +67,7 @@ public:
   virtual void
   check_if_admissible( Vector const & x ) const override
   {
-    UTILS_ASSERT( x( 0 ) >= xmin, "BertolazziRootPlusSquare: x = {} must be >= {}", x( 0 ), xmin );
+    Utils::Check( x( 0 ) >= xmin, "BertolazziRootPlusSquare: x = {} must be >= {}", x( 0 ), xmin );
   }
 
   virtual void
@@ -140,7 +140,7 @@ public:
   check_if_admissible( Vector const & x ) const override
   {
     for ( integer i = 0; i < n; ++i )
-      UTILS_ASSERT( std::abs( x( i ) ) < 10, "x[{}] = {} out of range [-10,10]", i, x( i ) );
+      Utils::Check( std::abs( x( i ) ) < 10, "x[{}] = {} out of range [-10,10]", i, x( i ) );
   }
 
   virtual void

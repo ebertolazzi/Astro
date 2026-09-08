@@ -69,31 +69,31 @@ namespace Utils
     void
     check_min_equations( integer i, integer i_min ) const
     {
-      UTILS_ASSERT( i >= i_min, "check_min_equations:: i = {} < {}", i, i_min );
+      Utils::Check( i >= i_min, "check_min_equations:: i = {} < {}", i, i_min );
     }
 
     void
     check_even( integer i, integer i_min ) const
     {
-      UTILS_ASSERT( ( i % 2 ) == 0 && i >= i_min, "check_even:: odd index i = {}" );
+      Utils::Check( ( i % 2 ) == 0 && i >= i_min, "check_even:: odd index i = {}" );
     }
 
     void
     check_odd( integer i, integer i_min ) const
     {
-      UTILS_ASSERT( ( i % 2 ) != 0 && i >= i_min, "check_odd:: odd index i = {}" );
+      Utils::Check( ( i % 2 ) != 0 && i >= i_min, "check_odd:: odd index i = {}" );
     }
 
     void
     check_three( integer i, integer i_min ) const
     {
-      UTILS_ASSERT( ( i % 3 ) == 0 && i >= i_min, "check_three:: index i = {}" );
+      Utils::Check( ( i % 3 ) == 0 && i >= i_min, "check_three:: index i = {}" );
     }
 
     void
     check_four( integer i, integer i_min ) const
     {
-      UTILS_ASSERT( ( i % 4 ) == 0 && i >= i_min, "check_four:: index i = {}" );
+      Utils::Check( ( i % 4 ) == 0 && i >= i_min, "check_four:: index i = {}" );
     }
 
     real_type real_max{ std::numeric_limits<real_type>::max() };
