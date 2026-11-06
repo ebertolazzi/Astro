@@ -503,13 +503,21 @@ function(astro_add_platform_library_alias TARGET_NAME BASE_NAME)
     set(GENERIC_FILENAME "${CMAKE_SHARED_LIBRARY_PREFIX}${BASE_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}")
   else()
     set(REAL_OUTPUT_NAME "${BASE_NAME}_${ASTRO_PLATFORM_SUFFIX}_static")
-    if(WIN32)
-      set(REAL_FILENAME "lib${REAL_OUTPUT_NAME}${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    # Il prefisso "lib" va messo a mano solo dove CMake non lo aggiunge da
+    # solo, cioe' con MSVC (CMAKE_STATIC_LIBRARY_PREFIX vuoto).  Prima lo si
+    # metteva nel nome del file atteso ma non in OUTPUT_NAME: con MSVC il
+    # file scritto era Astro_win64_static.lib mentre REAL_FILENAME diceva
+    # libAstro_win64_static.lib, e l'alias e l'install guardavano un file che
+    # non esisteva.  Cosi' il risultato e'
+    # lib<nome>_<piattaforma>_static.<ext> su tutte le piattaforme, come per
+    # gli altri moduli della famiglia.
+    if(WIN32 AND NOT CMAKE_STATIC_LIBRARY_PREFIX)
+      set(REAL_OUTPUT_NAME "lib${REAL_OUTPUT_NAME}")
       set(GENERIC_FILENAME "lib${BASE_NAME}${CMAKE_STATIC_LIBRARY_SUFFIX}")
     else()
-      set(REAL_FILENAME "${CMAKE_STATIC_LIBRARY_PREFIX}${REAL_OUTPUT_NAME}${CMAKE_STATIC_LIBRARY_SUFFIX}")
       set(GENERIC_FILENAME "${CMAKE_STATIC_LIBRARY_PREFIX}${BASE_NAME}${CMAKE_STATIC_LIBRARY_SUFFIX}")
     endif()
+    set(REAL_FILENAME "${CMAKE_STATIC_LIBRARY_PREFIX}${REAL_OUTPUT_NAME}${CMAKE_STATIC_LIBRARY_SUFFIX}")
   endif()
 
   # Apply the platform-suffixed output name to every artifact class CMake may
