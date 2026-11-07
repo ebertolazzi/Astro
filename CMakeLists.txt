@@ -313,7 +313,11 @@ endforeach()
 FetchContent_Declare(
   quarticRootsFlocke
   GIT_REPOSITORY https://github.com/ebertolazzi/quarticRootsFlocke.git
-  GIT_TAG        1.2.0
+  # The 1.2.0 CMake files add both /std:c++17 and an MSVC option unsupported
+  # by VS 2022 17.8, producing D9025/D9002 in every Astro build.  The master
+  # branch removes those obsolete flags and is already used by the sibling
+  # checkout supported below.
+  GIT_TAG        master
   GIT_SHALLOW    TRUE
 )
 astro_use_local_or_fetch(quarticRootsFlocke "${ASTRO_QUARTIC_ROOTS_LOCAL_DIR}")
