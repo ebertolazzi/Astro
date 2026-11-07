@@ -109,6 +109,15 @@ option(BUILD_TESTING "Build the Astro test executables" ${PROJECT_IS_TOP_LEVEL})
 option(ASTRO_INSTALL "Generate the install target" ${PROJECT_IS_TOP_LEVEL})
 option(ASTRO_BUILD_BENCHMARKS "Build the micro-benchmarks" ${PROJECT_IS_TOP_LEVEL})
 option(ASTRO_STRICT_WARNINGS "Compile with narrowing/conversion warnings" OFF)
+option(ASTRO_ALLOW_NETWORK_FETCH "Allow FetchContent network fallbacks for missing dependencies" ON)
+
+# Apply Astro's network policy to dependencies that resolve their own optional
+# components. GenericContainer needs this when its YAML backend must fetch
+# fkYAML, and UtilsLite uses the same policy for any missing vendored headers.
+set(GENERIC_CONTAINER_ALLOW_NETWORK_FETCH "${ASTRO_ALLOW_NETWORK_FETCH}"
+    CACHE BOOL "Allow GenericContainer nested dependency fetching" FORCE)
+set(UTILS_ALLOW_NETWORK_FETCH "${ASTRO_ALLOW_NETWORK_FETCH}"
+    CACHE BOOL "Allow UtilsLite nested dependency fetching" FORCE)
 
 # --------------------------------------------------------------------------
 # Local install layout

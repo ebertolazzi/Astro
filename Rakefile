@@ -111,6 +111,7 @@ def cmake_configure_command(build_tests: false)
     "-DASTRO_INSTALL=ON",
     "-DASTRO_BUILD_BENCHMARKS=OFF",
     "-DASTRO_STRICT_WARNINGS=OFF",
+    "-DASTRO_ALLOW_NETWORK_FETCH=ON",
     project_root
   ]
   args.join(' ')
