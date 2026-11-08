@@ -292,6 +292,11 @@ astro_use_local_or_fetch(UtilsLite "${ASTRO_UTILSLITE_LOCAL_DIR}")
 # This prevents warnings from dependency headers from being reported as Astro
 # warnings, which is especially useful when enabling stricter warning options
 # on the Astro target itself.
+# NON su MSVC: li' SYSTEM diventa /external:I, e con cl 19.38 basta questo a
+# far esplodere il back-end ("fatal error C1001", compiler file p2/main.c) su
+# header pesanti di Eigen e UtilsLite.  Stessa scelta gia' fatta in
+# PINSBuild.cmake; su Windows i warning di terze parti si tolgono dai flag.
+if(NOT MSVC)
 foreach(_utils_tgt utils_UtilsLite_Static utils_UtilsLite)
   if(TARGET ${_utils_tgt})
     get_target_property(_utils_inc ${_utils_tgt} INTERFACE_INCLUDE_DIRECTORIES)
@@ -303,6 +308,7 @@ foreach(_utils_tgt utils_UtilsLite_Static utils_UtilsLite)
     endif()
   endif()
 endforeach()
+endif()
 
 # --------------------------------------------------------------------------
 # Dependency 3: quarticRootsFlocke
