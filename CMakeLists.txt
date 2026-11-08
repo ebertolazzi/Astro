@@ -526,10 +526,11 @@ function(astro_add_platform_library_alias TARGET_NAME BASE_NAME)
     # gli altri moduli della famiglia.
     if(WIN32 AND NOT CMAKE_STATIC_LIBRARY_PREFIX)
       set(REAL_OUTPUT_NAME "lib${REAL_OUTPUT_NAME}")
-      set(GENERIC_FILENAME "lib${BASE_NAME}${CMAKE_STATIC_LIBRARY_SUFFIX}")
-    else()
-      set(GENERIC_FILENAME "${CMAKE_STATIC_LIBRARY_PREFIX}${BASE_NAME}${CMAKE_STATIC_LIBRARY_SUFFIX}")
     endif()
+    # L'alias di compatibilita' NON prende il "lib": nel resto della famiglia
+    # (UtilsLite, Splines, Clothoids, GenericContainer) con MSVC si chiama
+    # <nome>.lib, e chi linka il nome generico si aspetta quello.
+    set(GENERIC_FILENAME "${CMAKE_STATIC_LIBRARY_PREFIX}${BASE_NAME}${CMAKE_STATIC_LIBRARY_SUFFIX}")
     set(REAL_FILENAME "${CMAKE_STATIC_LIBRARY_PREFIX}${REAL_OUTPUT_NAME}${CMAKE_STATIC_LIBRARY_SUFFIX}")
   endif()
 
