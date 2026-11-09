@@ -16,7 +16,8 @@
 #                                                                          #
 ############################################################################
 
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.28)
+include("${CMAKE_CURRENT_LIST_DIR}/CMakeLists_compiler.txt")
 
 # --------------------------------------------------------------------------
 # Apple FAT/universal build setup
@@ -89,6 +90,7 @@ project(
   HOMEPAGE_URL "https://ebertolazzi.github.io/Astro/"
   LANGUAGES CXX C
 )
+pins_configure_compiler()
 
 # --------------------------------------------------------------------------
 # Top-level build options and default build type
