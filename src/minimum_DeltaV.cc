@@ -402,7 +402,6 @@ namespace AstroLib {
 
     vector<dvec3_t> R1(TABLE_SIZE), V1(TABLE_SIZE),
                     R2(TABLE_SIZE), V2(TABLE_SIZE);
-    dvec3_t W1, W2;
 
     // prima tabella
     real_type delta_L = m_2pi/TABLE_SIZE;
@@ -606,7 +605,7 @@ namespace AstroLib {
           a_to.position( tt2, P2 );
           a_to.velocity( tt2, V2 );
 
-          integer okk = Lambert( P1, P2, tt2-tt1, 0, muS, W1, W2 );
+          if ( Lambert( P1, P2, tt2-tt1, 0, muS, W1, W2 ) != 1 ) continue;
           trips.emplace_back( tt1, P1, V1, W1, tt2, P2, V2, W2 );
         }
       }
@@ -671,7 +670,6 @@ namespace AstroLib {
 
     vector<dvec3_t> R1(TABLE_SIZE), V1(TABLE_SIZE),
                     R2(TABLE_SIZE), V2(TABLE_SIZE);
-    dvec3_t W1, W2;
 
     // prima tabella
     real_type delta_L = m_2pi/TABLE_SIZE;
@@ -875,7 +873,7 @@ namespace AstroLib {
           a_to.position( tt2, P2 );
           a_to.velocity( tt2, V2 );
 
-          integer okk = Lambert( P1, P2, tt2-tt1, 0, muS, W1, W2 );
+          if ( Lambert( P1, P2, tt2-tt1, 0, muS, W1, W2 ) != 1 ) continue;
           trips.emplace_back( tt1, P1, V1, W1, tt2, P2, V2, W2 );
         }
       }
@@ -1064,7 +1062,7 @@ namespace AstroLib {
         a_to.position( tt2, P2 );
         a_to.velocity( tt2, V2 );
 
-        integer okk = Lambert( P1, P2, tt2-tt1, 0, muS, W1, W2 );
+        if ( Lambert( P1, P2, tt2-tt1, 0, muS, W1, W2 ) != 1 ) continue;
         //trip.DeltaV1 = (V1-trip.W1).norm();
         //trip.DeltaV2 = (V2-trip.W2).norm();
 

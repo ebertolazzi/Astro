@@ -411,6 +411,10 @@ list(FILTER PUBLIC_HEADERS EXCLUDE REGEX ".*.tmpl$")
 add_library(Astro ${SOURCES})
 add_library(Astro::Astro ALIAS Astro)
 
+# PINS links this static archive into shared libraries; compile its objects as
+# position-independent code for safe reuse by shared consumers.
+set_target_properties(Astro PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 astro_set_target_output_dirs(Astro lib/lib)
 
 target_compile_features(Astro PUBLIC cxx_std_20)
